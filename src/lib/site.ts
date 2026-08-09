@@ -34,7 +34,6 @@ export const site = {
     facebook: "https://www.facebook.com/TotalCharm.ge",
     instagram: "https://www.instagram.com/total_charm_dent/",
   },
-  umbrella: "https://totalcharmvake.com/",
   geo: { lat: 41.7069642, lng: 44.7667472 },
 
   /** Machine-readable opening hours. Keep in sync with `contact.hours`. */

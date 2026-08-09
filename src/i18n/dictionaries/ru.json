@@ -18,9 +18,6 @@
     "language": "Язык",
     "allServices": "Все услуги",
     "servicesIntro": "16 направлений — от диагностики до цифрового моделирования, в одном пространстве.",
-    "umbrellaLabel": "Часть группы",
-    "umbrellaName": "Total Charm Vake",
-    "umbrellaNote": "Косметология и пластическая хирургия",
     "skipToContent": "Перейти к содержимому",
     "call": "Позвонить",
     "whatsapp": "WhatsApp",
@@ -36,6 +33,7 @@
     "ctaPrimary": "Записаться на приём",
     "ctaSecondary": "Смотреть услуги",
     "scroll": "Листайте",
+    "trust": "5 специалистов, стажировка в Европе и международные протоколы",
     "pauseMotion": "Остановить видео",
     "playMotion": "Запустить видео",
     "facts": [
@@ -320,7 +318,6 @@
     "navLabel": "Навигация",
     "servicesLabel": "Услуги",
     "contactLabel": "Контакты",
-    "groupLabel": "Часть группы",
     "rights": "Все права защищены.",
     "privacy": "Конфиденциальность",
     "terms": "Условия"

@@ -8,8 +8,18 @@ import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { getMegaColumns, getNavItems, homeHref, route } from "@/lib/nav";
-import { media, site } from "@/lib/site";
-import { ArrowUpRight, ChevronDown, Clock, Close, Menu, Phone, Pin } from "@/components/ui/icons";
+import { media, site, whatsappHref } from "@/lib/site";
+import {
+  ArrowUpRight,
+  ChevronDown,
+  Clock,
+  Close,
+  Mail,
+  Menu,
+  Phone,
+  Pin,
+  WhatsApp,
+} from "@/components/ui/icons";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 type Props = { dict: Dictionary; lang: Locale };
@@ -174,16 +184,28 @@ export default function SiteHeader({ dict, lang }: Props) {
               {dict.contact.hours}
             </span>
           </div>
-          <a
-            href={site.umbrella}
-            target="_blank"
-            rel="noreferrer"
-            className="group inline-flex items-center gap-1.5 transition-colors hover:text-accent-700"
-          >
-            <span className="text-ink-500">{dict.nav.umbrellaLabel}</span>
-            <span className="font-medium text-ink-800">{dict.nav.umbrellaName}</span>
-            <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </a>
+          {/* The group-brand link used to sit here. WhatsApp and email take
+              the slot so the strip keeps its balance — and deliberately not
+              the phone, which already has a pill in the main bar below and
+              would otherwise appear twice on an unscrolled desktop. */}
+          <div className="flex items-center gap-5">
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-accent-700"
+            >
+              <WhatsApp className="h-3.5 w-3.5 text-accent-600" />
+              {dict.nav.whatsapp}
+            </a>
+            <a
+              href={`mailto:${site.email}`}
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-accent-700"
+            >
+              <Mail className="h-3.5 w-3.5 text-accent-600" />
+              {site.email}
+            </a>
+          </div>
         </div>
       </div>
 
@@ -465,21 +487,21 @@ export default function SiteHeader({ dict, lang }: Props) {
                   </a>
                 </dd>
               </div>
+              <div className="flex items-start gap-3 text-ink-700">
+                <WhatsApp className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
+                <dt className="sr-only">{dict.nav.whatsapp}</dt>
+                <dd>
+                  <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-accent-700"
+                  >
+                    {dict.nav.whatsapp}
+                  </a>
+                </dd>
+              </div>
             </dl>
-
-            <a
-              href={site.umbrella}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-between rounded-2xl border border-ivory-500 bg-ivory-50 px-5 py-4 shadow-soft"
-            >
-              <span>
-                <span className="label-micro">{dict.nav.umbrellaLabel}</span>
-                <span className="mt-1 block text-sm text-ink-900">{dict.nav.umbrellaName}</span>
-                <span className="mt-0.5 block text-xs text-ink-600">{dict.nav.umbrellaNote}</span>
-              </span>
-              <ArrowUpRight className="h-4 w-4 text-accent-600" />
-            </a>
           </div>
         </div>
       </div>

@@ -18,9 +18,6 @@
     "language": "ენა",
     "allServices": "ყველა სერვისი",
     "servicesIntro": "16 მიმართულება — დიაგნოსტიკიდან ციფრულ მოდელირებამდე, ერთ სივრცეში.",
-    "umbrellaLabel": "ქოლგა-ბრენდი",
-    "umbrellaName": "Total Charm Vake",
-    "umbrellaNote": "კოსმეტოლოგია და პლასტიკური ქირურგია",
     "skipToContent": "მთავარ კონტენტზე გადასვლა",
     "call": "დარეკვა",
     "whatsapp": "WhatsApp",
@@ -36,6 +33,7 @@
     "ctaPrimary": "ვიზიტზე ჩაწერა",
     "ctaSecondary": "სერვისების ნახვა",
     "scroll": "გადაახვიეთ",
+    "trust": "5 სპეციალისტი, ევროპული სტაჟირება და საერთაშორისო პროტოკოლები",
     "pauseMotion": "ვიდეოს გაჩერება",
     "playMotion": "ვიდეოს გაშვება",
     "facts": [
@@ -320,7 +318,6 @@
     "navLabel": "ნავიგაცია",
     "servicesLabel": "სერვისები",
     "contactLabel": "კონტაქტი",
-    "groupLabel": "ჯგუფის ნაწილი",
     "rights": "ყველა უფლება დაცულია.",
     "privacy": "კონფიდენციალურობა",
     "terms": "წესები და პირობები"

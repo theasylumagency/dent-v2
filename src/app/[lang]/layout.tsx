@@ -158,7 +158,7 @@ export default async function LocaleLayout({
       name: category.title,
       description: category.blurb,
     })),
-    sameAs: [site.social.facebook, site.social.instagram, site.umbrella],
+    sameAs: [site.social.facebook, site.social.instagram],
   };
 
   return (

@@ -1,8 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { route } from "@/lib/nav";
+import { getTeam } from "@/lib/team";
 import { ArrowUpRight, ChevronDown } from "@/components/ui/icons";
 import HeroMedia from "./HeroMedia";
 
@@ -12,6 +14,11 @@ import HeroMedia from "./HeroMedia";
  * would force the heavy grading the client asked us to drop.
  */
 export default function Hero({ dict, lang }: { dict: Dictionary; lang: Locale }) {
+  /* Four faces, not all five — the row stays compact and the count lives
+     in the copy. Lead doctor first, so the stack opens on the name the
+     rest of the page builds on. */
+  const faces = getTeam(dict).slice(0, 4);
+
   return (
     <section className="relative grain overflow-hidden bg-ivory-100 pb-16 pt-28 lg:pb-24 lg:pt-40">
       <div className="aura -left-52 -top-24 h-[34rem] w-[34rem] opacity-40" aria-hidden="true" />
@@ -40,6 +47,40 @@ export default function Hero({ dict, lang }: { dict: Dictionary; lang: Locale })
               <Link href={route(lang, "services")} className="btn-ghost">
                 {dict.hero.ctaSecondary}
               </Link>
+            </div>
+
+            {/* Social proof, immediately after the CTAs — real faces do
+                more for a first-time patient than another statistic, and
+                this is the moment they are deciding whether to click.
+
+                The stack is decorative: names and roles belong to the team
+                section, so the sentence carries the whole meaning here and
+                the images are hidden from assistive tech rather than read
+                out as four unlabelled photos. */}
+            <div className="mt-9 flex items-center gap-5">
+              <ul className="flex shrink-0" aria-hidden="true">
+                {faces.map((member, index) => (
+                  <li
+                    key={member.slug}
+                    /* Grows only at xl: the copy column is at its narrowest
+                       right at the lg breakpoint, where the fixed grid gaps
+                       eat the most space. */
+                    className={`relative h-12 w-12 overflow-hidden rounded-full bg-ivory-200 ring-2 ring-ivory-100 xl:h-14 xl:w-14 ${
+                      index === 0 ? "" : "-ml-3.5"
+                    }`}
+                  >
+                    <Image
+                      src={member.photo}
+                      alt=""
+                      fill
+                      sizes="112px"
+                      className="object-cover object-top"
+                    />
+                  </li>
+                ))}
+              </ul>
+
+              <p className="max-w-xs text-sm leading-relaxed text-ink-600">{dict.hero.trust}</p>
             </div>
           </div>
 

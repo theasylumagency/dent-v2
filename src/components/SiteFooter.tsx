@@ -145,18 +145,16 @@ export default function SiteFooter({ dict, lang }: { dict: Dictionary; lang: Loc
             </li>
           </ul>
 
-          <a
-            href={site.umbrella}
-            target="_blank"
-            rel="noreferrer"
-            className="group mt-8 flex items-center justify-between rounded-2xl border border-ivory-600 bg-ivory-100 px-4 py-3.5 transition-colors hover:border-accent-500 hover:bg-accent-50"
+          {/* Took the slot the group-brand card used to occupy. Keeps the
+              column's visual weight and ends the footer on the action we
+              actually want, instead of on an outbound link. */}
+          <Link
+            href={route(lang, "contact")}
+            className="group mt-8 flex items-center justify-between rounded-2xl border border-accent-200 bg-accent-50 px-4 py-3.5 transition-colors hover:border-accent-500"
           >
-            <span>
-              <span className="label-micro">{dict.footer.groupLabel}</span>
-              <span className="mt-1 block text-sm text-ink-900">{dict.nav.umbrellaName}</span>
-            </span>
-            <ArrowUpRight className="h-4 w-4 text-accent-600 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </a>
+            <span className="text-sm font-medium text-ink-900">{dict.nav.book}</span>
+            <ArrowUpRight className="h-4 w-4 text-accent-700 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </Link>
         </div>
       </div>
 

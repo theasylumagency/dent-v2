@@ -18,9 +18,6 @@
     "language": "Language",
     "allServices": "All services",
     "servicesIntro": "16 disciplines — from diagnostics to digital smile design, all under one roof.",
-    "umbrellaLabel": "Part of",
-    "umbrellaName": "Total Charm Vake",
-    "umbrellaNote": "Cosmetology and plastic surgery",
     "skipToContent": "Skip to content",
     "call": "Call",
     "whatsapp": "WhatsApp",
@@ -36,6 +33,7 @@
     "ctaPrimary": "Book a visit",
     "ctaSecondary": "Explore services",
     "scroll": "Scroll",
+    "trust": "5 specialists, trained in Europe, working to international protocols",
     "pauseMotion": "Pause video",
     "playMotion": "Play video",
     "facts": [
@@ -320,7 +318,6 @@
     "navLabel": "Navigation",
     "servicesLabel": "Services",
     "contactLabel": "Contact",
-    "groupLabel": "Part of the group",
     "rights": "All rights reserved.",
     "privacy": "Privacy",
     "terms": "Terms & conditions"
