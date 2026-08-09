@@ -44,9 +44,15 @@ export default function Technology({ dict }: { dict: Dictionary }) {
                     {[media.ornament.implantology, media.ornament.aesthetic].map((src) => (
                       <span
                         key={src}
-                        className="relative aspect-square overflow-hidden rounded-2xl bg-accent-50 ring-1 ring-inset ring-accent-200"
+                        className="relative isolate aspect-square overflow-hidden rounded-2xl bg-accent-50 ring-1 ring-inset ring-accent-200"
                       >
-                        <Image src={src} alt="" fill sizes="24rem" className="object-contain p-2" />
+                        <Image
+                          src={src}
+                          alt=""
+                          fill
+                          sizes="24rem"
+                          className="object-contain mix-blend-multiply"
+                        />
                       </span>
                     ))}
                   </div>

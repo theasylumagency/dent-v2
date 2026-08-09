@@ -433,14 +433,42 @@
     font-style: normal;
   }
 
+  /* ------------------------------------------------------------------
+     Fluid display type.
+
+     The h1 sits in a 6-of-12 column, but `vw` measures the whole
+     viewport — so the type kept scaling while its container did not.
+     The grid's fixed 56px gaps take a proportionally larger bite out of
+     the column at narrower desktop widths, which is where the headline
+     was breaking out of its box. A gentler coefficient and a lower
+     ceiling keep the longest word inside the column from 1024px up.
+
+     `overflow-wrap` is the backstop: a single unbreakable word can still
+     exceed any column, and clipping a headline is worse than breaking it.
+     ------------------------------------------------------------------ */
   .fluid-display {
-    font-size: clamp(2.5rem, 6.4vw, 6rem);
-    line-height: 1;
+    font-size: clamp(2.25rem, 4.6vw, 4.5rem);
+    line-height: 1.06;
+    overflow-wrap: break-word;
   }
 
   .fluid-title {
-    font-size: clamp(1.9rem, 3.8vw, 3.4rem);
-    line-height: 1.08;
+    font-size: clamp(1.75rem, 3.2vw, 3rem);
+    line-height: 1.15;
+    overflow-wrap: break-word;
+  }
+
+  /* Georgian needs both dials turned down. Mkhedruli words are long, and
+     unlike Latin lowercase the script carries true ascenders and
+     descenders (ღ, ვ, ჯ, ყ, ჭ) — at line-height 1 the two stacked lines
+     of the hero headline collided. */
+  :lang(ka) .fluid-display {
+    font-size: clamp(2rem, 4vw, 3.875rem);
+    line-height: 1.18;
+  }
+
+  :lang(ka) .fluid-title {
+    line-height: 1.28;
   }
 
   .no-scrollbar::-webkit-scrollbar {

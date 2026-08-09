@@ -68,17 +68,21 @@ export default function Services({ dict, lang }: { dict: Dictionary; lang: Local
                     border and shadow carry the affordance instead. */}
                 <article className="group card relative flex h-full flex-col p-7 transition-[border-color,box-shadow] duration-300 hover:border-accent-400 hover:shadow-lift lg:p-8">
                   <div className="flex items-start justify-between gap-4">
-                    <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-accent-50 ring-1 ring-inset ring-accent-200 transition-colors duration-500 group-hover:bg-accent-100">
+                    {/* `isolate` scopes the blend to this tile; `multiply`
+                        makes the artwork's white background disappear into
+                        the tint, so the icon no longer reads as a white box
+                        pasted onto a blue square. It only works because the
+                        tile is lighter than every ink in the artwork.
+                        TODO(design): see docs/icon-and-logo-notes.md — these
+                        want to be SVG, and their strokes are too fine for
+                        this size. */}
+                    <span className="relative isolate h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-accent-50 ring-1 ring-inset ring-accent-200 transition-colors duration-500 group-hover:bg-accent-100">
                       <Image
                         src={category.icon}
                         alt=""
                         fill
-                        /* 2x the rendered 64px — the source art is raster,
-                           so asking for 64px served a blurry icon on every
-                           retina screen. TODO(design): these are line art
-                           and belong in SVG. */
-                        sizes="128px"
-                        className="object-contain p-1.5 transition-transform duration-700 group-hover:scale-110"
+                        sizes="160px"
+                        className="object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
                       />
                     </span>
                   </div>
