@@ -1,26 +1,506 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* ------------------------------------------------------------------
+     Brand blue chosen by the client (#7AC7EF is accent-300).
+
+     Contrast note: accent-300 is a *fill* colour — it does not carry
+     enough contrast for small text on the ivory page. For text and
+     small icons use accent-600 (4.9:1 on ivory-100) or accent-700.
+     ------------------------------------------------------------------ */
+  --color-accent-50: #f2fafe;
+  --color-accent-100: #e0f3fc;
+  --color-accent-200: #b9e5f8;
+  --color-accent-300: #7ac7ef;
+  --color-accent-400: #4fb0e2;
+  --color-accent-500: #2f93c9;
+  --color-accent-600: #1f72a2;
+  --color-accent-700: #175a80;
+
+  /* Warm ivory surfaces — the page is light, never dark ------------- */
+  --color-ivory-50: #fffdfa; /* elevated cards */
+  --color-ivory-100: #fbf7f1; /* page background */
+  --color-ivory-200: #f4eee4; /* alternating band */
+  --color-ivory-300: #e9e1d4; /* decorative hairlines, grid gaps */
+  --color-ivory-400: #d8cdba; /* stronger rules */
+  --color-ivory-500: #cdc0aa; /* visible hairline — card edges */
+
+  /* ------------------------------------------------------------------
+     ivory-600 is the *control boundary* token, and the only one that is
+     contrast-constrained. WCAG 1.4.11 asks for 3:1 on the visual
+     boundary of anything the user operates — inputs, secondary buttons,
+     selects. Measured against the three surfaces it can sit on:
+
+        vs ivory-50   3.63:1      vs ivory-100  3.45:1
+        vs ivory-200  3.19:1
+
+     Everything above it (300/400/500) is decorative and deliberately
+     below 3:1 — those draw structure, not controls. Do not swap one for
+     the other: a field with an ivory-300 border measures 1.2:1 and is
+     effectively invisible, which is how this page shipped originally.
+     ------------------------------------------------------------------ */
+  --color-ivory-600: #8f8471;
+
+  /* ------------------------------------------------------------------
+     Warm ink for type. Every step clears 4.5:1 against ivory-200, the
+     darkest surface any of them sits on — including ink-500, which is
+     used for small labels and so cannot be a decorative grey.
+     (ink-500 measures 4.8:1 on ivory-200 — passing, but with little
+     headroom, so it is capped at label duty and never body copy.)
+     ------------------------------------------------------------------ */
+  --color-ink-900: #1b2126; /* headings              15.2:1 on ivory-100 */
+  --color-ink-800: #2c343a; /* strong body           11.6:1 */
+  --color-ink-700: #46525a; /* body                   7.5:1 */
+  --color-ink-600: #5a646b; /* muted body             5.7:1 */
+  --color-ink-500: #606a71; /* small labels           4.8:1 on ivory-200 */
+
+  --color-danger-700: #a4271f; /* form errors — 6.1:1 on ivory-100 */
+
+  --font-sans: var(--font-body), var(--font-body-ka), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-latin), var(--font-display-ka), ui-serif, Georgia, serif;
+
+  --radius-card: 1.5rem;
+
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Warm-tinted shadows — neutral grey shadows look dirty on ivory --- */
+  --shadow-soft: 0 1px 2px rgb(60 46 26 / 0.04), 0 8px 24px -14px rgb(60 46 26 / 0.14);
+  --shadow-lift: 0 2px 6px rgb(60 46 26 / 0.05), 0 20px 50px -20px rgb(60 46 26 / 0.22);
+  --shadow-glow: 0 16px 40px -16px rgb(47 147 201 / 0.45);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  * {
+    border-color: var(--color-ivory-300);
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    scroll-behavior: smooth;
+    /* Matches the *scrolled* header (h-16 = 64px) plus 16px of air.
+       The taller unscrolled header is irrelevant here: by the time an
+       anchor lands, the page has scrolled and the bar has collapsed. */
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+    color-scheme: light;
+    background-color: var(--color-ivory-100);
+  }
+
+  body {
+    background-color: var(--color-ivory-100);
+    color: var(--color-ink-700);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-accent-300);
+    color: var(--color-ink-900);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent-600);
+    outline-offset: 3px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    /* 400 rather than 300: a light serif goes faint against ivory. */
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--color-ink-900);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* ====================================================================
+     Georgian typography
+     ====================================================================
+     The display stack is Cormorant Garamond → Noto Serif Georgian. Latin
+     and Cyrillic resolve on the first family; Georgian has no coverage
+     there and falls through to Noto. So on the *primary* locale every
+     heading is actually Noto Serif Georgian, and the Latin-tuned metrics
+     above are wrong for it.
+
+     Three concrete mismatches, fixed below:
+
+     1. Negative tracking. Mkhedruli is already tightly fitted; -0.015em
+        closes the counters and the headline turns into a texture.
+     2. `text-transform: uppercase`. Mkhedruli is unicase — the property
+        is a no-op. Every micro-label was therefore rendering at 10-11px
+        with 0.22em of tracking and none of the payoff that spacing is
+        supposed to buy. Georgian labels get size instead.
+     3. Synthetic italic. Noto Serif Georgian ships no italic, so the
+        browser skews the upright — very visible at display sizes.
+
+     Body *size* is deliberately not adjusted here. Tailwind's text-*
+     utilities are rem-based, so a font-size on <body> would not reach
+     them; the size floor is applied per component instead (16px minimum
+     for body copy, which mkhedruli needs more than Latin does).
+     ==================================================================== */
+  :lang(ka) h1,
+  :lang(ka) h2,
+  :lang(ka) h3 {
+    letter-spacing: 0;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Section shell ---------------------------------------------------- */
+  .shell {
+    width: 100%;
+    max-width: 88rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .shell {
+      padding-inline: 4rem;
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     Vertical rhythm. Every section used to be py-24 / lg:py-32, which
+     reads as one continuous scroll with no phrasing. Three steps let
+     the page breathe: dense blocks sit tight, the ones that need air
+     get it.
+     ------------------------------------------------------------------ */
+  .section {
+    padding-block: 5.5rem;
+  }
+
+  .section-airy {
+    padding-block: 7rem;
+  }
+
+  .section-tight {
+    padding-block: 4rem;
+  }
+
+  @media (min-width: 1024px) {
+    .section {
+      padding-block: 7.5rem;
+    }
+    .section-airy {
+      padding-block: 10rem;
+    }
+    .section-tight {
+      padding-block: 5.5rem;
+    }
+  }
+
+  /* Eyebrow label ---------------------------------------------------- */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-accent-600);
+    font-weight: 600;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 1.75rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-accent-400));
+  }
+
+  /* ------------------------------------------------------------------
+     Micro-label — the small caps used for <dt>, form labels and footer
+     column headings. Previously spelled out inline as
+     `text-[0.6rem] uppercase tracking-[0.2em]` in ~12 places, which made
+     the Georgian fix impossible to apply. One class, one override.
+     ------------------------------------------------------------------ */
+  .label-micro {
+    display: block;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-ink-500);
+    font-weight: 500;
+  }
+
+  :lang(ka) .eyebrow,
+  :lang(ka) .label-micro {
+    text-transform: none;
+    letter-spacing: 0.06em;
+    font-size: 0.8125rem;
+  }
+
+  /* Hairline separators ---------------------------------------------- */
+  .hairline {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-ivory-400), transparent);
+  }
+
+  /* Elevated ivory surface ------------------------------------------- */
+  .card {
+    background: var(--color-ivory-50);
+    /* ivory-500, not 300: at 1.28:1 the old edge was invisible in
+       daylight and the cards read as free-floating shadows. */
+    border: 1px solid var(--color-ivory-500);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Translucent surface over imagery --------------------------------- */
+  .glass {
+    background: color-mix(in oklab, var(--color-ivory-50) 88%, transparent);
+    backdrop-filter: blur(18px) saturate(120%);
+    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    border: 1px solid var(--color-ivory-400);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Buttons ----------------------------------------------------------- */
+  .btn-primary {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.95rem 1.9rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    /* Ink on brand blue = 8.6:1. White on brand blue would be 1.9:1. */
+    color: var(--color-ink-900);
+    background: linear-gradient(
+      135deg,
+      var(--color-accent-200),
+      var(--color-accent-300) 55%,
+      var(--color-accent-400)
+    );
+    box-shadow: var(--shadow-glow);
+    transition: transform 0.35s var(--ease-premium), box-shadow 0.35s var(--ease-premium),
+      filter 0.35s var(--ease-premium);
+    overflow: hidden;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    filter: saturate(115%);
+    box-shadow: 0 22px 52px -18px rgb(47 147 201 / 0.6);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.95rem 1.7rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-ink-800);
+    /* Interactive control → boundary must clear 3:1 (WCAG 1.4.11). */
+    border: 1px solid var(--color-ivory-600);
+    background: color-mix(in oklab, var(--color-ivory-50) 80%, transparent);
+    backdrop-filter: blur(8px);
+    transition: border-color 0.35s var(--ease-premium),
+      background-color 0.35s var(--ease-premium), color 0.35s var(--ease-premium),
+      transform 0.35s var(--ease-premium);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--color-accent-500);
+    background: var(--color-accent-50);
+    color: var(--color-accent-700);
+    transform: translateY(-2px);
+  }
+
+  /* Form controls ------------------------------------------------------
+     The original field border was ivory-300 on an ivory-100 fill: 1.2:1,
+     i.e. no perceptible boundary at all. On the one element the whole
+     page is trying to drive, patients could not see where to type.     */
+  .field {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-ivory-600);
+    background: var(--color-ivory-50);
+    padding: 0.875rem 1rem;
+    font-size: 1rem; /* < 16px triggers iOS Safari zoom-on-focus */
+    color: var(--color-ink-900);
+    transition: border-color 0.25s var(--ease-premium), box-shadow 0.25s var(--ease-premium);
+  }
+
+  .field::placeholder {
+    color: var(--color-ink-500);
+  }
+
+  .field:focus {
+    outline: none;
+    border-color: var(--color-accent-600);
+    box-shadow: 0 0 0 3px var(--color-accent-100);
+  }
+
+  .field[aria-invalid="true"] {
+    border-color: var(--color-danger-700);
+  }
+
+  .field[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-danger-700) 20%, transparent);
+  }
+
+  select.field {
+    -webkit-appearance: none;
+    appearance: none;
+    /* Chevron drawn in the border colour so it never drops below 3:1. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none'%3E%3Cpath d='M4 6.5L8 10.5L12 6.5' stroke='%238f8471' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    padding-right: 2.5rem;
+  }
+}
+
+@layer utilities {
+  /* Ambient brand-blue wash behind sections -------------------------- */
+  .aura {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 999px;
+    filter: blur(110px);
+    opacity: 0.55;
+    background: radial-gradient(
+      circle,
+      color-mix(in oklab, var(--color-accent-300) 42%, transparent) 0%,
+      transparent 70%
+    );
+  }
+
+  /* Barely-there paper tooth. Multiply, not overlay — overlay blows out
+     on a light surface.                                                */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.045;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  /* ------------------------------------------------------------------
+     Gradient display text.
+
+     Two guards. The solid colour is declared first so that if
+     `background-clip: text` is unsupported or the paint fails, the
+     headline is still *there* rather than transparent. And the light
+     end stops at accent-500: accent-400 measured 2.28:1 on ivory, which
+     fails even the 3:1 allowance for large text.
+     ------------------------------------------------------------------ */
+  .text-gradient {
+    color: var(--color-accent-600);
+  }
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .text-gradient {
+      background: linear-gradient(
+        120deg,
+        var(--color-accent-700) 10%,
+        var(--color-accent-600) 45%,
+        var(--color-accent-500)
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+  }
+
+  /* Noto Serif Georgian has no italic; the browser would skew it. */
+  .display-italic {
+    font-style: italic;
+  }
+
+  :lang(ka) .display-italic {
+    font-style: normal;
+  }
+
+  .fluid-display {
+    font-size: clamp(2.5rem, 6.4vw, 6rem);
+    line-height: 1;
+  }
+
+  .fluid-title {
+    font-size: clamp(1.9rem, 3.8vw, 3.4rem);
+    line-height: 1.08;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  /* ------------------------------------------------------------------
+     Scroll reveal.
+
+     The hidden state is scoped to `.js`, a class set synchronously in
+     <head>. Without that guard `opacity: 0` is the *served* state, so a
+     failed or slow bundle leaves a medical site with a blank page. With
+     it, no-JS renders everything visible and the animation is purely
+     additive.
+
+     600ms, not 1s: at 1s plus a 280ms stagger the services grid was
+     still resolving 1.3s after entering view, which reads as lag rather
+     than polish.
+     ------------------------------------------------------------------ */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s var(--ease-premium), transform 0.6s var(--ease-premium);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+}
+
+@layer base {
+  /* Lives in `base` on purpose: for !important declarations the cascade
+     *reverses* layer order, so an !important here outranks anything in
+     components/utilities — including the button and card transitions. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }

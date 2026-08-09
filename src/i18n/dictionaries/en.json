@@ -1,0 +1,334 @@
+{
+  "meta": {
+    "title": "Total Charm Dent — Premium Dental Clinic in Tbilisi",
+    "description": "Total Charm Dent — modern, painless and high-quality dentistry in Vake, Tbilisi. Implantology, orthodontics, aesthetic dentistry and digital diagnostics.",
+    "ogAlt": "Total Charm Dent — dental clinic in Tbilisi"
+  },
+
+  "nav": {
+    "home": "Home",
+    "clinic": "Clinic",
+    "services": "Services",
+    "team": "Doctors",
+    "technology": "Technology",
+    "contact": "Contact",
+    "book": "Book a visit",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "language": "Language",
+    "allServices": "All services",
+    "servicesIntro": "16 disciplines — from diagnostics to digital smile design, all under one roof.",
+    "umbrellaLabel": "Part of",
+    "umbrellaName": "Total Charm Vake",
+    "umbrellaNote": "Cosmetology and plastic surgery",
+    "skipToContent": "Skip to content",
+    "call": "Call",
+    "whatsapp": "WhatsApp",
+    "sectionsLabel": "Page sections",
+    "primaryLabel": "Primary navigation"
+  },
+
+  "hero": {
+    "eyebrow": "Total Charm Dent · Vake, Tbilisi",
+    "titleTop": "A modern vision",
+    "titleBottom": "of self-care",
+    "lead": "Digital precision, international protocols and care that continues well beyond the appointment.",
+    "ctaPrimary": "Book a visit",
+    "ctaSecondary": "Explore services",
+    "scroll": "Scroll",
+    "pauseMotion": "Pause video",
+    "playMotion": "Play video",
+    "facts": [
+      { "value": "16", "label": "Dental disciplines" },
+      { "value": "3D", "label": "Digital diagnostics and planning" },
+      { "value": "9:00 – 21:00", "label": "Open every day" }
+    ]
+  },
+
+  "mission": {
+    "label": "About us",
+    "title": "Total Charm Dent",
+    "missionLabel": "Mission",
+    "missionText": "Our mission is to offer patients modern, painless and high-quality dental care. We believe a healthy smile matters for both physical and psycho-emotional wellbeing, and we do everything so that every one of our patients feels it.",
+    "visionLabel": "Vision",
+    "visionText": "To become one of the most trusted and advanced dental clinics in the Caucasus region, where the patient receives not only quality treatment, but also care, attention and an individual approach.",
+    "quoteTop": "Bring your aura to life",
+    "quoteBottom": "Beyond beauty, we build trust",
+    "imageAlt": "Total Charm Dent interior"
+  },
+
+  "stats": {
+    "satisfied": "Satisfied patients",
+    "satisfiedValue": "98",
+    "satisfiedSuffix": "%",
+    "years": "Years on the market",
+    "yearsValue": "10",
+    "yearsSuffix": "+",
+    "specialists": "Specialists in the team",
+    "specialistsValue": "5",
+    "specialistsSuffix": "",
+    "directions": "Treatment disciplines",
+    "directionsValue": "16",
+    "directionsSuffix": ""
+  },
+
+  "services": {
+    "label": "Services",
+    "title": "The full spectrum of dentistry",
+    "lead": "From diagnostics to aesthetic restoration — every stage in one clinic, under the care of one team.",
+    "cta": "Details",
+    "viewAll": "All services",
+    "categoryCta": "Explore this direction",
+    "categoriesNote": "Five directions, 16 services — the full list lives on the services page.",
+    "categories": {
+      "diagnostics-planning": {
+        "title": "Diagnostics and digital planning",
+        "blurb": "Every course of treatment starts with an accurate picture — imaging and a digital plan the whole team can see at once."
+      },
+      "therapy-prevention": {
+        "title": "Therapy and prevention",
+        "blurb": "Everyday dental care for adults and children — conservative methods, at an unhurried pace."
+      },
+      "surgery-implantation": {
+        "title": "Surgery and implantation",
+        "blurb": "Surgical work and implants grounded in a plan, explained in advance, delivered as a calm clinical process."
+      },
+      "orthodontics": {
+        "title": "Orthodontics",
+        "blurb": "Correcting how the teeth sit, at any age — classic and invisible systems, built on precise diagnostics."
+      },
+      "aesthetic": {
+        "title": "Aesthetic dentistry",
+        "blurb": "A natural look built on exact colour, shape and proportion — a result that never reads as \"done\"."
+      }
+    },
+    "items": {
+      "diagnostics": {
+        "title": "Diagnostics",
+        "blurb": "Check-up — a comprehensive oral examination and a rational treatment plan."
+      },
+      "therapy-adults": {
+        "title": "Therapy for adults",
+        "blurb": "Caries, pulpitis, root canals and professional Air Flow hygiene."
+      },
+      "therapy-children": {
+        "title": "Therapy for children",
+        "blurb": "A gentle approach for our youngest patients — from milk teeth to hygiene habits."
+      },
+      "surgery": {
+        "title": "Surgery",
+        "blurb": "Our experienced surgical team is ready to make your goal a reality."
+      },
+      "implantation": {
+        "title": "Surgery and immediate implantation",
+        "blurb": "Implantation at Total Charm Dent using an innovative protocol."
+      },
+      "periodontology": {
+        "title": "Periodontology",
+        "blurb": "Restore your gum health with periodontitis treatment."
+      },
+      "orthodontics": {
+        "title": "Orthodontics",
+        "blurb": "American Orthodontics (AO) — a renowned manufacturer of orthodontic braces."
+      },
+      "aligners": {
+        "title": "Aligners",
+        "blurb": "Achieve your ideal bite with comfort and efficiency."
+      },
+      "veneers": {
+        "title": "Ceramic veneers",
+        "blurb": "Ceramic veneers made with CAD/CAM technology."
+      },
+      "digital-modelling": {
+        "title": "Digital modelling",
+        "blurb": "Digital modelling of your future smile before treatment begins."
+      },
+      "forestadent": {
+        "title": "FORESTADENT braces",
+        "blurb": "The FORESTADENT bracket system is developed and manufactured in Germany."
+      },
+      "damon": {
+        "title": "Damon braces",
+        "blurb": "The Damon bracket system is developed and manufactured in the USA."
+      },
+      "whitening": {
+        "title": "Whitening ZOOM 4",
+        "blurb": "Teeth whitening and cleaning with the ZOOM 4 method."
+      },
+      "tomography": {
+        "title": "Tomography",
+        "blurb": "Computed tomography of the teeth and oral cavity."
+      },
+      "restoration": {
+        "title": "Dental restoration",
+        "blurb": "Restoration is the art of rebuilding the shape and function of a tooth."
+      },
+      "visiograph": {
+        "title": "Visiograph",
+        "blurb": "Precision and innovation for the health of your smile."
+      }
+    }
+  },
+
+  "doctor": {
+    "label": "Chief doctor",
+    "name": "Archil Apkhadze",
+    "role": "Chief doctor of the clinic",
+    "credentials": "Maxillofacial surgeon, periodontal surgeon, implantologist, candidate of dental sciences.",
+    "bio1": "More than 20 years of experience, having worked in leading clinics. He regularly sharpens his skills through conferences and seminars around the world.",
+    "bio2": "Archil specialises in dental surgery, periodontology and implantology, and holds the highest professional category.",
+    "tags": ["Surgery", "Periodontology", "Implantology"],
+    "experienceValue": "20+",
+    "experienceLabel": "years of experience"
+  },
+
+  "team": {
+    "label": "Our specialists",
+    "title": "Professionals in their field",
+    "lead": "At Total Charm Dental we have gathered the best doctors. Every specialist has completed an internship in European clinics, mastered modern techniques and works to international protocols. Regular training and participation in dental congresses allow them to continuously raise their level of qualification. Paediatric dentistry is handled only by doctors with the relevant specialisation and many years of experience working with children.",
+    "members": {
+      "archil-apkhadze": { "name": "Archil Apkhadze", "role": "Chief doctor of the clinic" },
+      "shorena-shioshvili": { "name": "Shorena Shioshvili", "role": "Therapist" },
+      "nino-buluashvili": { "name": "Nino Buluashvili", "role": "Orthodontist" },
+      "salome-gabunia": { "name": "Salome Gabunia", "role": "Prosthodontist" },
+      "nino-osadze": { "name": "Nino Osadze", "role": "Prosthodontist" }
+    }
+  },
+
+  "technology": {
+    "label": "Technology",
+    "title": "Premium digital equipment",
+    "lead": "We have done everything to make modern dental technology accessible to you. Premium digital equipment from European and American manufacturers allows us to:",
+    "items": [
+      {
+        "index": "01",
+        "title": "Microscopic precision in prosthetics",
+        "text": "During the very first visit, temporary orthopaedic constructions are created using 3D models of implants and crowns, and fixed immediately. While waiting for permanent veneers or crowns, the patient never has to experience the discomfort of missing teeth."
+      },
+      {
+        "index": "02",
+        "title": "Innovation in aesthetic dentistry",
+        "text": "Digital planning and predictable treatment outcomes. The patient always knows what to expect from any given treatment method."
+      },
+      {
+        "index": "03",
+        "title": "Safe instrumental research",
+        "text": "Instrumental examinations are carried out with maximum efficiency and safety — computed tomography is available with the lowest radiation dose."
+      },
+      {
+        "index": "04",
+        "title": "The full spectrum of orthodontics",
+        "text": "Selection and placement of the optimal orthodontic treatment — all types of appliances, bracket systems and aligners to create a correct bite."
+      },
+      {
+        "index": "05",
+        "title": "Three-stage sterilisation",
+        "text": "The safety of patients and doctors is ensured through three-stage sterilisation and control, made possible by our own top-class sterilisation department. This is an unprecedented level of processing for reusable instruments and handpieces, combined with the availability of single-use consumables in any quantity required."
+      }
+    ],
+    "note": "Every procedure is performed under anaesthesia. Adults and children who come to us are no longer afraid of the dentist."
+  },
+
+  "care": {
+    "label": "Only for you",
+    "title": "Care that continues beyond your visit",
+    "items": [
+      "Appointment reminders, aftercare recommendations and monitoring of your treatment plan",
+      "A comprehensive approach to treating teeth and gums — we always look for the cause of the disease; when needed a medical council convenes, and all examinations take place in our clinic (computed tomography and panoramic imaging)",
+      "Premium care for your teeth and oral cavity",
+      "Only pleasant clinical aromas and none of the typical dental smell",
+      "Training in effective daily oral care"
+    ]
+  },
+
+  "contact": {
+    "label": "Contact",
+    "title": "Book your visit",
+    "lead": "Leave a request and our manager will get back to you at a time that suits you.",
+    "addressLabel": "Address",
+    "address": "1/12 D. Arakishvili St, Tbilisi 0179",
+    "hoursLabel": "Opening hours",
+    "hours": "Every day: 9:00 – 21:00",
+    "phoneLabel": "Phone",
+    "phoneAltLabel": "Landline",
+    "emailLabel": "Email",
+    "whatsappLabel": "Message us on WhatsApp",
+    "socialLabel": "Social media",
+    "directions": "Directions",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "phone": "Phone",
+      "phonePlaceholder": "+995 5XX XX XX XX",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "service": "Area of interest",
+      "servicePlaceholder": "Not sure yet",
+      "preferredTime": "Best time to call",
+      "timeAny": "Any time",
+      "timeMorning": "Morning (9:00 – 13:00)",
+      "timeAfternoon": "Afternoon (13:00 – 17:00)",
+      "timeEvening": "Evening (17:00 – 21:00)",
+      "message": "Message",
+      "messagePlaceholder": "Briefly describe what you are interested in",
+      "optional": "optional",
+      "submit": "Book a visit",
+      "consent": "By submitting this form you consent to the processing of your personal data.",
+      "success": "Thank you! We will call you back during opening hours, 9:00 – 21:00.",
+      "error": "We could not send your request. Please try again or call us.",
+      "errorCall": "Call us",
+      "invalidName": "Please enter your name.",
+      "invalidPhone": "Please enter a valid phone number.",
+      "invalidEmail": "That email address looks incorrect."
+    }
+  },
+
+  "faq": {
+    "label": "Questions",
+    "title": "Frequently asked questions",
+    "lead": "Can't find your answer? Call us or message us on WhatsApp — every day, 9:00 to 21:00.",
+    "items": [
+      {
+        "q": "Does treatment hurt?",
+        "a": "Every procedure is performed under anaesthesia. Your dentist explains each stage in advance and works at your pace — which is why the adults and children who come to us are no longer afraid of the dentist."
+      },
+      {
+        "q": "How do I book a visit?",
+        "a": "Three ways: fill in the form on this page, call us, or message us on WhatsApp. We are open every day from 9:00 to 21:00, with no closing days."
+      },
+      {
+        "q": "What does the first consultation cost?",
+        "a": "A consultation covers an oral examination, imaging where needed, and a written treatment plan with costs set out. We confirm the exact figure when you book — nothing further is charged before you approve the plan."
+      },
+      {
+        "q": "Do you treat children?",
+        "a": "Yes. Paediatric dentistry is handled only by doctors with the relevant specialisation and many years of experience with children — from milk teeth through to teaching good hygiene habits."
+      },
+      {
+        "q": "How do you handle sterilisation?",
+        "a": "The clinic has its own top-class sterilisation department and a three-stage sterilisation and control process. Reusable instruments and handpieces go through a full cycle after every patient, and single-use consumables are always stocked in the quantities required."
+      },
+      {
+        "q": "How many visits will my case take?",
+        "a": "That depends on the diagnosis, which is why we start with imaging — computed tomography and digital planning. You receive the plan after your first visit, with the stages and timeline set out, so there are no surprises later."
+      }
+    ]
+  },
+
+  "footer": {
+    "tagline": "A modern vision of self-care.",
+    "navLabel": "Navigation",
+    "servicesLabel": "Services",
+    "contactLabel": "Contact",
+    "groupLabel": "Part of the group",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy",
+    "terms": "Terms & conditions"
+  },
+
+  "common": {
+    "readMore": "Details",
+    "back": "Back",
+    "loading": "Loading…"
+  }
+}
