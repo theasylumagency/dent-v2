@@ -52,7 +52,8 @@
     "visionText": "To become one of the most trusted and advanced dental clinics in the Caucasus region, where the patient receives not only quality treatment, but also care, attention and an individual approach.",
     "quoteTop": "Bring your aura to life",
     "quoteBottom": "Beyond beauty, we build trust",
-    "imageAlt": "Total Charm Dent interior"
+    "imageAlt": "Total Charm Dent treatment room in Vake, Tbilisi",
+    "imageAlt2": "Total Charm Dent reception and waiting area"
   },
 
   "stats": {
@@ -78,92 +79,252 @@
     "viewAll": "All services",
     "categoryCta": "Explore this direction",
     "categoriesNote": "Five directions, 16 services — the full list lives on the services page.",
+    "page": {
+      "metaTitle": "Services — the full spectrum of dentistry",
+      "metaDescription": "The 16 dental services of Total Charm Dent across five directions: diagnostics and digital planning, therapy, surgery and implantation, orthodontics and aesthetic dentistry. Vake, Tbilisi.",
+      "title": "The full spectrum of dentistry",
+      "lead": "Five clinical directions and 16 services — from diagnostics to aesthetic restoration. Every stage in one clinic, under the care of one team.",
+      "breadcrumbHome": "Home",
+      "breadcrumbLabel": "Breadcrumb",
+      "directionsLabel": "Clinical directions",
+      "servicesLabel": "Services",
+      "jumpLabel": "Directions",
+      "inCategory": "Services in this direction",
+      "otherDirections": "Other directions",
+      "whatsIncluded": "What it covers",
+      "ctaTitle": "Not sure where to start?",
+      "ctaLead": "Book a first consultation — we examine your mouth, show you the 3D scan and hand you a written treatment plan with stages, timelines and costs.",
+      "consultationNote": "First consultation — 50 ₾, follow-up — 25 ₾. You only pay for treatment once you have approved the plan."
+    },
     "categories": {
       "diagnostics-planning": {
         "title": "Diagnostics and digital planning",
-        "blurb": "Every course of treatment starts with an accurate picture — imaging and a digital plan the whole team can see at once."
+        "blurb": "Every course of treatment starts with an accurate picture — imaging and a digital plan the whole team can see at once.",
+        "lead": "An accurate diagnosis is half the treatment. At a check-up your mouth is examined by a therapist, a prosthodontist and an orthodontist at the same time, 3D tomography shows what the eye cannot, and digital modelling shows you the result before treatment starts. After the case conference you receive a written plan with stages, timelines and costs.",
+        "metaTitle": "Diagnostics and digital planning",
+        "metaDescription": "Check-up, 3D computed tomography, visiograph imaging and digital smile design at Total Charm Dent in Vake, Tbilisi."
       },
       "therapy-prevention": {
         "title": "Therapy and prevention",
-        "blurb": "Everyday dental care for adults and children — conservative methods, at an unhurried pace."
+        "blurb": "Everyday dental care for adults and children — conservative methods, at an unhurried pace.",
+        "lead": "Everyday dentistry — treatment of caries, pulpitis and root canals, professional Air Flow hygiene and gum care. Every procedure is carried out under anaesthetic and with rubber dam isolation. Children are seen only by dentists with paediatric training and years of experience with young patients.",
+        "metaTitle": "Therapy and prevention",
+        "metaDescription": "Treatment of caries, pulpitis and root canals, professional Air Flow hygiene, paediatric dentistry and periodontology in Vake, Tbilisi."
       },
       "surgery-implantation": {
         "title": "Surgery and implantation",
-        "blurb": "Surgical work and implants grounded in a plan, explained in advance, delivered as a calm clinical process."
+        "blurb": "Surgical work and implants grounded in a plan, explained in advance, delivered as a calm clinical process.",
+        "lead": "The surgical side covers painless extraction with piezosurgery, removal of wisdom and retained teeth, bone grafting and PRP plasma therapy. For implants we work with surgical guides and with the Straumann, DENTIUM and Bredent SKY systems — from a single tooth to All-on-4 and All-on-6 restorations.",
+        "metaTitle": "Surgery and implantation",
+        "metaDescription": "Tooth extraction, bone grafting, PRP and dental implants with Straumann, DENTIUM and Bredent SKY systems. All-on-4 and All-on-6 in Tbilisi."
       },
       "orthodontics": {
         "title": "Orthodontics",
-        "blurb": "Correcting how the teeth sit, at any age — classic and invisible systems, built on precise diagnostics."
+        "blurb": "Correcting how the teeth sit, at any age — classic and invisible systems, built on precise diagnostics.",
+        "lead": "Bite correction for children, teenagers and adults. We work with the American Orthodontics, FORESTADENT and Damon bracket systems — metal, ceramic and self-ligating — and with clear aligners produced from a 3D scan. The orthodontist chooses the system after diagnostics, based on your clinical picture and what you want aesthetically.",
+        "metaTitle": "Orthodontics — braces and aligners",
+        "metaDescription": "American Orthodontics, FORESTADENT and Damon braces, clear aligners. Orthodontic treatment at Total Charm Dent in Vake, Tbilisi."
       },
       "aesthetic": {
         "title": "Aesthetic dentistry",
-        "blurb": "A natural look built on exact colour, shape and proportion — a result that never reads as \"done\"."
+        "blurb": "A natural look built on exact colour, shape and proportion — a result that never reads as \"done\".",
+        "lead": "Aesthetic work begins with digital smile design and ends in a material that behaves like natural enamel. Ceramic veneers are milled with CAD/CAM technology and need minimal preparation, composite restoration rebuilds shape in one or two visits, and ZOOM 4 whitening lifts the enamel by up to eight shades.",
+        "metaTitle": "Aesthetic dentistry",
+        "metaDescription": "CAD/CAM ceramic veneers, aesthetic restoration and ZOOM 4 teeth whitening at Total Charm Dent, Tbilisi."
       }
     },
     "items": {
       "diagnostics": {
         "title": "Diagnostics",
-        "blurb": "Check-up — a comprehensive oral examination and a rational treatment plan."
+        "blurb": "Check-up — a comprehensive oral examination and a rational treatment plan.",
+        "lead": "A check-up is a wide examination that identifies every condition present in the mouth and assesses the state of the teeth and soft tissue. What you get out of it is an accurate diagnosis and a rational treatment plan — or, if no treatment is needed, guidance on how to care for your mouth.",
+        "points": [
+          "Consultation with the chief doctor plus an examination by a therapist, prosthodontist and orthodontist",
+          "3D digital X-ray diagnostics (CT) for a deep analysis of the tissues",
+          "Photo protocol for tracking changes and the effectiveness of treatment",
+          "Assessment of hard and soft tissue, the periodontium, existing fillings and prosthetic work",
+          "After the case conference — a written plan with stages, timelines and costs"
+        ]
       },
       "therapy-adults": {
         "title": "Therapy for adults",
-        "blurb": "Caries, pulpitis, root canals and professional Air Flow hygiene."
+        "blurb": "Caries, pulpitis, root canals and professional Air Flow hygiene.",
+        "lead": "Adult therapy covers the treatment of caries, pulpitis and root canals, as well as professional hygiene. We start with diagnostics, establish how far the damage goes and choose the most conservative method available — so that as much of your own tooth structure survives as possible.",
+        "points": [
+          "Caries treatment and tooth restoration with high-quality materials",
+          "Pulpitis treatment — from conservative care through to root canal work",
+          "Root canal treatment guided by 3D tomography, under rubber dam isolation",
+          "Professional Air Flow hygiene: plaque, calculus and polishing",
+          "Every stage under anaesthetic — the procedure is painless"
+        ]
       },
       "therapy-children": {
         "title": "Therapy for children",
-        "blurb": "A gentle approach for our youngest patients — from milk teeth to hygiene habits."
+        "blurb": "A gentle approach for our youngest patients — from milk teeth to hygiene habits.",
+        "lead": "Young patients are seen only by dentists with paediatric training. A child should visit the dentist once the first teeth appear — that lets us catch a problem at an early stage and turn the appointment into an experience they do not mind repeating.",
+        "points": [
+          "Treatment of milk teeth — they matter for speech, eating and how the adult teeth come through",
+          "Early detection of caries and painless treatment",
+          "Professional hygiene on a protocol chosen specifically for children",
+          "Teaching oral care to both the child and the parent",
+          "A calm room and a pace the child sets"
+        ]
       },
       "surgery": {
         "title": "Surgery",
-        "blurb": "Our experienced surgical team is ready to make your goal a reality."
+        "blurb": "Our experienced surgical team is ready to make your goal a reality.",
+        "lead": "We turn to surgery only once every option for saving the tooth has been exhausted — and then with methods that disturb the surrounding tissue as little as possible. Every stage is explained in advance and the procedure is carried out under effective anaesthetic.",
+        "points": [
+          "Tooth extraction, including piezosurgery (ultrasonic) — less bleeding and faster healing",
+          "Removal of wisdom and retained teeth with precise advance planning",
+          "Bone grafting (osteoplasty) to prepare the site for an implant",
+          "PRP plasma therapy using the patient's own blood to speed up regeneration",
+          "Post-operative care and recommendations for a quick recovery"
+        ]
       },
       "implantation": {
         "title": "Surgery and immediate implantation",
-        "blurb": "Implantation at Total Charm Dent using an innovative protocol."
+        "blurb": "Implantation at Total Charm Dent using an innovative protocol.",
+        "lead": "An implant is an artificial root placed where the tooth was lost. We work with surgical guides, which give maximum accuracy in positioning the implant, and where the clinical picture allows it the implant goes in at the same appointment as the extraction.",
+        "points": [
+          "Straumann (Switzerland), DENTIUM (Korea) and Bredent SKY (Germany) systems",
+          "All-on-4, All-on-6 and All-on-8 for complete tooth loss (edentulism)",
+          "Immediate implantation at the time of extraction, where the case allows",
+          "Surgical guides and 3D planning for accurate placement",
+          "Chewing function and aesthetics restored without a removable denture"
+        ]
       },
       "periodontology": {
         "title": "Periodontology",
-        "blurb": "Restore your gum health with periodontitis treatment."
+        "blurb": "Restore your gum health with periodontitis treatment.",
+        "lead": "Periodontitis is an inflammatory disease of the gums and the tissue that holds the tooth in place; left too long, it ends in tooth loss. We start by establishing the stage precisely and build an individual plan that addresses the cause rather than the symptom.",
+        "points": [
+          "Thorough diagnosis of periodontitis and determination of its stage",
+          "Professional removal of calculus and bacterial plaque",
+          "Treatment of gum recession, including tissue regeneration methods",
+          "Treatment of inflammation and bleeding on an individual plan",
+          "Recommendations for keeping the gums healthy afterwards"
+        ]
       },
       "orthodontics": {
         "title": "Orthodontics",
-        "blurb": "American Orthodontics (AO) — a renowned manufacturer of orthodontic braces."
+        "blurb": "American Orthodontics (AO) — a renowned manufacturer of orthodontic braces.",
+        "lead": "Orthodontic treatment corrects the bite at any age. American Orthodontics (AO) is a well-known US manufacturer of braces, and the system is adapted individually to each patient's anatomy.",
+        "points": [
+          "A wide choice of metal, ceramic and self-ligating brackets",
+          "The self-ligating mechanism reduces friction between bracket and archwire",
+          "Strength and durability that hold up across the whole course of treatment",
+          "Precise bite correction based on individual planning",
+          "The orthodontist selects the system on the evidence from diagnostics"
+        ]
       },
       "aligners": {
         "title": "Aligners",
-        "blurb": "Achieve your ideal bite with comfort and efficiency."
+        "blurb": "Achieve your ideal bite with comfort and efficiency.",
+        "lead": "Aligners are a set of clear trays that shift the teeth gradually. They are practically invisible, come out for eating and cleaning, and are produced from a 3D scan — which makes every stage of the correction predictable.",
+        "points": [
+          "Practically invisible — bite correction without a visible appliance",
+          "Smooth material that does not irritate the soft tissue of the mouth",
+          "Removable for meals and brushing — hygiene stays straightforward",
+          "3D scanning and digital control at every stage of the correction",
+          "No meaningful restrictions on sport or everyday activity"
+        ]
       },
       "veneers": {
         "title": "Ceramic veneers",
-        "blurb": "Ceramic veneers made with CAD/CAM technology."
+        "blurb": "Ceramic veneers made with CAD/CAM technology.",
+        "lead": "A ceramic veneer is a thin shell that covers the front surface of the tooth and corrects its shape, colour and proportion. We produce them with CAD/CAM technology — from a digital impression straight to milling — so you see the result before the work begins.",
+        "points": [
+          "Minimal preparation of the tooth",
+          "Ceramic reproduces the optical behaviour of natural enamel",
+          "Corrects distorted shape, staining and minor damage",
+          "Durable — holds its colour and function for years",
+          "You approve the result in digital modelling before any work starts"
+        ]
       },
       "digital-modelling": {
         "title": "Digital modelling",
-        "blurb": "Digital modelling of your future smile before treatment begins."
+        "blurb": "Digital modelling of your future smile before treatment begins.",
+        "lead": "Digital modelling shows you what your smile will look like before treatment starts. It makes the decision an informed one — you agree the result before we touch a tooth.",
+        "points": [
+          "Visualisation of your future smile before treatment begins",
+          "An individual model built around your wishes and your anatomy",
+          "The basis for planning veneers, restorations and prosthetic work",
+          "A predictable result — no surprises at the end",
+          "Digital impressions and 3D scanning instead of conventional putty"
+        ]
       },
       "forestadent": {
         "title": "FORESTADENT braces",
-        "blurb": "The FORESTADENT bracket system is developed and manufactured in Germany."
+        "blurb": "The FORESTADENT bracket system is developed and manufactured in Germany.",
+        "lead": "The FORESTADENT bracket system is developed and manufactured in Germany. The range covers classic, self-ligating and aesthetic options, so the system can be matched to both the clinical need and what you want it to look like.",
+        "points": [
+          "Metal, ceramic and self-ligating brackets within one system",
+          "Self-ligating models reduce the number of adjustment visits",
+          "Modern materials — high strength and durability",
+          "Individually adapted to each patient's anatomy",
+          "German manufacturing and quality control"
+        ]
       },
       "damon": {
         "title": "Damon braces",
-        "blurb": "The Damon bracket system is developed and manufactured in the USA."
+        "blurb": "The Damon bracket system is developed and manufactured in the USA.",
+        "lead": "Damon is a self-ligating bracket system developed and manufactured in the USA. Its sliding door mechanism reduces friction between the archwire and the bracket, which makes tooth movement more even and more predictable.",
+        "points": [
+          "Self-ligating door — less friction, more predictable movement",
+          "More even pressure on the teeth and therefore less discomfort",
+          "A shorter overall treatment time",
+          "Finer control of the correction on the clinician's side",
+          "Fewer visits to the clinic for adjustments"
+        ]
       },
       "whitening": {
         "title": "Whitening ZOOM 4",
-        "blurb": "Teeth whitening and cleaning with the ZOOM 4 method."
+        "blurb": "Teeth whitening and cleaning with the ZOOM 4 method.",
+        "lead": "ZOOM 4 (Philips ZOOM! WhiteSpeed) is currently one of the most advanced and safest ways to lighten enamel: under light, the gel releases active oxygen that penetrates deep into the tooth structure and breaks down even set-in pigmentation, including staining from age or smoking.",
+        "points": [
+          "Up to eight shades or more in a single 45-minute session",
+          "Suitable for sensitive enamel — the gel does not cause demineralisation",
+          "Results last up to four years, and longer if you follow the aftercare",
+          "The gel contains amorphous calcium phosphate, which strengthens the enamel",
+          "Preparation stage: treating any decay, professional hygiene and enamel strengthening"
+        ]
       },
       "tomography": {
         "title": "Tomography",
-        "blurb": "Computed tomography of the teeth and oral cavity."
+        "blurb": "Computed tomography of the teeth and oral cavity.",
+        "lead": "Computed tomography gives a three-dimensional picture of the structures inside your mouth. It is the scan that implant planning, root canal treatment and orthodontics are all built on.",
+        "points": [
+          "A 3D picture of the state of the teeth, bone and gums",
+          "Precise assessment of the number, shape and curvature of the roots",
+          "Measurement of bone volume and density before implantation",
+          "A low radiation dose compared with conventional X-ray methods",
+          "Carried out on site — no need to go to another clinic for the scan"
+        ]
       },
       "restoration": {
         "title": "Dental restoration",
-        "blurb": "Restoration is the art of rebuilding the shape and function of a tooth."
+        "blurb": "Restoration is the art of rebuilding the shape and function of a tooth.",
+        "lead": "Aesthetic restoration rebuilds the shape, structure and natural shine of a tooth using composite materials. It is used to correct shape, change colour, repair a chip and finish the treatment of decay.",
+        "points": [
+          "Single-stage restoration — shape and function in one visit",
+          "Two-stage restoration modelled in wax first, for more complex cases",
+          "Professional hygiene beforehand to establish the natural enamel shade",
+          "Contouring and polishing — the restoration is indistinguishable from its neighbours",
+          "Where damage is extensive, an inlay or crown is considered instead"
+        ]
       },
       "visiograph": {
         "title": "Visiograph",
-        "blurb": "Precision and innovation for the health of your smile."
+        "blurb": "Precision and innovation for the health of your smile.",
+        "lead": "A visiograph produces digital X-ray images of the teeth and gums. The image appears on the monitor almost instantly, so the dentist can show you the detail there and then and decide with you rather than for you.",
+        "points": [
+          "High resolution — even the smallest detail is visible",
+          "Digital technology lowers the radiation dose compared with conventional X-ray",
+          "The image is ready in seconds — no waiting",
+          "Convenient for checking root canal treatment stage by stage",
+          "Images are stored and can be compared at later appointments"
+        ]
       }
     }
   },
@@ -224,7 +385,8 @@
         "text": "The safety of patients and doctors is ensured through three-stage sterilisation and control, made possible by our own top-class sterilisation department. This is an unprecedented level of processing for reusable instruments and handpieces, combined with the availability of single-use consumables in any quantity required."
       }
     ],
-    "note": "Every procedure is performed under anaesthesia. Adults and children who come to us are no longer afraid of the dentist."
+    "note": "Every procedure is performed under anaesthesia. Adults and children who come to us are no longer afraid of the dentist.",
+    "brandsLabel": "Equipment and systems"
   },
 
   "care": {
@@ -260,6 +422,8 @@
     "district": "Vake, Tbilisi",
     "cantFind": "Can't find us?",
     "cantFindNote": "Call or message us and we'll talk you in.",
+    "consultationFirst": "First consultation",
+    "consultationRepeat": "Follow-up consultation",
     "form": {
       "name": "Name",
       "namePlaceholder": "Your name",

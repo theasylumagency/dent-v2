@@ -47,7 +47,10 @@ export default function Clinic({ dict }: { dict: Dictionary }) {
                 <div className="relative aspect-square">
                   <Image
                     src={media.interior[1]}
-                    alt={dict.mission.imageAlt}
+                    /* Distinct from the image above — both shared one alt
+                       string, which reads to a crawler as the same picture
+                       twice and to a screen reader as a pointless repeat. */
+                    alt={dict.mission.imageAlt2}
                     fill
                     sizes="14rem"
                     className="object-cover"

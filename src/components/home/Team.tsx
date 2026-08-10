@@ -29,7 +29,9 @@ export default function Team({ dict }: { dict: Dictionary }) {
                   <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-ivory-300 shadow-soft transition-shadow duration-500 group-hover:shadow-lift">
                     <Image
                       src={member.photo}
-                      alt={member.name}
+                      /* Name plus role: "ნინო ბულუაშვილი" alone tells an
+                         image search nothing about what the page is for. */
+                      alt={`${member.name} — ${member.role}`}
                       fill
                       sizes="(min-width: 1024px) 22vw, 45vw"
                       /* 500ms, and only the two properties that change —

@@ -6,6 +6,7 @@ import "../globals.css";
 import { htmlLang, isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getServiceCategories } from "@/lib/services";
+import { getTeam } from "@/lib/team";
 import { site } from "@/lib/site";
 import SiteHeader from "@/components/nav/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -93,7 +94,26 @@ export async function generateMetadata({
       url: `/${lang}`,
       images: [{ url: "/media/hero-poster.jpg", width: 1920, height: 1080, alt: dict.meta.ogAlt }],
     },
-    icons: { icon: "/favicon.ico" },
+    /* Without an explicit card type X falls back to a small thumbnail;
+       `summary_large_image` is what makes a shared link look deliberate. */
+    twitter: {
+      card: "summary_large_image",
+      title: dict.meta.title,
+      description: dict.meta.description,
+      images: [{ url: "/media/hero-poster.jpg", alt: dict.meta.ogAlt }],
+    },
+    /* SVG first for anything modern, .ico as the fallback.
+       TODO(design): `apple` still points at the SVG, which iOS ignores —
+       a real 180x180 PNG is needed before launch or iOS home-screen
+       bookmarks fall back to a screenshot of the page. */
+    icons: {
+      icon: [
+        { url: "/brand/icon.svg", type: "image/svg+xml" },
+        { url: "/favicon.ico", sizes: "any" },
+      ],
+      apple: "/brand/icon.svg",
+    },
+    manifest: "/manifest.webmanifest",
   };
 }
 
@@ -110,6 +130,7 @@ export default async function LocaleLayout({
   const locale = lang as Locale;
   const dict = await getDictionary(locale);
   const categories = getServiceCategories(dict, locale);
+  const team = getTeam(dict);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -158,7 +179,43 @@ export default async function LocaleLayout({
       name: category.title,
       description: category.blurb,
     })),
-    sameAs: [site.social.facebook, site.social.instagram],
+
+    /* Named practitioners with their roles. The clinic's strongest E-E-A-T
+       asset was sitting in prose only — search and AI engines cannot infer
+       "candidate of dental sciences, 20+ years" from a paragraph, but they
+       will read it here. `Person`, not `Physician`: in schema.org
+       `Physician` is a MedicalBusiness, i.e. a practice, not a human. */
+    employee: team.map((member, index) => ({
+      "@type": "Person",
+      name: member.name,
+      jobTitle: member.role,
+      image: `${site.url}${member.photo}`,
+      worksFor: { "@id": `${site.url}/#clinic` },
+      ...(index === 0
+        ? { description: dict.doctor.credentials, knowsAbout: dict.doctor.tags }
+        : {}),
+    })),
+
+    /* Only the two fees the clinic actually publishes. `priceRange` is
+       deliberately omitted — treatment pricing is not published, and
+       inventing a "$$" band would be a guess dressed as structured data. */
+    makesOffer: [
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: dict.contact.consultationFirst },
+        price: String(site.consultation.first),
+        priceCurrency: site.consultation.currency,
+      },
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: dict.contact.consultationRepeat },
+        price: String(site.consultation.repeat),
+        priceCurrency: site.consultation.currency,
+      },
+    ],
+
+    /* Filtered: an empty Google Business Profile URL would emit `""`. */
+    sameAs: [site.social.facebook, site.social.instagram, site.social.google].filter(Boolean),
   };
 
   return (

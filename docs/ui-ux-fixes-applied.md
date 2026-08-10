@@ -132,6 +132,31 @@ Schema სექციაშივეა და არა layout-ში — ი�
 
 ---
 
+## SEO / GEO / AEO — „სწრაფი გამარჯვებები" (მესამე გავლა)
+
+აუდიტის მწვანე სიის სრული იმპლემენტაცია. სრული ანგარიში: `seo-audit-totalcharmdent-ge-2026-08-10.pdf`.
+
+| # | რა გაკეთდა | სად |
+|---|---|---|
+| 1 | **Person სქემა** — 5 ექიმი სახელით, როლით და ფოტოთი; მთავარ ექიმს დამატებით `description` (კვალიფიკაცია) და `knowsAbout` | `layout.tsx` |
+| 2 | **`makesOffer`** — ორივე კონსულტაციის ფასი სტრუქტურირებულად (50 / 25 ₾) | `layout.tsx` |
+| 3 | **Twitter Card** — `summary_large_image` | `layout.tsx` |
+| 4 | **`sameAs` + Google Business Profile სლოტი** — ცარიელი მნიშვნელობა იფილტრება | `layout.tsx`, `site.ts` |
+| 5 | **აპარატურის ბრენდები დალინკულია** — FORESTADENT, Ormco/Damon, American Orthodontics, Philips Zoom | `Technology.tsx`, `site.ts` |
+| 6 | **ექიმების alt** — სახელი + როლი | `Team.tsx`, `LeadDoctor.tsx` |
+| 7 | **Clinic-ის ორმაგი alt გასწორდა** — ორ სურათს ცალკე აღწერა აქვს | `Clinic.tsx` + 3 ლექსიკონი |
+| 8 | **`manifest.webmanifest`** — სახელი, აღწერა, ფერები, `start_url: /ka` | `app/manifest.ts` |
+| 9 | **ბრენდული ხატულა** — SVG favicon (ლურჯი კვადრატი + კბილი), `.ico` fallback-ად | `public/brand/icon.svg`, `layout.tsx` |
+
+**რატომ არა `priceRange`:** მკურნალობის ფასები არ არის გამოქვეყნებული. „$$"-ის მოგონება სტრუქტურირებულ მონაცემებში ვარაუდი იქნებოდა, რომელიც ფაქტად გამოიყურება — ამის ნაცვლად მხოლოდ ორი რეალური ფასი დავდე `makesOffer`-ში.
+
+**ორი TODO დარჩა:**
+
+- `site.social.google` — ჩასვი Google Business Profile-ის URL. ლოკალური კლინიკისთვის ეს ყველაზე ძლიერი `sameAs` ბმულია.
+- `apple-touch-icon` — iOS SVG-ს არ კითხულობს. საჭიროა ნამდვილი **180×180 PNG**.
+
+---
+
 ## ❗ დარჩენილი — თქვენს გადაწყვეტილებას ელოდება
 
 1. **`RESEND_API_KEY` + `BOOKING_FROM`** — მათ გარეშე ფორმა შეცდომას აჩვენებს

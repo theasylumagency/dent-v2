@@ -33,7 +33,31 @@ export const site = {
   social: {
     facebook: "https://www.facebook.com/TotalCharm.ge",
     instagram: "https://www.instagram.com/total_charm_dent/",
+    /**
+     * TODO(client): paste the Google Business Profile URL here.
+     * It is the single strongest `sameAs` link a local clinic can publish —
+     * it ties the site to the entity Google already ranks in Maps and the
+     * local pack. Falsy values are filtered out of the schema, so leaving
+     * it empty is safe.
+     */
+    google: "",
   },
+
+  /**
+   * Equipment and systems named in the copy. Linking them out associates
+   * this clinic with entities search and AI engines already know, which is
+   * a cheap and durable authority signal — and it lets a patient verify
+   * the claim rather than take it on trust.
+   */
+  brands: [
+    { name: "FORESTADENT", url: "https://www.forestadent.com/" },
+    { name: "Ormco / Damon", url: "https://ormco.com/" },
+    { name: "American Orthodontics", url: "https://americanortho.com/" },
+    { name: "Philips Zoom", url: "https://www.philips.com/" },
+  ],
+
+  /** Published consultation fees. Kept here so schema and copy cannot drift. */
+  consultation: { first: 50, repeat: 25, currency: "GEL" },
   geo: { lat: 41.7069642, lng: 44.7667472 },
 
   /** Machine-readable opening hours. Keep in sync with `contact.hours`. */

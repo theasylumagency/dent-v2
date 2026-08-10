@@ -9,8 +9,14 @@
  */
 const routeReady = {
   clinic: false,
-  services: false,
-  serviceCategory: false,
+  services: true,
+  serviceCategory: true,
+  /* Individual services do not get their own URL. Sixteen thin pages built
+     from one lead paragraph and five bullets would compete with each other
+     for the same queries; the copy lives on the category page instead and
+     `serviceHref` in `services.ts` links to the anchor there. Flip this to
+     `true` only once a service has enough of its own content to stand as a
+     page. */
   serviceDetail: false,
   team: false,
   technology: false,
@@ -38,6 +44,11 @@ const realPath = {
 } as const;
 
 export type RouteKey = keyof typeof routeReady;
+
+/** Exposed so callers can pick a fallback target rather than guess one. */
+export function isRouteReady(key: RouteKey): boolean {
+  return routeReady[key];
+}
 
 export function route(lang: string, key: RouteKey, slug?: string): string {
   if (!routeReady[key]) return `/${lang}${homeAnchor[key]}`;

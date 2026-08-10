@@ -45,6 +45,19 @@ export default function SiteHeader({ dict, lang }: Props) {
   const navItems = getNavItems(dict, lang);
   const megaColumns = getMegaColumns(dict, lang);
 
+  /* Which nav item is highlighted.
+     On the home page that is the scroll-spy below. Everywhere else the
+     sections it observes simply do not exist, so the bar would show
+     nothing at all — the pathname answers it instead, and a category page
+     (`/ka/services/orthodontics`) still lights up "Services". */
+  const segment = pathname.split("/").filter(Boolean)[1];
+  const currentKey = segment
+    ? (navItems.find(
+        (item) =>
+          item.href === `/${lang}/${segment}` || item.href.startsWith(`/${lang}/${segment}/`),
+      )?.key ?? null)
+    : activeId;
+
   /* Close every menu on navigation. Adjusted during render rather than in an
      effect — React re-runs this pass before painting, so the drawer never
      flashes on the new route. */
@@ -245,7 +258,7 @@ export default function SiteHeader({ dict, lang }: Props) {
           {/* Desktop nav */}
           <nav className="hidden items-center gap-1 lg:flex" aria-label={dict.nav.primaryLabel}>
             {navItems.map((item) => {
-              const isActive = item.key === activeId;
+              const isActive = item.key === currentKey;
 
               return item.mega ? (
                 <button
@@ -448,7 +461,7 @@ export default function SiteHeader({ dict, lang }: Props) {
                 <Link
                   key={item.key}
                   href={item.href}
-                  aria-current={item.key === activeId ? "true" : undefined}
+                  aria-current={item.key === currentKey ? "true" : undefined}
                   className="block border-b border-ivory-400 py-5 font-display text-2xl text-ink-900"
                 >
                   {item.label}

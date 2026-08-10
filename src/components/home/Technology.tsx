@@ -1,5 +1,6 @@
 import type { Dictionary } from "@/i18n/dictionaries";
-import { Sparkle } from "@/components/ui/icons";
+import { site } from "@/lib/site";
+import { ArrowUpRight, Sparkle } from "@/components/ui/icons";
 import ServiceIcon from "@/components/ui/ServiceIcons";
 import Reveal from "@/components/ui/Reveal";
 
@@ -56,6 +57,29 @@ export default function Technology({ dict }: { dict: Dictionary }) {
                   <div className="mt-8 flex items-start gap-3 border-t border-ivory-400 pt-6">
                     <Sparkle className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
                     <p className="text-base leading-relaxed text-ink-700">{dict.technology.note}</p>
+                  </div>
+
+                  {/* Outbound links to the manufacturers named in the copy.
+                      They tie this clinic to entities search and AI engines
+                      already recognise, and they let a patient verify the
+                      claim instead of taking it on trust. */}
+                  <div className="mt-6 border-t border-ivory-400 pt-5">
+                    <p className="label-micro">{dict.technology.brandsLabel}</p>
+                    <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+                      {site.brands.map((brand) => (
+                        <li key={brand.url}>
+                          <a
+                            href={brand.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-sm text-ink-700 underline decoration-ivory-500 underline-offset-4 transition-colors hover:text-accent-700 hover:decoration-accent-400"
+                          >
+                            {brand.name}
+                            <ArrowUpRight className="h-3 w-3" />
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
 

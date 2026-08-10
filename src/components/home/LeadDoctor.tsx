@@ -19,7 +19,7 @@ export default function LeadDoctor({ dict }: { dict: Dictionary }) {
             <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] shadow-lift">
               <Image
                 src={leadPhoto}
-                alt={dict.doctor.name}
+                alt={`${dict.doctor.name} — ${dict.doctor.role}`}
                 fill
                 sizes="(min-width: 1024px) 38vw, 90vw"
                 className="object-cover object-top"

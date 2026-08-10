@@ -1,5 +1,5 @@
 import type { Dictionary } from "@/i18n/dictionaries";
-import { route } from "./routes";
+import { isRouteReady, route } from "./routes";
 
 /** Order matches the service list on the current Total Charm site. */
 export const serviceOrder = [
@@ -76,26 +76,43 @@ function assertCategoriesCoverEveryService() {
 
 assertCategoriesCoverEveryService();
 
-export type ServiceCategory = {
-  slug: CategorySlug;
-  title: string;
-  blurb: string;
-  href: string;
-  items: { slug: ServiceSlug; title: string; href: string }[];
-};
+/**
+ * Reverse index, built once at module load. Safe to assert as total:
+ * `assertCategoriesCoverEveryService` above has already thrown if any slug
+ * were missing or duplicated, so by the time this runs every service has
+ * exactly one category.
+ */
+const categoryOfService = (() => {
+  const index = {} as Record<ServiceSlug, CategorySlug>;
+  for (const category of categoryOrder) {
+    for (const slug of categoryMembers[category]) index[slug] = category;
+  }
+  return index;
+})();
 
-export function getServiceCategories(dict: Dictionary, lang: string): ServiceCategory[] {
-  return categoryOrder.map((slug) => ({
-    slug,
-    title: dict.services.categories[slug].title,
-    blurb: dict.services.categories[slug].blurb,
-    href: route(lang, "serviceCategory", slug),
-    items: categoryMembers[slug].map((child) => ({
-      slug: child,
-      title: dict.services.items[child].title,
-      href: route(lang, "serviceDetail", child),
-    })),
-  }));
+export function categoryOf(slug: ServiceSlug): CategorySlug {
+  return categoryOfService[slug];
+}
+
+export function isCategorySlug(value: string): value is CategorySlug {
+  return (categoryOrder as readonly string[]).includes(value);
+}
+
+/**
+ * Where a single service points.
+ *
+ * While `serviceDetail` is unbuilt the copy for a service lives in the
+ * `#slug` block of its category page, so the link goes there rather than
+ * dumping the visitor at the top of a page and asking them to hunt. The
+ * home-page anchor stays as the last resort for the same reason it always
+ * did: nothing should 404.
+ */
+export function serviceHref(lang: string, slug: ServiceSlug): string {
+  if (isRouteReady("serviceDetail")) return route(lang, "serviceDetail", slug);
+  if (isRouteReady("serviceCategory")) {
+    return `${route(lang, "serviceCategory", categoryOfService[slug])}#${slug}`;
+  }
+  return route(lang, "serviceDetail", slug);
 }
 
 export type Service = {
@@ -105,20 +122,41 @@ export type Service = {
   href: string;
 };
 
-export function getServices(dict: Dictionary, lang: string): Service[] {
-  return serviceOrder.map((slug) => ({
-    slug,
-    title: dict.services.items[slug].title,
-    blurb: dict.services.items[slug].blurb,
-    href: route(lang, "serviceDetail", slug),
-  }));
-}
+export type ServiceCategory = {
+  slug: CategorySlug;
+  title: string;
+  blurb: string;
+  href: string;
+  items: Service[];
+};
 
 export function getService(dict: Dictionary, lang: string, slug: ServiceSlug): Service {
   return {
     slug,
     title: dict.services.items[slug].title,
     blurb: dict.services.items[slug].blurb,
-    href: route(lang, "serviceDetail", slug),
+    href: serviceHref(lang, slug),
   };
+}
+
+export function getServiceCategory(
+  dict: Dictionary,
+  lang: string,
+  slug: CategorySlug,
+): ServiceCategory {
+  return {
+    slug,
+    title: dict.services.categories[slug].title,
+    blurb: dict.services.categories[slug].blurb,
+    href: route(lang, "serviceCategory", slug),
+    items: categoryMembers[slug].map((child) => getService(dict, lang, child)),
+  };
+}
+
+export function getServiceCategories(dict: Dictionary, lang: string): ServiceCategory[] {
+  return categoryOrder.map((slug) => getServiceCategory(dict, lang, slug));
+}
+
+export function getServices(dict: Dictionary, lang: string): Service[] {
+  return serviceOrder.map((slug) => getService(dict, lang, slug));
 }
