@@ -47,17 +47,16 @@ export const media = {
   heroVideo: "/media/hero.mp4",
   heroPoster: "/media/hero-poster.jpg",
   interior: ["/interior/totcharm_dentinner99.webp", "/interior/totcharm_dentinner11.webp"],
-  ornament: {
-    aesthetic: "/services/Aesthetic-Dentistry.webp",
-    implantology: "/services/Implantology.webp",
-  },
   /**
    * TODO(client): replace with real photography. These slots are deliberately
    * labelled so it is obvious which shots are still missing.
+   *
+   * `location` was dropped here: the contact section now loads a real Google
+   * Maps embed on demand instead of showing a stand-in image, so there is no
+   * longer a slot for it. `public/placeholder/location.webp` can be deleted.
    */
   placeholder: {
     atmosphere: "/placeholder/atmosphere-wide.webp",
     reception: "/placeholder/reception.webp",
-    location: "/placeholder/location.webp",
   },
 } as const;

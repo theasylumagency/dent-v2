@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import type { Locale } from "@/i18n/config";
@@ -6,6 +5,7 @@ import type { Dictionary } from "@/i18n/dictionaries";
 import { route } from "@/lib/nav";
 import { getServiceCategories } from "@/lib/services";
 import { ArrowUpRight } from "@/components/ui/icons";
+import ServiceIcon from "@/components/ui/ServiceIcons";
 import Reveal from "@/components/ui/Reveal";
 
 /**
@@ -68,22 +68,11 @@ export default function Services({ dict, lang }: { dict: Dictionary; lang: Local
                     border and shadow carry the affordance instead. */}
                 <article className="group card relative flex h-full flex-col p-7 transition-[border-color,box-shadow] duration-300 hover:border-accent-400 hover:shadow-lift lg:p-8">
                   <div className="flex items-start justify-between gap-4">
-                    {/* `isolate` scopes the blend to this tile; `multiply`
-                        makes the artwork's white background disappear into
-                        the tint, so the icon no longer reads as a white box
-                        pasted onto a blue square. It only works because the
-                        tile is lighter than every ink in the artwork.
-                        TODO(design): see docs/icon-and-logo-notes.md — these
-                        want to be SVG, and their strokes are too fine for
-                        this size. */}
-                    <span className="relative isolate h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-accent-50 ring-1 ring-inset ring-accent-200 transition-colors duration-500 group-hover:bg-accent-100">
-                      <Image
-                        src={category.icon}
-                        alt=""
-                        fill
-                        sizes="160px"
-                        className="object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
-                      />
+                    {/* Inline SVG rather than <Image>: the icon inherits
+                        `currentColor`, so the tile's hover state carries it
+                        without a second asset. */}
+                    <span className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-accent-50 text-accent-700 ring-1 ring-inset ring-accent-200 transition-colors duration-500 group-hover:bg-accent-100 group-hover:text-accent-600">
+                      <ServiceIcon name={category.slug} className="h-9 w-9" />
                     </span>
                   </div>
 

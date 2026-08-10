@@ -1,8 +1,6 @@
-import Image from "next/image";
-
 import type { Dictionary } from "@/i18n/dictionaries";
-import { media } from "@/lib/site";
 import { Sparkle } from "@/components/ui/icons";
+import ServiceIcon from "@/components/ui/ServiceIcons";
 import Reveal from "@/components/ui/Reveal";
 
 export default function Technology({ dict }: { dict: Dictionary }) {
@@ -40,21 +38,19 @@ export default function Technology({ dict }: { dict: Dictionary }) {
             <Reveal delay={140}>
               <div className="sticky top-28 space-y-6">
                 <div className="card relative overflow-hidden p-8">
+                  {/* Four of the pieces of equipment the list below talks
+                      about, rather than two decorative tiles. */}
                   <div className="grid grid-cols-2 gap-4">
-                    {[media.ornament.implantology, media.ornament.aesthetic].map((src) => (
-                      <span
-                        key={src}
-                        className="relative isolate aspect-square overflow-hidden rounded-2xl bg-accent-50 ring-1 ring-inset ring-accent-200"
-                      >
-                        <Image
-                          src={src}
-                          alt=""
-                          fill
-                          sizes="24rem"
-                          className="object-contain mix-blend-multiply"
-                        />
-                      </span>
-                    ))}
+                    {(["tomography", "digital-modelling", "visiograph", "implantation"] as const).map(
+                      (name) => (
+                        <span
+                          key={name}
+                          className="flex aspect-square items-center justify-center rounded-2xl bg-accent-50 text-accent-700 ring-1 ring-inset ring-accent-200"
+                        >
+                          <ServiceIcon name={name} className="h-12 w-12" />
+                        </span>
+                      ),
+                    )}
                   </div>
 
                   <div className="mt-8 flex items-start gap-3 border-t border-ivory-400 pt-6">

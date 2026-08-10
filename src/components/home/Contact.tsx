@@ -1,12 +1,12 @@
-import Image from "next/image";
-
+import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { media, site, whatsappHref } from "@/lib/site";
+import { site, whatsappHref } from "@/lib/site";
 import { ArrowUpRight, Clock, Mail, Phone, Pin, WhatsApp } from "@/components/ui/icons";
 import Reveal from "@/components/ui/Reveal";
 import BookingForm from "./BookingForm";
+import MapEmbed from "./MapEmbed";
 
-export default function Contact({ dict }: { dict: Dictionary }) {
+export default function Contact({ dict, lang }: { dict: Dictionary; lang: Locale }) {
   return (
     <section
       id="contact"
@@ -117,36 +117,8 @@ export default function Contact({ dict }: { dict: Dictionary }) {
             </dl>
           </Reveal>
 
-          {/* TODO(client): this is still a static image linking out to Google
-              Maps. "Where are you?" is a primary task for a local clinic —
-              replace with a lazy-loaded map embed or, at minimum, a real
-              static map tile with the pin on it. */}
           <Reveal delay={140}>
-            <a
-              href={site.maps}
-              target="_blank"
-              rel="noreferrer"
-              className="group relative mt-6 block aspect-[16/9] overflow-hidden rounded-card shadow-soft transition-shadow duration-500 hover:shadow-lift"
-            >
-              <Image
-                src={media.placeholder.location}
-                alt=""
-                fill
-                sizes="(min-width: 1024px) 45vw, 90vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-              />
-              <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ivory-50 via-ivory-50/80 to-transparent" />
-              <span className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
-                <span className="text-sm font-medium text-ink-900">{dict.contact.address}</span>
-                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent-500 bg-ivory-50 text-accent-700 transition-colors group-hover:bg-accent-300 group-hover:text-ink-900">
-                  <ArrowUpRight className="h-3.5 w-3.5" />
-                </span>
-              </span>
-              <span
-                className="pointer-events-none absolute inset-0 rounded-card ring-1 ring-inset ring-ink-900/10"
-                aria-hidden="true"
-              />
-            </a>
+            <MapEmbed dict={dict} lang={lang} />
           </Reveal>
         </div>
 

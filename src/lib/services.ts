@@ -23,25 +23,10 @@ export const serviceOrder = [
 
 export type ServiceSlug = (typeof serviceOrder)[number];
 
-/** Icon artwork supplied by the client (line art on off-white). */
-const icons: Record<ServiceSlug, string> = {
-  diagnostics: "/services/Diagnostics.webp",
-  "therapy-adults": "/services/Therapy-in-Adults.webp",
-  "therapy-children": "/services/Therapy-for-Children.webp",
-  surgery: "/services/Surgery.webp",
-  implantation: "/services/Surgery-and-Same-Day-Implantation.webp",
-  periodontology: "/services/Periodontology.webp",
-  orthodontics: "/services/Orthodontics.webp",
-  aligners: "/services/Aligners.webp",
-  veneers: "/services/Ceramic-Veneers.webp",
-  "digital-modelling": "/services/Digital-Modelling.webp",
-  forestadent: "/services/FORESTADENT-Braces.webp",
-  damon: "/services/Damon-Braces.webp",
-  whitening: "/services/Teeth-Whitening.webp",
-  tomography: "/services/Tomography.webp",
-  restoration: "/services/Aesthetic-dental-restoration.webp",
-  visiograph: "/services/Viziography.webp",
-};
+/* Icons are no longer file paths. Every slug below has a matching entry in
+   `components/ui/ServiceIcons.tsx`, rendered inline so it can inherit
+   colour from CSS — see the note at the top of that file for why the
+   supplied illustration set was retired from this size. */
 
 /* --------------------------------------------------------------------------
    Five clinical directions.
@@ -70,15 +55,6 @@ const categoryMembers: Record<CategorySlug, readonly ServiceSlug[]> = {
   aesthetic: ["veneers", "restoration", "whitening"],
 };
 
-/** Category artwork, picked from the same line-art set. */
-const categoryIcons: Record<CategorySlug, string> = {
-  "diagnostics-planning": "/services/Diagnostics.webp",
-  "therapy-prevention": "/services/Therapy-in-Adults.webp",
-  "surgery-implantation": "/services/Implantology.webp",
-  orthodontics: "/services/Orthodontics.webp",
-  aesthetic: "/services/Aesthetic-Dentistry.webp",
-};
-
 /**
  * Fails loudly at module load if a service is orphaned or double-counted,
  * so a new entry in `serviceOrder` can never silently vanish from the home
@@ -104,7 +80,6 @@ export type ServiceCategory = {
   slug: CategorySlug;
   title: string;
   blurb: string;
-  icon: string;
   href: string;
   items: { slug: ServiceSlug; title: string; href: string }[];
 };
@@ -114,7 +89,6 @@ export function getServiceCategories(dict: Dictionary, lang: string): ServiceCat
     slug,
     title: dict.services.categories[slug].title,
     blurb: dict.services.categories[slug].blurb,
-    icon: categoryIcons[slug],
     href: route(lang, "serviceCategory", slug),
     items: categoryMembers[slug].map((child) => ({
       slug: child,
@@ -128,7 +102,6 @@ export type Service = {
   slug: ServiceSlug;
   title: string;
   blurb: string;
-  icon: string;
   href: string;
 };
 
@@ -137,7 +110,6 @@ export function getServices(dict: Dictionary, lang: string): Service[] {
     slug,
     title: dict.services.items[slug].title,
     blurb: dict.services.items[slug].blurb,
-    icon: icons[slug],
     href: route(lang, "serviceDetail", slug),
   }));
 }
@@ -147,7 +119,6 @@ export function getService(dict: Dictionary, lang: string, slug: ServiceSlug): S
     slug,
     title: dict.services.items[slug].title,
     blurb: dict.services.items[slug].blurb,
-    icon: icons[slug],
     href: route(lang, "serviceDetail", slug),
   };
 }

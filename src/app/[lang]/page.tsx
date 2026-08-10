@@ -31,7 +31,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       {/* FAQ sits immediately before the form: it answers the last
           objections while the visitor is already at the booking step. */}
       <Faq dict={dict} />
-      <Contact dict={dict} />
+      <Contact dict={dict} lang={locale} />
     </>
   );
 }

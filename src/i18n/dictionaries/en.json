@@ -253,6 +253,13 @@
     "whatsappLabel": "Message us on WhatsApp",
     "socialLabel": "Social media",
     "directions": "Directions",
+    "showMap": "Show map",
+    "mapTitle": "Clinic location on the map",
+    "mapNote": "The map loads from Google",
+    "districtLabel": "District",
+    "district": "Vake, Tbilisi",
+    "cantFind": "Can't find us?",
+    "cantFindNote": "Call or message us and we'll talk you in.",
     "form": {
       "name": "Name",
       "namePlaceholder": "Your name",
@@ -296,7 +303,7 @@
       },
       {
         "q": "What does the first consultation cost?",
-        "a": "A consultation covers an oral examination, imaging where needed, and a written treatment plan with costs set out. We confirm the exact figure when you book — nothing further is charged before you approve the plan."
+        "a": "A first consultation is 50 GEL; a follow-up consultation is 25 GEL. That covers the oral examination and a written treatment plan with the costs set out. You only pay for the treatment itself once you have approved the plan."
       },
       {
         "q": "Do you treat children?",

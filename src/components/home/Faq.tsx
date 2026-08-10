@@ -17,9 +17,11 @@ import Reveal from "@/components/ui/Reveal";
  * expanded state are all native, and every answer is present in the DOM
  * for crawlers whether or not it is open.
  *
- * TODO(client): the pricing answer describes the *process* rather than a
- * figure, deliberately — confirm the consultation fee and swap in the
- * real number. The clinical answers are drawn from copy already approved
+ * Consultation fees are the clinic's confirmed figures (50 ₾ first visit,
+ * 25 ₾ follow-up) and live in the dictionaries — update all three locales
+ * together if they change.
+ *
+ * TODO(client): the clinical answers are drawn from copy already approved
  * elsewhere on this page, but should still get a sign-off from the chief
  * doctor before launch.
  */
