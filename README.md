@@ -26,7 +26,7 @@ but not yet routed.
 | Atmosphere band | `components/home/Atmosphere.tsx` | placeholder photo |
 | Chief doctor | `components/home/LeadDoctor.tsx` | existing site |
 | Team (4) | `components/home/Team.tsx` | existing site |
-| Technology + care | `components/home/Technology.tsx` | existing site |
+| Technology teaser + care | `components/home/Technology.tsx` | device list from `lib/equipment.ts` |
 | Contact + booking | `components/home/Contact.tsx` | existing contact page |
 
 ## Internationalisation
@@ -65,6 +65,26 @@ Every service belongs to exactly one category. `assertCategoriesCoverEveryServic
 module load and throws if a slug is orphaned or double-counted, so adding a service to
 `serviceOrder` without filing it under a category fails fast rather than silently dropping it
 from the navigation.
+
+## Equipment
+
+`src/lib/equipment.ts` is to the technology page what `services.ts` is to the services page:
+eight devices in four groups, with model name, manufacturer, outbound link, photo slot and the
+services each device is used in. Prose lives in `technology.page.devices[slug]` in the
+dictionaries; model names never do — "Vatech EzRay Air" is the string the manufacturer and the
+search index both use, so it stays Latin in all three locales.
+
+Two consequences worth knowing:
+
+- `getManufacturers()` replaced the hand-kept `site.brands` array. The outbound brand links on the
+  home page are now derived from the devices themselves and cannot drift from them.
+- The five capability claims (`technology.items`) render **only** on `/[lang]/technology`. The home
+  section is a teaser that names the machines and links through. Do not put the five back on the
+  home page — the same block on two URLs makes Google choose which one to rank.
+
+Photos in `public/equipment/` are labelled stand-ins. See `docs/equipment-photos.md` for where each
+real image comes from, the licence question, and the two items still open with the client (the CBCT
+model number and the sterilisation vendor).
 
 ## Design system
 

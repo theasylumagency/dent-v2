@@ -14,10 +14,15 @@ import { site } from "@/lib/site";
  * missing from the sitemap.
  *
  * TODO: extend `paths` as the remaining sub-pages land (clinic, team,
- * technology, contact) — flipping a flag in `lib/routes.ts` changes every
- * link on the site but not this file.
+ * contact) — flipping a flag in `lib/routes.ts` changes every link on the
+ * site but not this file.
  */
-const paths = ["", "/services", ...categoryOrder.map((slug) => `/services/${slug}`)];
+const paths = [
+  "",
+  "/services",
+  ...categoryOrder.map((slug) => `/services/${slug}`),
+  "/technology",
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();

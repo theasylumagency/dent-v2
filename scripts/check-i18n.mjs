@@ -78,9 +78,9 @@ const assets = [
   ...["/brand/logo.svg", "/media/hero.mp4", "/media/hero-poster.jpg"],
 ];
 
-const sources = readFileSync(join(root, "src/lib/services.ts"), "utf8")
-  .concat(readFileSync(join(root, "src/lib/team.ts"), "utf8"))
-  .concat(readFileSync(join(root, "src/lib/site.ts"), "utf8"));
+const sources = ["services", "team", "site", "equipment"]
+  .map((module) => readFileSync(join(root, `src/lib/${module}.ts`), "utf8"))
+  .join("\n");
 const referenced = [...new Set([...assets, ...(sources.match(/"\/[^"]+\.(webp|jpg|svg|mp4)"/g) ?? []).map((s) => s.slice(1, -1))])];
 
 const missingAssets = referenced.filter((asset) => !existsSync(join(root, "public", asset)));

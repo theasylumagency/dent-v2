@@ -43,18 +43,11 @@ export const site = {
     google: "",
   },
 
-  /**
-   * Equipment and systems named in the copy. Linking them out associates
-   * this clinic with entities search and AI engines already know, which is
-   * a cheap and durable authority signal — and it lets a patient verify
-   * the claim rather than take it on trust.
-   */
-  brands: [
-    { name: "FORESTADENT", url: "https://www.forestadent.com/" },
-    { name: "Ormco / Damon", url: "https://ormco.com/" },
-    { name: "American Orthodontics", url: "https://americanortho.com/" },
-    { name: "Philips Zoom", url: "https://www.philips.com/" },
-  ],
+  /* `brands` used to live here as a hand-kept list of manufacturer links.
+     It moved to `lib/equipment.ts` and is now derived from the devices
+     themselves via `getManufacturers()` — the two lists had to be edited
+     together and this one had already fallen behind, missing Vatech,
+     3Shape and EMS entirely. */
 
   /** Published consultation fees. Kept here so schema and copy cannot drift. */
   consultation: { first: 50, repeat: 25, currency: "GEL" },

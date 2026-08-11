@@ -19,7 +19,7 @@ const routeReady = {
      page. */
   serviceDetail: false,
   team: false,
-  technology: false,
+  technology: true,
   contact: false,
 } as const;
 

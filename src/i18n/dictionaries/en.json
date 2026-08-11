@@ -386,7 +386,153 @@
       }
     ],
     "note": "Every procedure is performed under anaesthesia. Adults and children who come to us are no longer afraid of the dentist.",
-    "brandsLabel": "Equipment and systems"
+    "brandsLabel": "Equipment and systems",
+    "teaserLabel": "Equipment",
+    "teaserLead": "Modern dentistry depends on what is actually in the room. Here is exactly which machines the clinic works with.",
+    "teaserCta": "See every device and system",
+    "page": {
+      "metaTitle": "Technology — the clinic's digital equipment",
+      "metaDescription": "The equipment at Total Charm Dent: Vatech digital X-ray and CBCT, the 3Shape TRIOS 3 Move+ intraoral scanner, EMS AIRFLOW, Philips Zoom whitening, and the FORESTADENT, Damon and American Orthodontics bracket systems.",
+      "title": "The equipment the treatment rests on",
+      "lead": "Digital equipment from European and American manufacturers, from diagnostics through to sterilisation. Every device here is explained by what it actually changes for the patient.",
+      "breadcrumbHome": "Home",
+      "breadcrumbLabel": "Breadcrumb",
+      "devicesLabel": "Devices",
+      "manufacturersLabel": "Manufacturers",
+      "jumpLabel": "Equipment groups",
+      "capabilitiesLabel": "What it gives us",
+      "capabilitiesTitle": "Five things digital equipment changed",
+      "equipmentLabel": "Equipment",
+      "equipmentTitle": "What is in the surgeries",
+      "manufacturerLabel": "Manufacturer",
+      "usedForLabel": "Used in",
+      "highlightsLabel": "In short",
+      "photoPendingLabel": "Photo coming",
+      "groups": {
+        "diagnostics": {
+          "title": "Digital diagnostics and planning",
+          "lead": "Effective treatment starts with an accurate diagnosis. All three devices sit in one digital chain — X-ray, CBCT and intraoral scanner — and their data complements each other rather than arriving as separate, unconnected studies."
+        },
+        "hygiene": {
+          "title": "Professional hygiene and prevention",
+          "lead": "Regular professional cleaning is the foundation of caries and gum disease prevention. The equipment solves one thing here: make the procedure painless and the patient comes back for the next one."
+        },
+        "aesthetics": {
+          "title": "Smile aesthetics",
+          "lead": "Whitening is one of the most requested procedures in the world — and one where the difference between systems shows up directly in the result and in the state of the enamel afterwards."
+        },
+        "orthodontics": {
+          "title": "Orthodontic systems",
+          "lead": "Bracket systems are not interchangeable: different clinical pictures call for different mechanics. The clinic keeps three of the major systems, and clear aligners are produced from the TRIOS scan."
+        }
+      },
+      "devices": {
+        "vatech-ezray-air": {
+          "summary": "A digital intraoral X-ray with a low dose and automatic settings.",
+          "body": [
+            "Vatech EzRay Air is a digital intraoral X-ray — the instrument dental diagnostics begins with. The image appears on screen in seconds, with no film to develop, and can be repeated within the same visit if needed.",
+            "The unit carries FDA and CE certification and an additional shielding contour, while the automatic settings remove the possibility of over-exposure — the patient receives less radiation than the equivalent film would deliver."
+          ],
+          "highlights": [
+            "Image in seconds, no developing",
+            "FDA and CE certified",
+            "Automatic settings, no excess dose"
+          ]
+        },
+        "vatech-cbct": {
+          "summary": "Cone-beam computed tomography — a three-dimensional image from a single rotation.",
+          "body": [
+            "A single 360-degree rotation produces two results: an orthopantomogram and a full 3D reconstruction of the area under examination. When planning an implant that is the difference between estimating and measuring — bone thickness and nerve position are visible before the surgery rather than during it.",
+            "Taking both studies in one rotation cuts the radiation load fourfold compared with a series of separate images. That matters most across the stages of implantation and during long orthodontic treatment, where checks are repeated several times."
+          ],
+          "highlights": [
+            "One rotation — panorama and 3D reconstruction",
+            "Four times less dose than a series of images",
+            "Implant position planned before surgery"
+          ]
+        },
+        "trios-3-move": {
+          "summary": "An intraoral scanner — a digital impression with no silicone and no tray.",
+          "body": [
+            "TRIOS 3 Move+ scans a full bite in roughly 60 seconds, with accurate colour rendering and into areas that are hard to reach. It replaces the silicone impression — that is, precisely the step most patients remember as the worst part of the visit.",
+            "Digital accuracy sharply reduces the number of errors made in the laboratory, and the Move+ configuration turns the screen towards the patient: with TRIOS Smile Design the expected result is visible from the chair, before anything starts."
+          ],
+          "highlights": [
+            "Full-bite scan in roughly 60 seconds",
+            "No silicone impression needed",
+            "The result is visible before treatment begins"
+          ]
+        },
+        "ems-airflow-master": {
+          "summary": "Professional hygiene using a jet of air, water and powder — with no mechanical scraping.",
+          "body": [
+            "AIRFLOW Prophylaxis Master Premium removes biofilm, staining and less mineralised deposits both above and below the gumline with a fine powder jet. The need for hand instruments and ultrasonic tips drops to a minimum — and with it, the mechanical load on the enamel.",
+            "Water temperature is adjustable and the unit is controlled by a wireless pedal. In practice that means the procedure stays comfortable even with sensitive gums — and the patient returns for hygiene regularly, which is the entire point of periodontal prevention."
+          ],
+          "highlights": [
+            "Subgingival deposits too, without scraping",
+            "Adjustable water temperature",
+            "Caries and periodontitis prevention"
+          ]
+        },
+        "philips-zoom-4": {
+          "summary": "In-chair whitening activated by light — one session, under an hour.",
+          "body": [
+            "The latest generation of the Zoom system activates the whitening gel with a dedicated light: oxygen breaks down pigment molecules inside the enamel rather than on its surface. The whole procedure takes under an hour.",
+            "The formulation is designed for sensitive teeth, and the gums and lips are covered with a protective barrier. According to the manufacturer, a single session improves the shade by up to eight tones, and a repeat procedure strengthens the effect further."
+          ],
+          "highlights": [
+            "Under an hour, a single visit",
+            "Up to eight shades in one session",
+            "Formulated for sensitive teeth"
+          ]
+        },
+        "forestadent": {
+          "summary": "A German orthodontic system — a broad bracket range, aesthetic options included.",
+          "body": [
+            "FORESTADENT is a German family manufacturer that has been producing orthodontic appliances for over a century. Its range covers classic metal brackets as well as ceramic and lingual ones — bonded to the inner surface of the tooth.",
+            "Which system is chosen depends on the clinical picture, not on preference: reaching the same result sometimes calls for strong mechanics and sometimes for the least visible construction possible."
+          ],
+          "highlights": [
+            "Metal, ceramic and lingual brackets",
+            "German manufacturing for over a century"
+          ]
+        },
+        "damon-ormco": {
+          "summary": "A self-ligating bracket system — no ligatures, and fewer adjustment visits.",
+          "body": [
+            "A Damon bracket holds the archwire with a built-in gate rather than an elastic or metal ligature. Friction drops, the wire moves freely and the tooth is repositioned with lighter force.",
+            "The practical difference shows in the appointment schedule: adjustments are needed less often than with a classic ligated system, which matters over a long course of treatment — particularly for teenagers and patients with crowded calendars."
+          ],
+          "highlights": [
+            "No ligatures, low friction",
+            "Fewer adjustment visits"
+          ]
+        },
+        "american-orthodontics": {
+          "summary": "American brackets, archwires and accessories — the third line in the orthodontic arsenal.",
+          "body": [
+            "American Orthodontics is one of the larger American manufacturers of brackets, archwires and orthodontic accessories, with products supplied to more than a hundred countries.",
+            "There is exactly one reason to keep three manufacturers at once: the orthodontist selects the system to fit the case in front of them, rather than to fit what happens to be in the cabinet."
+          ],
+          "highlights": [
+            "Brackets, archwires and accessories",
+            "Supplied to more than a hundred countries"
+          ]
+        }
+      },
+      "sterilisation": {
+        "label": "Safety comes first",
+        "title": "Three-stage sterilisation in our own department",
+        "body": "Reusable instruments and handpieces are processed in the clinic's own sterilisation department, on a three-stage cycle with every stage logged. Everything else is single-use.",
+        "items": [
+          "Cleaning — complete removal of organic residue",
+          "Disinfection — destruction of micro-organisms",
+          "Sterilisation — autoclaved, in individual pouches",
+          "Control — every cycle recorded"
+        ]
+      }
+    }
   },
 
   "care": {

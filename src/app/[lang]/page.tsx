@@ -27,7 +27,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       <Atmosphere dict={dict} />
       <LeadDoctor dict={dict} />
       <Team dict={dict} />
-      <Technology dict={dict} />
+      <Technology dict={dict} lang={locale} />
       {/* FAQ sits immediately before the form: it answers the last
           objections while the visitor is already at the booking step. */}
       <Faq dict={dict} />
