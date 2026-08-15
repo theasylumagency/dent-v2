@@ -6,12 +6,16 @@ Built with Next.js 16 (App Router, Turbopack) + Tailwind CSS v4.
 ## Getting started
 
 ```bash
+cp .env.example .env.local   # DATABASE_URL and PAYLOAD_SECRET are required to boot
 npm run dev        # http://localhost:3000 -> redirects to /ka
-npm run build
+npm run build      # needs a reachable database — every page queries the CMS
 npm run typecheck  # tsc --noEmit
 npm run lint
-npm run check:i18n # dictionary parity + asset existence
+npm run check:i18n # dictionary parity, meta lengths, asset existence
 ```
+
+Deploying is **not** a `git push`: the build talks to Postgres, uploads live outside
+the repo, and migrations do not run themselves. See `docs/deployment.md`.
 
 ## Current scope
 
@@ -66,6 +70,40 @@ module load and throws if a slug is orphaned or double-counted, so adding a serv
 `serviceOrder` without filing it under a category fails fast rather than silently dropping it
 from the navigation.
 
+## News
+
+`/[lang]/news` (list, client-side category filter) and `/[lang]/news/[slug]` (detail).
+
+`src/lib/news.ts` is a **stand-in for a Payload collection**, not a permanent home. Its field
+names and localisation model mirror what `posts` will look like in the CMS, so migration should
+replace the body of `getPosts` / `getPost` and leave the components alone.
+
+Post text is deliberately **not** in the i18n dictionaries: `check:i18n` enforces exact key parity,
+so one Georgian-only announcement would fail the build. `news.ts` does per-field fallback to `ka`
+instead, and the detail page tells the reader when they are getting the Georgian text.
+
+`docs/cms-migration.md` records which content moves to which collection, and what to delete before
+launch (there is one sample post, flagged `sample: true`).
+
+## The about page
+
+`clinic` and `team` were two planned routes. They shipped as one — `/[lang]/about` — because a
+clinic page without its doctors is a mission statement with nobody behind it, and a doctors page
+without the clinic is five portraits with no reason to trust them. The nav went from five items
+to four.
+
+Three things follow from that and are easy to break:
+
+- The home page's clinic section carries `id="about"`, not `id="clinic"`. `SECTION_IDS` in
+  `SiteHeader.tsx` is compared against nav *keys*, so the id and the key have to match or the
+  scroll-spy silently stops highlighting.
+- Mission, vision, the lead doctor's bio and the long team paragraph render **only** on
+  `/about`. The three home sections are teasers with their own short copy
+  (`mission.teaserText`, `team.teaserLead`) and a link through.
+- `profilePending` in `src/lib/team.ts` decides whether a doctor renders a full profile or a
+  short "in preparation" note. See `docs/team-profiles.md` for where each profile was sourced,
+  what was deliberately left out, and the questions still open with the client.
+
 ## Equipment
 
 `src/lib/equipment.ts` is to the technology page what `services.ts` is to the services page:
@@ -85,6 +123,49 @@ Two consequences worth knowing:
 Photos in `public/equipment/` are labelled stand-ins. See `docs/equipment-photos.md` for where each
 real image comes from, the licence question, and the two items still open with the client (the CBCT
 model number and the sterilisation vendor).
+
+## Contact details and page meta
+
+Two Payload globals, both read through a single helper each:
+
+- `clinic-info` → `getClinic(lang, fallback)` in `src/lib/clinic.ts`. Phone, WhatsApp, email,
+  address, hours, map link, consultation fees, social profiles.
+- `seo` → `getSeo(route, lang, fallback)` and `getCategorySeo(slug, lang, fallback)` in
+  `src/lib/seo.ts`. Title and description per route, used by every `generateMetadata`.
+
+Both fall back to what the site shipped with — `site.ts` for contact details, the dictionary for
+meta — so an unsaved global renders correctly rather than blank. `npm run seed` fills them, which
+also means **re-running the seed on a live site discards whatever the client has edited in them**.
+
+Three things that will bite:
+
+- **Do not import `site.phone`, `site.email`, `site.maps`, `site.social` or `site.consultation`
+  into a component.** They are `getClinic`'s fallbacks, not a second source of truth. That is the
+  bug this replaced: the globals existed in the admin for weeks with no reader, so editing the
+  clinic's number changed nothing on the site.
+- **`SiteHeader` is a client component.** It takes `clinic` as a prop from the layout and imports
+  only `import type { Clinic }`. A value import from `lib/clinic` there pulls the Payload SDK into
+  the browser bundle and fails with `Can't resolve 'fs'`.
+- **One editable phone number.** `phoneHref`, `whatsapp` and `whatsappHref` are derived from it in
+  `lib/clinic.ts`, because two fields an editor has to keep in step will drift, and the failure is
+  silent — right number on screen, wrong one behind the link.
+
+`docs/cms-migration.md` records what deliberately stayed in code (the booking inbox, the
+machine-readable opening hours, the domain and the map coordinates) and why.
+
+### The counters
+
+`src/lib/stats.ts` builds the four-figure row on the home page and `/about`. Two are counted from
+the CMS (specialists, services) and cannot fall out of step with what the pages show. Two are
+claims the clinic owns in `clinic-info` (`satisfiedPercent`, `yearsOnMarket`) and **do not render
+when unset** — they were hard-coded `"98"` and `"10"` with nothing behind them, which is a
+liability on a medical site. The row's CSS handles two, three or four cells.
+
+### Dictionaries hold UI copy only
+
+The service, doctor, device, profile and FAQ prose moved into
+`scripts/seed-data/content/{ka,en,ru}.json`. The site never reads it — it exists so a fresh
+database can be seeded. Change that text in the admin, not there.
 
 ## Design system
 

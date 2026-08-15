@@ -8,7 +8,12 @@
  * menu, drawer, home page and footer updates from here.
  */
 const routeReady = {
-  clinic: false,
+  /* `clinic` and `team` used to be two planned pages. They landed as one:
+     a clinic page without its doctors is a mission statement with nobody
+     behind it, and a doctors page without the clinic is five portraits
+     with no reason to trust them. One `about` page carries both, and the
+     nav went from five items to four. */
+  about: true,
   services: true,
   serviceCategory: true,
   /* Individual services do not get their own URL. Sixteen thin pages built
@@ -18,28 +23,30 @@ const routeReady = {
      `true` only once a service has enough of its own content to stand as a
      page. */
   serviceDetail: false,
-  team: false,
   technology: true,
-  contact: false,
+  news: true,
+  contact: true,
 } as const;
 
 const homeAnchor = {
-  clinic: "#clinic",
+  about: "#about",
   services: "#services",
   serviceCategory: "#services",
   serviceDetail: "#services",
-  team: "#team",
   technology: "#technology",
+  /* No news section on the home page. If the route were ever switched off
+     the anchor would land at the top, which is the least wrong option. */
+  news: "",
   contact: "#contact",
 } as const;
 
 const realPath = {
-  clinic: "clinic",
+  about: "about",
   services: "services",
   serviceCategory: "services",
   serviceDetail: "services",
-  team: "team",
   technology: "technology",
+  news: "news",
   contact: "contact",
 } as const;
 

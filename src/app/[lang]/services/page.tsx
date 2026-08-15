@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 
 import { htmlLang, isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
-import { getServiceCategories, serviceOrder } from "@/lib/services";
+import { getServiceCategories, getServiceCount } from "@/lib/services";
+import { getSeo } from "@/lib/seo";
 import { site } from "@/lib/site";
 import { ArrowUpRight } from "@/components/ui/icons";
 import ServiceIcon from "@/components/ui/ServiceIcons";
@@ -21,10 +22,14 @@ export async function generateMetadata({
   if (!isLocale(lang)) return {};
   const dict = await getDictionary(lang);
   const t = dict.services.page;
-
-  return {
+  const meta = await getSeo("services", lang, {
     title: t.metaTitle,
     description: t.metaDescription,
+  });
+
+  return {
+    title: meta.title,
+    description: meta.description,
     alternates: {
       canonical: `/${lang}/services`,
       languages: Object.fromEntries([
@@ -35,8 +40,8 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       siteName: site.name,
-      title: t.metaTitle,
-      description: t.metaDescription,
+      title: meta.title,
+      description: meta.description,
       locale: htmlLang[lang].replace("-", "_"),
       url: `/${lang}/services`,
     },
@@ -50,7 +55,10 @@ export default async function ServicesPage({ params }: { params: Promise<{ lang:
   const locale = lang as Locale;
   const dict = await getDictionary(locale);
   const t = dict.services.page;
-  const categories = getServiceCategories(dict, locale);
+  const [categories, serviceCount] = await Promise.all([
+    getServiceCategories(dict.services.categories, locale),
+    getServiceCount(),
+  ]);
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -79,7 +87,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ lang:
       "@type": "OfferCatalog",
       position: index + 1,
       name: category.title,
-      description: dict.services.categories[category.slug].blurb,
+      description: category.blurb,
       url: `${site.url}/${locale}/services/${category.slug}`,
       itemListElement: category.items.map((service, childIndex) => ({
         "@type": "Offer",
@@ -87,7 +95,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ lang:
         itemOffered: {
           "@type": "MedicalProcedure",
           name: service.title,
-          description: dict.services.items[service.slug].blurb,
+          description: service.blurb,
         },
       })),
     })),
@@ -117,7 +125,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ lang:
                 </div>
                 <div className="border-l border-ivory-400 pl-10">
                   <dt className="label-micro">{t.servicesLabel}</dt>
-                  <dd className="mt-1 font-display text-3xl text-ink-900">{serviceOrder.length}</dd>
+                  <dd className="mt-1 font-display text-3xl text-ink-900">{serviceCount}</dd>
                 </div>
               </dl>
 
@@ -167,7 +175,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ lang:
                     {category.title}
                   </h2>
                   <p className="mt-5 text-base leading-relaxed text-ink-700">
-                    {dict.services.categories[category.slug].lead}
+                    {category.lead}
                   </p>
 
                   <Link

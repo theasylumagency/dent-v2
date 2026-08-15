@@ -70,6 +70,66 @@ for (const locale of others) {
   if (!missing.length && !extra.length) console.log("  ✓ key parity ok");
 }
 
+/* --- seed archive -------------------------------------------------------
+   `scripts/seed-data/content/*.json` holds the prose that moved into Payload.
+   The site never reads it, but `seed.ts` indexes it by slug across all three
+   locales — `archive[locale].services.items[slug]` — so a key present in `ka`
+   and missing in `ru` is a crash on a fresh database rather than a missing
+   translation. Checked for parity, and only for parity: nothing here is
+   rendered, so length and sameness do not matter.
+   ------------------------------------------------------------------------ */
+const archiveDir = join(root, "scripts/seed-data/content");
+if (existsSync(join(archiveDir, `${base}.json`))) {
+  const loadArchive = (locale) =>
+    JSON.parse(readFileSync(join(archiveDir, `${locale}.json`), "utf8"));
+  const archiveBase = paths(loadArchive(base));
+
+  console.log("\nseed archive");
+  for (const locale of others) {
+    const localePaths = new Set(paths(loadArchive(locale)));
+    const missing = archiveBase.filter((p) => !localePaths.has(p));
+    if (missing.length) {
+      failed = true;
+      console.log(`  ✗ ${locale} missing (${missing.length}): ${missing.slice(0, 8).join(", ")}${missing.length > 8 ? " …" : ""}`);
+    } else {
+      console.log(`  ✓ ${locale} — ${localePaths.size}/${archiveBase.length} keys`);
+    }
+  }
+}
+
+/* --- search-result lengths ---------------------------------------------
+   Advisory, never fatal. Google truncates a long title or description for
+   display rather than rejecting it, and the `seo` global's caps are set well
+   above these numbers for that reason — but a description that gets cut off
+   mid-sentence in the results is still a description nobody finishes reading.
+   Listing them by path is what makes them fixable.
+   ------------------------------------------------------------------------ */
+const LIMITS = { title: 60, description: 155 };
+
+const metaPaths = (locale) => {
+  const dict = load(locale);
+  return paths(dict)
+    .filter((p) => /(^|\.)(metaTitle|metaDescription)$|^meta\.(title|description)$/.test(p))
+    .map((p) => {
+      const value = valueAt(dict, p);
+      const kind = /Description$|\.description$/.test(p) ? "description" : "title";
+      return { path: p, kind, length: typeof value === "string" ? [...value].length : 0 };
+    })
+    .filter((entry) => entry.length > LIMITS[entry.kind]);
+};
+
+console.log("\nsearch-result lengths");
+let overLong = 0;
+for (const locale of [base, ...others]) {
+  for (const entry of metaPaths(locale)) {
+    overLong += 1;
+    console.log(
+      `  ! ${locale}.${entry.path} — ${entry.length} chars (aim ${LIMITS[entry.kind]})`,
+    );
+  }
+}
+if (!overLong) console.log("  ✓ every title and description is within the recommended length");
+
 /* --- referenced assets ------------------------------------------------- */
 const assets = [
   ...basePaths

@@ -5,18 +5,16 @@ import { notFound } from "next/navigation";
 import { htmlLang, isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { route } from "@/lib/nav";
-import {
-  categoryOrder,
-  getServiceCategories,
-  getServiceCategory,
-  isCategorySlug,
-} from "@/lib/services";
+import { getServiceCategories } from "@/lib/services";
+import { categoryOrder, isCategorySlug } from "@/lib/services-shared";
+import { getCategorySeo } from "@/lib/seo";
 import { site } from "@/lib/site";
 import { ArrowUpRight, Sparkle } from "@/components/ui/icons";
 import ServiceIcon from "@/components/ui/ServiceIcons";
 import Reveal from "@/components/ui/Reveal";
 import PageHero from "@/components/services/PageHero";
 import BookingCta from "@/components/services/BookingCta";
+import BookingTrigger from "@/components/booking/BookingTrigger";
 
 /* Only the category is enumerated here — `[lang]` is owned by the locale
    layout, and Next composes the two sets. */
@@ -34,10 +32,14 @@ export async function generateMetadata({
 
   const dict = await getDictionary(lang);
   const copy = dict.services.categories[category];
-
-  return {
+  const meta = await getCategorySeo(category, lang, {
     title: copy.metaTitle,
     description: copy.metaDescription,
+  });
+
+  return {
+    title: meta.title,
+    description: meta.description,
     alternates: {
       canonical: `/${lang}/services/${category}`,
       languages: Object.fromEntries([
@@ -48,8 +50,8 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       siteName: site.name,
-      title: copy.metaTitle,
-      description: copy.metaDescription,
+      title: meta.title,
+      description: meta.description,
       locale: htmlLang[lang].replace("-", "_"),
       url: `/${lang}/services/${category}`,
     },
@@ -68,8 +70,16 @@ export default async function ServiceCategoryPage({
   const dict = await getDictionary(locale);
   const t = dict.services.page;
 
-  const current = getServiceCategory(dict, locale, category);
-  const others = getServiceCategories(dict, locale).filter((entry) => entry.slug !== category);
+  /* One query for all five, then split. Fetching the current category and
+     the "other directions" list separately would be two round trips for the
+     same rows. */
+  const categories = await getServiceCategories(dict.services.categories, locale);
+  const current = categories.find((entry) => entry.slug === category);
+  /* The direction exists as a route but has no services in the CMS — an
+     empty page is worse than an honest 404. */
+  if (!current) notFound();
+
+  const others = categories.filter((entry) => entry.slug !== category);
   const copy = dict.services.categories[category];
 
   const breadcrumbLd = {
@@ -105,7 +115,7 @@ export default async function ServiceCategoryPage({
       item: {
         "@type": "MedicalProcedure",
         name: service.title,
-        description: dict.services.items[service.slug].lead,
+        description: service.lead || service.blurb,
         url: `${site.url}/${locale}/services/${category}#${service.slug}`,
         provider: { "@type": "Dentist", "@id": `${site.url}/#clinic`, name: site.name },
       },
@@ -153,8 +163,6 @@ export default async function ServiceCategoryPage({
           <div className="lg:col-span-8">
             <div className="space-y-6">
               {current.items.map((service, index) => {
-                const detail = dict.services.items[service.slug];
-
                 return (
                   <Reveal key={service.slug} delay={Math.min(index, 3) * 60}>
                     {/* `scroll-mt` rather than relying on the global
@@ -170,23 +178,33 @@ export default async function ServiceCategoryPage({
                           <h2 className="font-display text-2xl leading-snug lg:text-3xl">
                             {service.title}
                           </h2>
-                          <p className="mt-1.5 text-sm text-ink-600">{detail.blurb}</p>
+                          <p className="mt-1.5 text-sm text-ink-600">{service.blurb}</p>
                         </div>
                       </div>
 
-                      <p className="mt-7 text-base leading-relaxed text-ink-700">{detail.lead}</p>
+                      {service.lead && (
+                        <p className="mt-7 text-base leading-relaxed text-ink-700">
+                          {service.lead}
+                        </p>
+                      )}
 
-                      <div className="mt-7 h-px w-full bg-ivory-400" aria-hidden="true" />
+                      {service.whatsIncluded.length > 0 && (
+                        <>
+                          <div className="mt-7 h-px w-full bg-ivory-400" aria-hidden="true" />
 
-                      <h3 className="mt-6 label-micro">{t.whatsIncluded}</h3>
-                      <ul className="mt-4 space-y-3">
-                        {detail.points.map((point) => (
-                          <li key={point} className="flex items-start gap-3">
-                            <Sparkle className="mt-1 h-3.5 w-3.5 shrink-0 text-accent-500" />
-                            <span className="text-base leading-relaxed text-ink-700">{point}</span>
-                          </li>
-                        ))}
-                      </ul>
+                          <h3 className="mt-6 label-micro">{t.whatsIncluded}</h3>
+                          <ul className="mt-4 space-y-3">
+                            {service.whatsIncluded.map((point) => (
+                              <li key={point} className="flex items-start gap-3">
+                                <Sparkle className="mt-1 h-3.5 w-3.5 shrink-0 text-accent-500" />
+                                <span className="text-base leading-relaxed text-ink-700">
+                                  {point}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
                     </article>
                   </Reveal>
                 );
@@ -234,9 +252,9 @@ export default async function ServiceCategoryPage({
                   <p className="mt-3 text-sm leading-relaxed text-ink-700">
                     {dict.contact.lead}
                   </p>
-                  <Link href={route(locale, "contact")} className="btn-primary mt-6 w-full">
+                  <BookingTrigger className="btn-primary mt-6 w-full">
                     {dict.nav.book}
-                  </Link>
+                  </BookingTrigger>
                 </div>
               </Reveal>
             </div>

@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 
 import { htmlLang, isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
-import { deviceOrder, getDeviceGroups, getManufacturers } from "@/lib/equipment";
+import { getDeviceCount, getDeviceGroups, getManufacturers } from "@/lib/equipment";
+import { getSeo } from "@/lib/seo";
 import { site } from "@/lib/site";
 import Reveal from "@/components/ui/Reveal";
 import PageHero from "@/components/services/PageHero";
@@ -22,10 +23,14 @@ export async function generateMetadata({
   if (!isLocale(lang)) return {};
   const dict = await getDictionary(lang);
   const t = dict.technology.page;
-
-  return {
+  const meta = await getSeo("technology", lang, {
     title: t.metaTitle,
     description: t.metaDescription,
+  });
+
+  return {
+    title: meta.title,
+    description: meta.description,
     alternates: {
       canonical: `/${lang}/technology`,
       languages: Object.fromEntries([
@@ -36,8 +41,8 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       siteName: site.name,
-      title: t.metaTitle,
-      description: t.metaDescription,
+      title: meta.title,
+      description: meta.description,
       locale: htmlLang[lang].replace("-", "_"),
       url: `/${lang}/technology`,
     },
@@ -51,8 +56,11 @@ export default async function TechnologyPage({ params }: { params: Promise<{ lan
   const locale = lang as Locale;
   const dict = await getDictionary(locale);
   const t = dict.technology.page;
-  const groups = getDeviceGroups(dict, locale);
-  const manufacturers = getManufacturers();
+  const [groups, manufacturers, deviceCount] = await Promise.all([
+    getDeviceGroups(t.groups, locale),
+    getManufacturers(locale),
+    getDeviceCount(),
+  ]);
 
   const cardLabels = {
     manufacturer: t.manufacturerLabel,
@@ -88,7 +96,7 @@ export default async function TechnologyPage({ params }: { params: Promise<{ lan
     "@type": "ItemList",
     name: t.title,
     url: `${site.url}/${locale}/technology`,
-    numberOfItems: deviceOrder.length,
+    numberOfItems: deviceCount,
     itemListElement: groups
       .flatMap((group) => group.items)
       .map((device, index) => ({
@@ -124,7 +132,7 @@ export default async function TechnologyPage({ params }: { params: Promise<{ lan
               <dl className="flex items-center">
                 <div className="pr-10">
                   <dt className="label-micro">{t.devicesLabel}</dt>
-                  <dd className="mt-1 font-display text-3xl text-ink-900">{deviceOrder.length}</dd>
+                  <dd className="mt-1 font-display text-3xl text-ink-900">{deviceCount}</dd>
                 </div>
                 <div className="border-l border-ivory-400 pl-10">
                   <dt className="label-micro">{t.manufacturersLabel}</dt>

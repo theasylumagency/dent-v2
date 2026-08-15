@@ -7,8 +7,10 @@ import { useEffect, useRef, useState } from "react";
 
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { getMegaColumns, getNavItems, homeHref, route } from "@/lib/nav";
-import { media, site, whatsappHref } from "@/lib/site";
+import { getNavItems, homeHref, route } from "@/lib/nav";
+import type { ServiceCategory } from "@/lib/services-shared";
+import type { Clinic } from "@/lib/clinic";
+import { media, site } from "@/lib/site";
 import {
   ArrowUpRight,
   ChevronDown,
@@ -21,17 +23,38 @@ import {
   WhatsApp,
 } from "@/components/ui/icons";
 import LanguageSwitcher from "./LanguageSwitcher";
+import BookingTrigger from "@/components/booking/BookingTrigger";
+import { useBooking } from "@/components/booking/BookingProvider";
 
-type Props = { dict: Dictionary; lang: Locale };
+/**
+ * `megaColumns` and `clinic` arrive as props rather than being fetched here:
+ * this is a client component and both come from the CMS. The layout is a
+ * server component, so it does the queries and hands the results down — the
+ * same arrangement `NewsList` uses.
+ *
+ * Importing `lib/clinic` here directly would pull the Payload SDK into the
+ * browser bundle and fail with `Can't resolve 'fs'`. The type import is safe;
+ * the value import is not.
+ */
+type Props = {
+  dict: Dictionary;
+  lang: Locale;
+  megaColumns: ServiceCategory[];
+  clinic: Clinic;
+};
 
 /** Section ids on the home page, in document order — drives scroll-spy. */
-const SECTION_IDS = ["clinic", "services", "team", "technology", "faq", "contact"] as const;
+/* Ids match nav keys, because the scroll-spy result is compared against
+   `item.key` directly. The home page's clinic and team sections both feed
+   the one "about" nav item now, so only the first of them carries the id. */
+const SECTION_IDS = ["about", "services", "technology", "faq"] as const;
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export default function SiteHeader({ dict, lang }: Props) {
+export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
   const pathname = usePathname();
+  const { isOpen: bookingOpen } = useBooking();
   const [scrolled, setScrolled] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -43,7 +66,6 @@ export default function SiteHeader({ dict, lang }: Props) {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const navItems = getNavItems(dict, lang);
-  const megaColumns = getMegaColumns(dict, lang);
 
   /* Which nav item is highlighted.
      On the home page that is the scroll-spy below. Everywhere else the
@@ -129,6 +151,7 @@ export default function SiteHeader({ dict, lang }: Props) {
   useEffect(() => {
     if (!drawerOpen) return;
     const node = drawerRef.current;
+    const menuButton = menuButtonRef.current;
     if (!node) return;
 
     node.querySelector<HTMLElement>(FOCUSABLE)?.focus();
@@ -155,7 +178,7 @@ export default function SiteHeader({ dict, lang }: Props) {
     node.addEventListener("keydown", onKeyDown);
     return () => {
       node.removeEventListener("keydown", onKeyDown);
-      menuButtonRef.current?.focus();
+      menuButton?.focus();
     };
   }, [drawerOpen]);
 
@@ -174,6 +197,29 @@ export default function SiteHeader({ dict, lang }: Props) {
      drawer can start exactly below it. */
   const barHeight = scrolled ? 64 : 80;
 
+  /* ------------------------------------------------------------------
+     Overlay mode.
+
+     The home page opens on a full-screen brand-blue hero, so the header
+     sits *on* it rather than above it: no fill, no border, light type.
+     The moment any of that stops being true — the page scrolls, a menu
+     opens — the bar reverts to the ivory treatment every inner page
+     uses, because from then on it is over ivory content.
+
+     `homeHref(lang)` rather than a `/${lang}` literal so this keeps
+     working if the locale routing ever gains a prefix.
+     ------------------------------------------------------------------ */
+  const overlay = pathname === homeHref(lang) && !scrolled && !megaOpen && !drawerOpen && !bookingOpen;
+
+  /* accent-600 is the icon colour on ivory and measures 2.1:1 against the
+     hero — three steps up the same ramp is the overlay equivalent. */
+  const accentIcon = overlay ? "text-accent-200" : "text-accent-600";
+  /* Pills: phone, language, hamburger. Same shape either way, and both
+     borders clear the 3:1 that WCAG 1.4.11 asks of a control boundary. */
+  const pill = overlay
+    ? "border-white/45 bg-white/10 text-ivory-50 hover:border-accent-200 hover:bg-white/20"
+    : "border-ivory-600 bg-ivory-50 text-ink-800 hover:border-accent-500 hover:text-accent-700";
+
   return (
     <header
       className="fixed inset-x-0 top-0 z-50"
@@ -182,19 +228,23 @@ export default function SiteHeader({ dict, lang }: Props) {
     >
       {/* Utility strip ------------------------------------------------ */}
       <div
-        className={`hidden overflow-hidden border-b border-accent-200 bg-accent-50 transition-[max-height,opacity] duration-500 lg:block ${
-          scrolled ? "max-h-0 opacity-0" : "max-h-12 opacity-100"
-        }`}
+        className={`hidden overflow-hidden border-b transition-[max-height,opacity,background-color,border-color] duration-500 lg:block ${
+          overlay ? "border-white/15 bg-transparent" : "border-accent-200 bg-accent-50"
+        } ${scrolled ? "max-h-0 opacity-0" : "max-h-12 opacity-100"}`}
       >
-        <div className="shell flex h-10 items-center justify-between text-[0.7rem] text-ink-600">
+        <div
+          className={`shell flex h-10 items-center justify-between text-[0.7rem] transition-colors duration-500 ${
+            overlay ? "text-ivory-200/85" : "text-ink-600"
+          }`}
+        >
           <div className="flex items-center gap-6">
             <span className="inline-flex items-center gap-1.5">
-              <Pin className="h-3.5 w-3.5 text-accent-600" />
-              {dict.contact.address}
+              <Pin className={`h-3.5 w-3.5 ${accentIcon}`} />
+              {clinic.address}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5 text-accent-600" />
-              {dict.contact.hours}
+              <Clock className={`h-3.5 w-3.5 ${accentIcon}`} />
+              {clinic.hours}
             </span>
           </div>
           {/* The group-brand link used to sit here. WhatsApp and email take
@@ -203,20 +253,24 @@ export default function SiteHeader({ dict, lang }: Props) {
               would otherwise appear twice on an unscrolled desktop. */}
           <div className="flex items-center gap-5">
             <a
-              href={whatsappHref}
+              href={clinic.whatsappHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 transition-colors hover:text-accent-700"
+              className={`inline-flex items-center gap-1.5 transition-colors ${
+                overlay ? "hover:text-ivory-50" : "hover:text-accent-700"
+              }`}
             >
-              <WhatsApp className="h-3.5 w-3.5 text-accent-600" />
+              <WhatsApp className={`h-3.5 w-3.5 ${accentIcon}`} />
               {dict.nav.whatsapp}
             </a>
             <a
-              href={`mailto:${site.email}`}
-              className="inline-flex items-center gap-1.5 transition-colors hover:text-accent-700"
+              href={`mailto:${clinic.email}`}
+              className={`inline-flex items-center gap-1.5 transition-colors ${
+                overlay ? "hover:text-ivory-50" : "hover:text-accent-700"
+              }`}
             >
-              <Mail className="h-3.5 w-3.5 text-accent-600" />
-              {site.email}
+              <Mail className={`h-3.5 w-3.5 ${accentIcon}`} />
+              {clinic.email}
             </a>
           </div>
         </div>
@@ -225,9 +279,11 @@ export default function SiteHeader({ dict, lang }: Props) {
       {/* Main bar ------------------------------------------------------ */}
       <div
         className={`border-b transition-[background-color,border-color,box-shadow] duration-500 ${
-          scrolled || megaOpen || drawerOpen
+          scrolled || megaOpen || drawerOpen || bookingOpen
             ? "border-ivory-400 bg-ivory-50/90 shadow-soft backdrop-blur-xl"
-            : "border-transparent bg-ivory-100/80 backdrop-blur-md"
+            : overlay
+              ? "border-transparent bg-transparent"
+              : "border-transparent bg-ivory-100/80 backdrop-blur-md"
         }`}
       >
         <div
@@ -250,8 +306,18 @@ export default function SiteHeader({ dict, lang }: Props) {
               className={`w-auto transition-[height] duration-500 ${scrolled ? "h-9" : "h-11 lg:h-12"}`}
             />
             <span className="hidden flex-col leading-none sm:flex">
-              <span className="font-display text-lg tracking-[0.02em] text-ink-900">Total Charm</span>
-              <span className="text-[0.6rem] uppercase tracking-[0.42em] text-accent-600">Dent</span>
+              <span
+                className={`font-display text-lg tracking-[0.02em] transition-colors duration-500 ${
+                  overlay ? "text-ivory-50" : "text-ink-900"
+                }`}
+              >
+                Total Charm
+              </span>
+              <span
+                className={`text-[0.6rem] uppercase tracking-[0.42em] transition-colors duration-500 ${accentIcon}`}
+              >
+                Dent
+              </span>
             </span>
           </Link>
 
@@ -271,8 +337,12 @@ export default function SiteHeader({ dict, lang }: Props) {
                   aria-controls="mega-menu"
                   className={`group flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm transition-colors ${
                     megaOpen || isActive
-                      ? "bg-accent-50 text-accent-700"
-                      : "text-ink-700 hover:text-accent-700"
+                      ? overlay
+                        ? "bg-white/12 text-ivory-50"
+                        : "bg-accent-50 text-accent-700"
+                      : overlay
+                        ? "text-ivory-200 hover:text-ivory-50"
+                        : "text-ink-700 hover:text-accent-700"
                   }`}
                 >
                   {item.label}
@@ -288,8 +358,12 @@ export default function SiteHeader({ dict, lang }: Props) {
                   aria-current={isActive ? "true" : undefined}
                   className={`rounded-full px-4 py-2.5 text-sm transition-colors ${
                     isActive
-                      ? "bg-accent-50 font-medium text-accent-700"
-                      : "text-ink-700 hover:text-accent-700"
+                      ? overlay
+                        ? "bg-white/12 font-medium text-ivory-50"
+                        : "bg-accent-50 font-medium text-accent-700"
+                      : overlay
+                        ? "text-ivory-200 hover:text-ivory-50"
+                        : "text-ink-700 hover:text-accent-700"
                   }`}
                 >
                   {item.label}
@@ -303,20 +377,20 @@ export default function SiteHeader({ dict, lang }: Props) {
                 number used to disappear entirely, which is the width of
                 a great many laptops. */}
             <a
-              href={`tel:${site.phoneHref}`}
-              className="hidden items-center gap-2 rounded-full border border-ivory-600 bg-ivory-50 px-3.5 py-2 text-xs text-ink-800 transition-colors hover:border-accent-500 hover:text-accent-700 lg:inline-flex"
+              href={`tel:${clinic.phoneHref}`}
+              className={`hidden items-center gap-2 rounded-full border px-3.5 py-2 text-xs transition-colors lg:inline-flex ${pill}`}
             >
-              <Phone className="h-3.5 w-3.5 text-accent-600" />
-              {site.phone}
+              <Phone className={`h-3.5 w-3.5 ${accentIcon}`} />
+              {clinic.phone}
             </a>
 
             <div className="hidden sm:block">
-              <LanguageSwitcher current={lang} label={dict.nav.language} />
+              <LanguageSwitcher current={lang} label={dict.nav.language} onDark={overlay} />
             </div>
 
-            <Link href={route(lang, "contact")} className="btn-primary hidden !px-6 !py-2.5 md:inline-flex">
+            <BookingTrigger className="btn-primary hidden !px-6 !py-2.5 md:inline-flex">
               {dict.nav.book}
-            </Link>
+            </BookingTrigger>
 
             <button
               ref={menuButtonRef}
@@ -325,7 +399,7 @@ export default function SiteHeader({ dict, lang }: Props) {
               aria-label={drawerOpen ? dict.nav.closeMenu : dict.nav.openMenu}
               aria-expanded={drawerOpen}
               aria-controls="mobile-drawer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ivory-600 bg-ivory-50 text-ink-800 transition-colors hover:border-accent-500 hover:text-accent-700 lg:hidden"
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors lg:hidden ${pill}`}
             >
               {drawerOpen ? <Close /> : <Menu />}
             </button>
@@ -476,27 +550,27 @@ export default function SiteHeader({ dict, lang }: Props) {
             {/* Repeated here because the drawer (z-40) sits above the
                 mobile action bar (z-30) — without it the menu is the one
                 place on mobile with no way to book. */}
-            <Link href={route(lang, "contact")} className="btn-primary w-full">
+            <BookingTrigger onClick={() => setDrawerOpen(false)} className="btn-primary w-full">
               {dict.nav.book}
-            </Link>
+            </BookingTrigger>
 
             <dl className="space-y-3 text-sm">
               <div className="flex items-start gap-3 text-ink-700">
                 <Pin className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
                 <dt className="sr-only">{dict.contact.addressLabel}</dt>
-                <dd>{dict.contact.address}</dd>
+                <dd>{clinic.address}</dd>
               </div>
               <div className="flex items-start gap-3 text-ink-700">
                 <Clock className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
                 <dt className="sr-only">{dict.contact.hoursLabel}</dt>
-                <dd>{dict.contact.hours}</dd>
+                <dd>{clinic.hours}</dd>
               </div>
               <div className="flex items-start gap-3 text-ink-700">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
                 <dt className="sr-only">{dict.contact.phoneLabel}</dt>
                 <dd>
-                  <a href={`tel:${site.phoneHref}`} className="hover:text-accent-700">
-                    {site.phone}
+                  <a href={`tel:${clinic.phoneHref}`} className="hover:text-accent-700">
+                    {clinic.phone}
                   </a>
                 </dd>
               </div>
@@ -505,7 +579,7 @@ export default function SiteHeader({ dict, lang }: Props) {
                 <dt className="sr-only">{dict.nav.whatsapp}</dt>
                 <dd>
                   <a
-                    href={whatsappHref}
+                    href={clinic.whatsappHref}
                     target="_blank"
                     rel="noreferrer"
                     className="hover:text-accent-700"

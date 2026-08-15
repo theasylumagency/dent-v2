@@ -1,5 +1,7 @@
+import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { site, whatsappHref } from "@/lib/site";
+import { getFaq } from "@/lib/faq";
+import { getClinic } from "@/lib/clinic";
 import { Phone, WhatsApp } from "@/components/ui/icons";
 import Reveal from "@/components/ui/Reveal";
 
@@ -17,19 +19,25 @@ import Reveal from "@/components/ui/Reveal";
  * expanded state are all native, and every answer is present in the DOM
  * for crawlers whether or not it is open.
  *
- * Consultation fees are the clinic's confirmed figures (50 ₾ first visit,
- * 25 ₾ follow-up) and live in the dictionaries — update all three locales
- * together if they change.
+ * Consultation fees quoted in the answers are the clinic's confirmed
+ * figures (50 ₾ first visit, 25 ₾ follow-up). They now live in the CMS, so
+ * a price change is an edit in the admin rather than a deploy — but the
+ * figure is written into the prose of one answer in three locales, and the
+ * numeric fields in `clinic-info` feed the structured data separately. Both
+ * have to be edited. The admin description on the fee fields says so.
  *
  * TODO(client): the clinical answers are drawn from copy already approved
  * elsewhere on this page, but should still get a sign-off from the chief
  * doctor before launch.
  */
-export default function Faq({ dict }: { dict: Dictionary }) {
+export default async function Faq({ dict, lang }: { dict: Dictionary; lang: Locale }) {
+  const [items, clinic] = await Promise.all([getFaq(lang), getClinic(lang, dict.contact)]);
+  if (!items.length) return null;
+
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: dict.faq.items.map((item) => ({
+    mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.q,
       acceptedAnswer: { "@type": "Answer", text: item.a },
@@ -47,12 +55,12 @@ export default function Faq({ dict }: { dict: Dictionary }) {
           <p className="mt-6 text-base leading-relaxed text-ink-700">{dict.faq.lead}</p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href={`tel:${site.phoneHref}`} className="btn-ghost !py-3 !text-sm">
+            <a href={`tel:${clinic.phoneHref}`} className="btn-ghost !py-3 !text-sm">
               <Phone className="h-4 w-4 text-accent-600" />
-              {site.phone}
+              {clinic.phone}
             </a>
             <a
-              href={whatsappHref}
+              href={clinic.whatsappHref}
               target="_blank"
               rel="noreferrer"
               className="btn-ghost !py-3 !text-sm"
@@ -65,7 +73,7 @@ export default function Faq({ dict }: { dict: Dictionary }) {
 
         <div className="lg:col-span-8">
           <ul className="border-t border-ivory-400">
-            {dict.faq.items.map((item, index) => (
+            {items.map((item, index) => (
               <li key={item.q} className="border-b border-ivory-400">
                 <Reveal delay={Math.min(index, 5) * 40}>
                   <details className="group">

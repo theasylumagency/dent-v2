@@ -4,14 +4,27 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { getNavItems, route } from "@/lib/nav";
-import { getServiceCategories } from "@/lib/services";
-import { media, site, whatsappHref } from "@/lib/site";
+import type { ServiceCategory } from "@/lib/services-shared";
+import type { Clinic } from "@/lib/clinic";
+import { media, site } from "@/lib/site";
 import { ArrowUpRight, Clock, Mail, Phone, Pin, WhatsApp } from "@/components/ui/icons";
+import BookingTrigger from "@/components/booking/BookingTrigger";
 
-export default function SiteFooter({ dict, lang }: { dict: Dictionary; lang: Locale }) {
+/* `categories` and `clinic` are passed in rather than fetched: the layout
+   already queries both for the header, and one round trip is enough. The
+   footer mirrors the home page — five directions, not sixteen links. */
+export default function SiteFooter({
+  dict,
+  lang,
+  categories,
+  clinic,
+}: {
+  dict: Dictionary;
+  lang: Locale;
+  categories: ServiceCategory[];
+  clinic: Clinic;
+}) {
   const navItems = getNavItems(dict, lang);
-  /* The footer mirrors the home page: five directions, not sixteen links. */
-  const categories = getServiceCategories(dict, lang);
   const year = new Date().getFullYear();
 
   return (
@@ -34,7 +47,7 @@ export default function SiteFooter({ dict, lang }: { dict: Dictionary; lang: Loc
 
           <div className="mt-8 flex gap-3">
             <a
-              href={site.social.facebook}
+              href={clinic.social.facebook}
               target="_blank"
               rel="noreferrer"
               aria-label="Facebook"
@@ -45,7 +58,7 @@ export default function SiteFooter({ dict, lang }: { dict: Dictionary; lang: Loc
               </svg>
             </a>
             <a
-              href={site.social.instagram}
+              href={clinic.social.instagram}
               target="_blank"
               rel="noreferrer"
               aria-label="Instagram"
@@ -112,35 +125,39 @@ export default function SiteFooter({ dict, lang }: { dict: Dictionary; lang: Loc
           <ul className="mt-5 space-y-4 text-sm text-ink-700">
             <li className="flex items-start gap-3">
               <Pin className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
-              <a href={site.maps} target="_blank" rel="noreferrer" className="hover:text-accent-700">
-                {dict.contact.address}
+              <a href={clinic.maps} target="_blank" rel="noreferrer" className="hover:text-accent-700">
+                {clinic.address}
               </a>
             </li>
             <li className="flex items-start gap-3">
               <Clock className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
-              <span>{dict.contact.hours}</span>
+              <span>{clinic.hours}</span>
             </li>
             <li className="flex items-start gap-3">
               <Phone className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
               <span className="flex flex-col gap-1">
-                <a href={`tel:${site.phoneHref}`} className="hover:text-accent-700">
-                  {site.phone}
+                <a href={`tel:${clinic.phoneHref}`} className="hover:text-accent-700">
+                  {clinic.phone}
                 </a>
-                <a href={`tel:${site.phoneAltHref}`} className="text-ink-600 hover:text-accent-700">
-                  {site.phoneAlt}
-                </a>
+                {/* The landline is optional in the CMS — an empty second line
+                    would render as a blank link, not as nothing. */}
+                {clinic.phoneAlt ? (
+                  <a href={`tel:${clinic.phoneAltHref}`} className="text-ink-600 hover:text-accent-700">
+                    {clinic.phoneAlt}
+                  </a>
+                ) : null}
               </span>
             </li>
             <li className="flex items-start gap-3">
               <WhatsApp className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
-              <a href={whatsappHref} target="_blank" rel="noreferrer" className="hover:text-accent-700">
+              <a href={clinic.whatsappHref} target="_blank" rel="noreferrer" className="hover:text-accent-700">
                 {dict.nav.whatsapp}
               </a>
             </li>
             <li className="flex items-start gap-3">
               <Mail className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
-              <a href={`mailto:${site.email}`} className="hover:text-accent-700">
-                {site.email}
+              <a href={`mailto:${clinic.email}`} className="hover:text-accent-700">
+                {clinic.email}
               </a>
             </li>
           </ul>
@@ -148,13 +165,12 @@ export default function SiteFooter({ dict, lang }: { dict: Dictionary; lang: Loc
           {/* Took the slot the group-brand card used to occupy. Keeps the
               column's visual weight and ends the footer on the action we
               actually want, instead of on an outbound link. */}
-          <Link
-            href={route(lang, "contact")}
+          <BookingTrigger
             className="group mt-8 flex items-center justify-between rounded-2xl border border-accent-200 bg-accent-50 px-4 py-3.5 transition-colors hover:border-accent-500"
           >
             <span className="text-sm font-medium text-ink-900">{dict.nav.book}</span>
-            <ArrowUpRight className="h-4 w-4 text-accent-700 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </Link>
+            <span className="text-accent-700" aria-hidden="true">+</span>
+          </BookingTrigger>
         </div>
       </div>
 
