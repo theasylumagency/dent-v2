@@ -100,7 +100,7 @@ export const media = {
     wide: { webm: "/media/hero_video_16_9.webm", mp4: "/media/hero_video_16_9.mp4" },
     tall: { webm: "/media/hero_video_9_16.webm", mp4: "/media/hero_video_9_16.mp4" },
   },
-  heroPoster: "/media/hero-poster.jpg",
+  heroPoster: "/media/hero-poster.webp",
   interior: ["/interior/totcharm_dentinner2.webp", "/interior/totcharm_dentinner1.webp"],
   /**
    * TODO(client): replace with real photography. These slots are deliberately

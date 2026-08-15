@@ -9,7 +9,7 @@ import { getServiceCategories } from "@/lib/services";
 import { getDoctors } from "@/lib/team";
 import { getClinic } from "@/lib/clinic";
 import { getSeo } from "@/lib/seo";
-import { site } from "@/lib/site";
+import { media, site } from "@/lib/site";
 import SiteHeader from "@/components/nav/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import MobileActionBar from "@/components/nav/MobileActionBar";
@@ -99,7 +99,7 @@ export async function generateMetadata({
       description: meta.description,
       locale: htmlLang[lang].replace("-", "_"),
       url: `/${lang}`,
-      images: [{ url: "/media/hero-poster.jpg", width: 1920, height: 1080, alt: dict.meta.ogAlt }],
+      images: [{ url: media.heroPoster, width: 1200, height: 1166, alt: dict.meta.ogAlt }],
     },
     /* Without an explicit card type X falls back to a small thumbnail;
        `summary_large_image` is what makes a shared link look deliberate. */
@@ -107,7 +107,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: meta.title,
       description: meta.description,
-      images: [{ url: "/media/hero-poster.jpg", alt: dict.meta.ogAlt }],
+      images: [{ url: media.heroPoster, alt: dict.meta.ogAlt }],
     },
     /* SVG first for anything modern, .ico as the fallback.
        TODO(design): `apple` still points at the SVG, which iOS ignores —
@@ -150,7 +150,7 @@ export default async function LocaleLayout({
     name: site.name,
     description: meta.description,
     url: `${site.url}/${locale}`,
-    image: `${site.url}/media/hero-poster.jpg`,
+    image: `${site.url}${media.heroPoster}`,
     logo: `${site.url}/brand/logo.svg`,
     telephone: clinic.phone,
     email: clinic.email,

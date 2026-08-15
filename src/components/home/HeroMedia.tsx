@@ -7,81 +7,155 @@ import type { Dictionary } from "@/i18n/dictionaries";
 import { media } from "@/lib/site";
 import { Pause, Play } from "@/components/ui/icons";
 
-/**
- * Hero media — fills whatever box the hero hands it.
- *
- * The poster is a real <Image priority> and is always what paints first,
- * so it — not the video — is the LCP element. The video is layered on top
- * afterwards, and in one of two crops:
- *
- *   • ≥1024px — the 16:9 master, sitting in the right-hand panel.
- *   • below that — the 9:16 master, full-bleed behind the copy.
- *
- * `orientation` starts as `null` and is only resolved in an effect, which
- * is what keeps the server and first client render identical: picking a
- * crop during render would need `window`. It also means exactly one file
- * is ever requested — the losing crop is never in the DOM, so the browser
- * never speculatively fetches it.
- *
- * The video is still suppressed entirely for:
- *
- *   • `prefers-reduced-motion: reduce` — an autoplaying, looping clip is
- *     precisely what that setting exists to suppress. The global CSS
- *     reduced-motion rule only reaches CSS animations, never a <video>,
- *     so this has to be handled here.
- *   • Save-Data / metered connections. The mobile gate that used to live
- *     here was a blanket "no video below 1024px"; now that there is a
- *     purpose-made vertical crop the clip is wanted on phones, and this
- *     is the check that should have been carrying that decision anyway.
- *
- * Everyone who does get the video also gets a control to stop it. Motion
- * sensitivity is not limited to people who have found the OS setting.
- */
 type Orientation = "wide" | "tall";
+type Codec = keyof (typeof media.heroVideo)[Orientation];
+type VideoSource = {
+  orientation: Orientation;
+  src: string;
+};
 
+type DataSavingConnection = EventTarget & {
+  saveData?: boolean;
+};
+
+type NavigatorWithConnection = Navigator & {
+  connection?: DataSavingConnection;
+};
+
+/**
+ * The poster is the only media request in the critical render. It is served
+ * directly (without an additional Next image-optimizer URL), while the video
+ * is not mounted until the window load event has passed and the browser gets
+ * an idle turn.
+ *
+ * At activation time we choose one crop and one codec, then put exactly one
+ * URL on the video element. Keeping the poster as a separate layer means the
+ * video needs no `poster` attribute and cannot trigger a second poster fetch.
+ */
 export default function HeroMedia({ dict }: { dict: Dictionary }) {
-  const [orientation, setOrientation] = useState<Orientation | null>(null);
+  const [videoSource, setVideoSource] = useState<VideoSource | null>(null);
+  const [videoReady, setVideoReady] = useState(false);
   const [playing, setPlaying] = useState(true);
+  const activeSourceRef = useRef<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: no-preference)");
     const wide = window.matchMedia("(min-width: 1024px)");
-    const saveData =
-      typeof navigator !== "undefined" &&
-      (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData ===
-        true;
+    const connection = (navigator as NavigatorWithConnection).connection;
+    const codecProbe = document.createElement("video");
+    const codec: Codec = codecProbe.canPlayType("video/webm") ? "webm" : "mp4";
 
-    const decide = () => {
-      if (!motion.matches || saveData) {
-        setOrientation(null);
-        return;
-      }
-      setOrientation(wide.matches ? "wide" : "tall");
+    let pageLoaded = document.readyState === "complete";
+    let activationScheduled = false;
+    let cancelScheduledActivation: (() => void) | undefined;
+
+    const videoIsAllowed = () => motion.matches && connection?.saveData !== true;
+
+    const sourceForCurrentViewport = (): VideoSource => {
+      const orientation: Orientation = wide.matches ? "wide" : "tall";
+      return {
+        orientation,
+        src: media.heroVideo[orientation][codec],
+      };
     };
 
-    decide();
-    motion.addEventListener("change", decide);
-    wide.addEventListener("change", decide);
+    const applyCurrentSource = () => {
+      if (!videoIsAllowed()) return;
+
+      const nextSource = sourceForCurrentViewport();
+      if (activeSourceRef.current === nextSource.src) return;
+
+      activeSourceRef.current = nextSource.src;
+      setVideoReady(false);
+      setPlaying(true);
+      setVideoSource(nextSource);
+    };
+
+    const deactivateVideo = () => {
+      cancelScheduledActivation?.();
+      cancelScheduledActivation = undefined;
+      activationScheduled = false;
+      activeSourceRef.current = null;
+      videoRef.current?.pause();
+      setVideoReady(false);
+      setVideoSource(null);
+    };
+
+    const scheduleActivation = () => {
+      if (!pageLoaded || activationScheduled || activeSourceRef.current || !videoIsAllowed()) {
+        return;
+      }
+
+      activationScheduled = true;
+
+      const activate = () => {
+        activationScheduled = false;
+        cancelScheduledActivation = undefined;
+        applyCurrentSource();
+      };
+
+      if ("requestIdleCallback" in window) {
+        const idleId = window.requestIdleCallback(activate, { timeout: 1500 });
+        cancelScheduledActivation = () => window.cancelIdleCallback(idleId);
+      } else {
+        const timeoutId = globalThis.setTimeout(activate, 0);
+        cancelScheduledActivation = () => globalThis.clearTimeout(timeoutId);
+      }
+    };
+
+    const handleLoad = () => {
+      pageLoaded = true;
+      scheduleActivation();
+    };
+
+    const handlePreferenceChange = () => {
+      if (videoIsAllowed()) {
+        scheduleActivation();
+      } else {
+        deactivateVideo();
+      }
+    };
+
+    const handleViewportChange = () => {
+      if (activeSourceRef.current) applyCurrentSource();
+    };
+
+    if (pageLoaded) {
+      scheduleActivation();
+    } else {
+      window.addEventListener("load", handleLoad, { once: true });
+    }
+
+    motion.addEventListener("change", handlePreferenceChange);
+    wide.addEventListener("change", handleViewportChange);
+    connection?.addEventListener("change", handlePreferenceChange);
+
     return () => {
-      motion.removeEventListener("change", decide);
-      wide.removeEventListener("change", decide);
+      window.removeEventListener("load", handleLoad);
+      motion.removeEventListener("change", handlePreferenceChange);
+      wide.removeEventListener("change", handleViewportChange);
+      connection?.removeEventListener("change", handlePreferenceChange);
+      cancelScheduledActivation?.();
     };
   }, []);
 
   const toggle = () => {
     const node = videoRef.current;
     if (!node) return;
+
     if (node.paused) {
-      void node.play();
-      setPlaying(true);
+      void node.play().catch(() => setPlaying(false));
     } else {
       node.pause();
-      setPlaying(false);
     }
   };
 
-  const sources = orientation ? media.heroVideo[orientation] : null;
+  const handleVideoError = () => {
+    activeSourceRef.current = null;
+    setVideoReady(false);
+    setVideoSource(null);
+  };
 
   return (
     <div className="absolute inset-0 overflow-hidden">
@@ -89,42 +163,39 @@ export default function HeroMedia({ dict }: { dict: Dictionary }) {
         src={media.heroPoster}
         alt=""
         fill
-        priority
+        unoptimized
+        loading="eager"
+        fetchPriority="high"
         sizes="(min-width: 1024px) 46vw, 100vw"
         className="object-cover"
       />
 
-      {sources && (
+      {videoSource && (
         <video
-          /* Keyed on the crop: swapping <source> children on a live
-             <video> does nothing without an explicit .load(), so on a
-             desktop↔mobile resize the element would keep playing the
-             old file. Remounting is the honest fix. */
-          key={orientation}
+          key={videoSource.src}
           ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
-          poster={media.heroPoster}
+          src={videoSource.src}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+            videoReady ? "opacity-100" : "opacity-0"
+          }`}
           autoPlay
           muted
           loop
           playsInline
-          preload="none"
+          preload="auto"
           aria-hidden="true"
-        >
-          <source src={sources.webm} type="video/webm" />
-          <source src={sources.mp4} type="video/mp4" />
-        </video>
+          onLoadedData={() => setVideoReady(true)}
+          onPlaying={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onError={handleVideoError}
+        />
       )}
 
-      {sources && (
+      {videoSource && (
         <button
           type="button"
           onClick={toggle}
           aria-label={playing ? dict.hero.pauseMotion : dict.hero.playMotion}
-          /* Top-right on phones, bottom-right on desktop. The mobile
-             hero stacks copy, two CTAs and the fixed action bar into
-             the lower half of the screen — a bottom-anchored control
-             there lands on top of one of them at some viewport height. */
           className="absolute right-4 top-24 z-20 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-white/10 text-ivory-50 backdrop-blur transition-colors hover:border-accent-200 hover:bg-white/20 lg:bottom-8 lg:right-8 lg:top-auto"
         >
           {playing ? <Pause /> : <Play />}
