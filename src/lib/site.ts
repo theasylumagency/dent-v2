@@ -93,8 +93,9 @@ export const media = {
    * `HeroMedia` picks the orientation at runtime and mounts only that
    * one, so the other is never fetched.
    *
-   * webm is listed first in the markup — it is roughly a quarter the
-   * size of the mp4 here — with mp4 as the Safari fallback.
+   * `HeroMedia` tests WebM support before mounting the video and assigns
+   * one URL only. WebM is roughly a quarter the size of the MP4 files;
+   * MP4 is selected only when the browser reports no WebM support.
    */
   heroVideo: {
     wide: { webm: "/media/hero_video_16_9.webm", mp4: "/media/hero_video_16_9.mp4" },
