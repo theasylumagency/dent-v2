@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:18.4
+    container_name: tcd-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: total_charm_dent
+      POSTGRES_USER: tcd
+      POSTGRES_PASSWORD: tcd_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - tcd_postgres_data:/var/lib/postgresql
+
+volumes:
+  tcd_postgres_data:

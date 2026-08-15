@@ -98,6 +98,11 @@ export async function POST(request: Request) {
   }
 
   const apiKey = process.env.RESEND_API_KEY;
+  /* Deliberately not read from the `clinic-info` global. That field is the
+     public contact address; this is where patient bookings are delivered.
+     Wiring them together would mean an editor tidying the address on the
+     contact page silently reroutes — or loses — every lead. `BOOKING_INBOX`
+     is the switch, and it is deployment configuration. */
   const to = process.env.BOOKING_INBOX ?? site.email;
   const from = process.env.BOOKING_FROM;
 

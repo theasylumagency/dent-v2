@@ -6,11 +6,14 @@ import "../globals.css";
 import { htmlLang, isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getServiceCategories } from "@/lib/services";
-import { getTeam } from "@/lib/team";
+import { getDoctors } from "@/lib/team";
+import { getClinic } from "@/lib/clinic";
+import { getSeo } from "@/lib/seo";
 import { site } from "@/lib/site";
 import SiteHeader from "@/components/nav/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import MobileActionBar from "@/components/nav/MobileActionBar";
+import BookingProvider from "@/components/booking/BookingProvider";
 
 /* --- Type stack -------------------------------------------------------
    Latin + Cyrillic come from the first family in each stack, Georgian
@@ -66,14 +69,18 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!isLocale(lang)) return {};
   const dict = await getDictionary(lang);
+  const meta = await getSeo("home", lang, {
+    title: dict.meta.title,
+    description: dict.meta.description,
+  });
 
   return {
     metadataBase: new URL(site.url),
     title: {
-      default: dict.meta.title,
+      default: meta.title,
       template: `%s — ${site.name}`,
     },
-    description: dict.meta.description,
+    description: meta.description,
     alternates: {
       canonical: `/${lang}`,
       languages: Object.fromEntries([
@@ -88,8 +95,8 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       siteName: site.name,
-      title: dict.meta.title,
-      description: dict.meta.description,
+      title: meta.title,
+      description: meta.description,
       locale: htmlLang[lang].replace("-", "_"),
       url: `/${lang}`,
       images: [{ url: "/media/hero-poster.jpg", width: 1920, height: 1080, alt: dict.meta.ogAlt }],
@@ -98,8 +105,8 @@ export async function generateMetadata({
        `summary_large_image` is what makes a shared link look deliberate. */
     twitter: {
       card: "summary_large_image",
-      title: dict.meta.title,
-      description: dict.meta.description,
+      title: meta.title,
+      description: meta.description,
       images: [{ url: "/media/hero-poster.jpg", alt: dict.meta.ogAlt }],
     },
     /* SVG first for anything modern, .ico as the fallback.
@@ -129,26 +136,30 @@ export default async function LocaleLayout({
 
   const locale = lang as Locale;
   const dict = await getDictionary(locale);
-  const categories = getServiceCategories(dict, locale);
-  const team = getTeam(dict);
+  const [categories, team, clinic, meta] = await Promise.all([
+    getServiceCategories(dict.services.categories, locale),
+    getDoctors(locale),
+    getClinic(locale, dict.contact),
+    getSeo("home", locale, { title: dict.meta.title, description: dict.meta.description }),
+  ]);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Dentist",
     "@id": `${site.url}/#clinic`,
     name: site.name,
-    description: dict.meta.description,
+    description: meta.description,
     url: `${site.url}/${locale}`,
     image: `${site.url}/media/hero-poster.jpg`,
     logo: `${site.url}/brand/logo.svg`,
-    telephone: site.phone,
-    email: site.email,
+    telephone: clinic.phone,
+    email: clinic.email,
     medicalSpecialty: "Dentistry",
-    hasMap: site.maps,
+    hasMap: clinic.maps,
     areaServed: { "@type": "City", name: "Tbilisi" },
     address: {
       "@type": "PostalAddress",
-      streetAddress: dict.contact.address,
+      streetAddress: clinic.address,
       addressLocality: "Tbilisi",
       postalCode: "0179",
       addressCountry: "GE",
@@ -160,19 +171,26 @@ export default async function LocaleLayout({
       opens: site.hours.opens,
       closes: site.hours.closes,
     },
+    /* The landline is dropped rather than emitted empty when the CMS has no
+       second number — a `ContactPoint` with `telephone: ""` is a broken
+       claim, not an absent one. */
     contactPoint: [
       {
         "@type": "ContactPoint",
         contactType: "reservations",
-        telephone: site.phone,
+        telephone: clinic.phone,
         availableLanguage: ["ka", "en", "ru"],
       },
-      {
-        "@type": "ContactPoint",
-        contactType: "customer service",
-        telephone: site.phoneAlt,
-        availableLanguage: ["ka", "en", "ru"],
-      },
+      ...(clinic.phoneAlt
+        ? [
+            {
+              "@type": "ContactPoint",
+              contactType: "customer service",
+              telephone: clinic.phoneAlt,
+              availableLanguage: ["ka", "en", "ru"],
+            },
+          ]
+        : []),
     ],
     availableService: categories.map((category) => ({
       "@type": "MedicalProcedure",
@@ -184,15 +202,31 @@ export default async function LocaleLayout({
        asset was sitting in prose only — search and AI engines cannot infer
        "candidate of dental sciences, 20+ years" from a paragraph, but they
        will read it here. `Person`, not `Physician`: in schema.org
-       `Physician` is a MedicalBusiness, i.e. a practice, not a human. */
-    employee: team.map((member, index) => ({
+       `Physician` is a MedicalBusiness, i.e. a practice, not a human.
+
+       Credentials come from each doctor's own record. They used to be read
+       from `dict.doctor.*` for whoever happened to be first in the array —
+       two bugs in one line: the lead is identified by the `isLead` flag, not
+       by position, and the text was a second copy of a bio the CMS already
+       owned. Editing the chief doctor in the admin left this block quoting
+       the old credentials indefinitely.
+
+       Gated on `published`, matching the about page: an unconfirmed profile
+       is emitted as a name and a job title, never as an assertion we have
+       not checked. */
+    employee: team.map((member) => ({
       "@type": "Person",
       name: member.name,
       jobTitle: member.role,
-      image: `${site.url}${member.photo}`,
+      image: member.photo ? `${site.url}${member.photo}` : undefined,
+      url: `${site.url}${member.href}`,
       worksFor: { "@id": `${site.url}/#clinic` },
-      ...(index === 0
-        ? { description: dict.doctor.credentials, knowsAbout: dict.doctor.tags }
+      ...(member.published
+        ? {
+            description: member.focus || undefined,
+            knowsAbout: member.tags.length ? member.tags : undefined,
+            knowsLanguage: member.languages.length ? member.languages : undefined,
+          }
         : {}),
     })),
 
@@ -203,20 +237,31 @@ export default async function LocaleLayout({
       {
         "@type": "Offer",
         itemOffered: { "@type": "Service", name: dict.contact.consultationFirst },
-        price: String(site.consultation.first),
-        priceCurrency: site.consultation.currency,
+        price: String(clinic.consultation.first),
+        priceCurrency: clinic.consultation.currency,
       },
       {
         "@type": "Offer",
         itemOffered: { "@type": "Service", name: dict.contact.consultationRepeat },
-        price: String(site.consultation.repeat),
-        priceCurrency: site.consultation.currency,
+        price: String(clinic.consultation.repeat),
+        priceCurrency: clinic.consultation.currency,
       },
     ],
 
     /* Filtered: an empty Google Business Profile URL would emit `""`. */
-    sameAs: [site.social.facebook, site.social.instagram, site.social.google].filter(Boolean),
+    sameAs: [clinic.social.facebook, clinic.social.instagram, clinic.social.google].filter(Boolean),
   };
+
+  const bookingCopy = {
+    ...dict.booking,
+    loading: dict.common.loading,
+    form: dict.contact.form,
+  };
+
+  const bookingOptions = categories.map((category) => ({
+    value: category.slug,
+    label: category.title,
+  }));
 
   return (
     <html
@@ -232,19 +277,25 @@ export default async function LocaleLayout({
           dangerouslySetInnerHTML={{ __html: `document.documentElement.classList.add("js")` }}
         />
 
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent-300 focus:px-5 focus:py-3 focus:text-sm focus:font-medium focus:text-ink-900"
-        >
-          {dict.nav.skipToContent}
-        </a>
+        <BookingProvider copy={bookingCopy} options={bookingOptions}>
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent-300 focus:px-5 focus:py-3 focus:text-sm focus:font-medium focus:text-ink-900"
+          >
+            {dict.nav.skipToContent}
+          </a>
 
-        <SiteHeader dict={dict} lang={locale} />
+          {/* `clinic` is fetched once here and passed down. The header is a
+              client component and cannot await a query; the footer and the
+              action bar could, but three separate reads of the same global
+              on every page is work for nothing. */}
+          <SiteHeader dict={dict} lang={locale} megaColumns={categories} clinic={clinic} />
 
-        <main id="main">{children}</main>
+          <main id="main">{children}</main>
 
-        <SiteFooter dict={dict} lang={locale} />
-        <MobileActionBar dict={dict} lang={locale} />
+          <SiteFooter dict={dict} lang={locale} categories={categories} clinic={clinic} />
+          <MobileActionBar dict={dict} lang={locale} clinic={clinic} />
+        </BookingProvider>
 
         <script
           type="application/ld+json"

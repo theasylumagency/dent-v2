@@ -1,5 +1,4 @@
 import type { Dictionary } from "@/i18n/dictionaries";
-import { getServiceCategories, type ServiceCategory } from "./services";
 import { homeHref, route, type RouteKey } from "./routes";
 
 export { homeHref, route };
@@ -12,17 +11,18 @@ export type NavItem = {
   mega?: boolean;
 };
 
+/**
+ * Synchronous on purpose: `SiteHeader` is a client component and builds its
+ * own nav from the dictionary it already receives. The mega menu's columns
+ * are the one thing it cannot compute — those come from the CMS, so the
+ * layout fetches them and passes them down as props.
+ */
 export function getNavItems(dict: Dictionary, lang: string): NavItem[] {
   return [
-    { key: "clinic", label: dict.nav.clinic, href: route(lang, "clinic") },
+    { key: "about", label: dict.nav.about, href: route(lang, "about") },
     { key: "services", label: dict.nav.services, href: route(lang, "services"), mega: true },
-    { key: "team", label: dict.nav.team, href: route(lang, "team") },
     { key: "technology", label: dict.nav.technology, href: route(lang, "technology") },
+    { key: "news", label: dict.nav.news, href: route(lang, "news") },
     { key: "contact", label: dict.nav.contact, href: route(lang, "contact") },
   ];
-}
-
-/** The mega menu shows one column per clinical direction. */
-export function getMegaColumns(dict: Dictionary, lang: string): ServiceCategory[] {
-  return getServiceCategories(dict, lang);
 }

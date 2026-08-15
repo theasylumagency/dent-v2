@@ -184,13 +184,37 @@ export function hasServiceIcon(name: string): name is ServiceIconName {
   return name in ICONS;
 }
 
+/* Shown for a slug with no icon yet: a circle with a dot, which reads as
+   "something goes here" rather than as a broken image or a missing glyph. */
+const FALLBACK_ICON = (
+  <>
+    <circle cx="12" cy="12" r="8.5" />
+    <circle cx="12" cy="12" r="2" />
+  </>
+);
+
+/**
+ * `name` is a plain string, not `ServiceIconName`.
+ *
+ * Service slugs come from the CMS now, so an editor can create a service
+ * whose slug has no icon in this file. Demanding the narrow union would move
+ * that problem to compile time, where it cannot be fixed — the slug does not
+ * exist until someone types it into the admin panel.
+ *
+ * An unknown slug renders the neutral fallback below rather than nothing, so
+ * a new service looks unfinished instead of broken. Adding the real icon is
+ * then a normal commit, and `hasServiceIcon` is exported for anywhere that
+ * wants to check first.
+ */
 export default function ServiceIcon({
   name,
   className = "h-10 w-10",
 }: {
-  name: ServiceIconName;
+  name: string;
   className?: string;
 }) {
+  const glyph = hasServiceIcon(name) ? ICONS[name] : FALLBACK_ICON;
+
   return (
     <svg
       viewBox="0 0 24 24"
@@ -202,7 +226,7 @@ export default function ServiceIcon({
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      {ICONS[name]}
+      {glyph}
     </svg>
   );
 }

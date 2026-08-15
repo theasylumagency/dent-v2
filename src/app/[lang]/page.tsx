@@ -10,7 +10,7 @@ import LeadDoctor from "@/components/home/LeadDoctor";
 import Team from "@/components/home/Team";
 import Technology from "@/components/home/Technology";
 import Faq from "@/components/home/Faq";
-import Contact from "@/components/home/Contact";
+import FinalBookingCta from "@/components/home/FinalBookingCta";
 
 export default async function HomePage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
@@ -22,16 +22,15 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
   return (
     <>
       <Hero dict={dict} lang={locale} />
-      <Clinic dict={dict} />
+      <Clinic dict={dict} lang={locale} />
       <Services dict={dict} lang={locale} />
       <Atmosphere dict={dict} />
-      <LeadDoctor dict={dict} />
-      <Team dict={dict} />
+      <LeadDoctor dict={dict} lang={locale} />
+      <Team dict={dict} lang={locale} />
       <Technology dict={dict} lang={locale} />
-      {/* FAQ sits immediately before the form: it answers the last
-          objections while the visitor is already at the booking step. */}
-      <Faq dict={dict} />
-      <Contact dict={dict} lang={locale} />
+      {/* FAQ answers the last practical questions before the final action. */}
+      <Faq dict={dict} lang={locale} />
+      <FinalBookingCta dict={dict} lang={locale} />
     </>
   );
 }

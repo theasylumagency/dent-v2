@@ -21,9 +21,21 @@ type Props = {
   label: string;
   /** `bar` sits in the header, `stack` is the expanded list used on mobile. */
   variant?: "bar" | "stack";
+  /**
+   * Only the trigger inverts. The dropdown itself stays an ivory card in
+   * both modes — it is a floating surface with its own background, so
+   * matching it to the hero behind it would make it harder to read, not
+   * more consistent.
+   */
+  onDark?: boolean;
 };
 
-export default function LanguageSwitcher({ current, label, variant = "bar" }: Props) {
+export default function LanguageSwitcher({
+  current,
+  label,
+  variant = "bar",
+  onDark = false,
+}: Props) {
   const pathname = usePathname() || `/${current}`;
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -81,9 +93,13 @@ export default function LanguageSwitcher({ current, label, variant = "bar" }: Pr
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label={label}
-        className="flex items-center gap-1.5 rounded-full border border-ivory-600 bg-ivory-50 px-3.5 py-2 text-xs tracking-[0.12em] text-ink-800 transition-colors hover:border-accent-500 hover:text-accent-700"
+        className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs tracking-[0.12em] transition-colors ${
+          onDark
+            ? "border-white/45 bg-white/10 text-ivory-50 hover:border-accent-200 hover:bg-white/20"
+            : "border-ivory-600 bg-ivory-50 text-ink-800 hover:border-accent-500 hover:text-accent-700"
+        }`}
       >
-        <Globe className="h-3.5 w-3.5 text-accent-600" />
+        <Globe className={`h-3.5 w-3.5 ${onDark ? "text-accent-200" : "text-accent-600"}`} />
         {localeLabels[current].short}
         <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>

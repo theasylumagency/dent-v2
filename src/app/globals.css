@@ -17,13 +17,38 @@
   --color-accent-600: #1f72a2;
   --color-accent-700: #175a80;
 
+  /* ------------------------------------------------------------------
+     Deep end of the same blue. The hero is the one place on the site
+     that inverts — brand colour carries the section and the type goes
+     light — so these are the surfaces that have to be dark enough for
+     ivory text to clear 4.5:1, not just "dark blue".
+
+        ivory-50 on brand-900   14.6:1
+        ivory-50 on brand-700    8.1:1
+        accent-200 on brand-800  7.4:1   (headline second line)
+
+     brand-600 is the lightest of them and is used only as the far end
+     of the ambient wash, never as a text backdrop on its own.
+     ------------------------------------------------------------------ */
+  --color-brand-950: #04121d;
+  --color-brand-900: #082033;
+  --color-brand-800: #0d3550;
+  --color-brand-700: #124a70;
+  --color-brand-600: #1b6493;
+
   /* Warm ivory surfaces — the page is light, never dark ------------- */
-  --color-ivory-50: #fffdfa; /* elevated cards */
-  --color-ivory-100: #fbf7f1; /* page background */
-  --color-ivory-200: #f4eee4; /* alternating band */
-  --color-ivory-300: #e9e1d4; /* decorative hairlines, grid gaps */
-  --color-ivory-400: #d8cdba; /* stronger rules */
-  --color-ivory-500: #cdc0aa; /* visible hairline — card edges */
+  --color-ivory-50: #fffdfa;
+  /* elevated cards */
+  --color-ivory-100: #fbf7f1;
+  /* page background */
+  --color-ivory-200: #f4eee4;
+  /* alternating band */
+  --color-ivory-300: #e9e1d4;
+  /* decorative hairlines, grid gaps */
+  --color-ivory-400: #d8cdba;
+  /* stronger rules */
+  --color-ivory-500: #cdc0aa;
+  /* visible hairline — card edges */
 
   /* ------------------------------------------------------------------
      ivory-600 is the *control boundary* token, and the only one that is
@@ -48,18 +73,24 @@
      (ink-500 measures 4.8:1 on ivory-200 — passing, but with little
      headroom, so it is capped at label duty and never body copy.)
      ------------------------------------------------------------------ */
-  --color-ink-900: #1b2126; /* headings              15.2:1 on ivory-100 */
-  --color-ink-800: #2c343a; /* strong body           11.6:1 */
-  --color-ink-700: #46525a; /* body                   7.5:1 */
-  --color-ink-600: #5a646b; /* muted body             5.7:1 */
-  --color-ink-500: #606a71; /* small labels           4.8:1 on ivory-200 */
+  --color-ink-900: #1b2126;
+  /* headings              15.2:1 on ivory-100 */
+  --color-ink-800: #2c343a;
+  /* strong body           11.6:1 */
+  --color-ink-700: #46525a;
+  /* body                   7.5:1 */
+  --color-ink-600: #5a646b;
+  /* muted body             5.7:1 */
+  --color-ink-500: #606a71;
+  /* small labels           4.8:1 on ivory-200 */
 
-  --color-danger-700: #a4271f; /* form errors — 6.1:1 on ivory-100 */
+  --color-danger-700: #a4271f;
+  /* form errors — 6.1:1 on ivory-100 */
 
   --font-sans: var(--font-body), var(--font-body-ka), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display-latin), var(--font-display-ka), ui-serif, Georgia, serif;
 
-  --radius-card: 1.5rem;
+  --radius-card: 0.5rem;
 
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -152,6 +183,7 @@
 }
 
 @layer components {
+
   /* Section shell ---------------------------------------------------- */
   .shell {
     width: 100%;
@@ -194,11 +226,193 @@
     .section {
       padding-block: 7.5rem;
     }
+
     .section-airy {
       padding-block: 10rem;
     }
+
     .section-tight {
       padding-block: 5.5rem;
+    }
+  }
+
+  /* ====================================================================
+     Fixed-height sections
+     ====================================================================
+     A `.h-viewport` section is exactly one screen and never scrolls, so
+     vertical space inside it is a fixed budget rather than something the
+     content can push against. That inverts the usual sizing logic: the
+     rhythm and the two type sizes that dominate the budget are a share
+     of the *viewport height*, and the one flexible element (an image
+     band) absorbs whatever is left over.
+
+     Everything is clamped at both ends. Raw `vh` would give a 13px
+     paragraph on a short phone and a 40px one on a tall monitor.
+     ==================================================================== */
+  .h-viewport {
+    /* Two declarations, in this order, rather than Tailwind's `h-screen`
+       + `h-svh` — those are two utilities in one layer and the cascade
+       between them depends on generation order, which is not ours to
+       rely on. */
+    height: 100vh;
+    height: 100svh;
+  }
+
+  /* ------------------------------------------------------------------
+     One screen from lg, *at least* one screen below it.
+
+     Not every section can honour a hard 100vh on a phone. A five-item
+     index can't: the directions are named in Georgian, the longest runs
+     to two lines at 375px, and once the head and the padding are paid
+     for there is not enough left for five rows of two lines. Forcing it
+     means deleting content — the numbers, the service names, the
+     photographs — which is a worse trade than a section that runs to
+     1.2 screens.
+
+     So the constraint relaxes to a floor. The section still *starts* on
+     a screen boundary and still reads as part of the same rhythm; it
+     just stops lying about how much fits on a phone.
+
+     Flex column with the inner shell on `flex-1`, because `h-full` on
+     the shell would resolve against `auto` here and collapse — a
+     percentage height needs a definite parent height, and `min-height`
+     is not one.
+     ------------------------------------------------------------------ */
+  .h-viewport-lg {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+
+  @media (min-width: 1024px) {
+    .h-viewport-lg {
+      height: 100vh;
+      height: 100svh;
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     Clears the fixed header above and, below lg, the fixed action bar
+     below. `max()` rather than plain vh: the clearance must never shrink
+     below the height of the thing it is clearing, however short the
+     screen gets.
+
+     The floor is 64px + air, not 80px or 136px. A `.fit-pad` section is
+     by definition below the fold, so by the time it is on screen the
+     header has already collapsed to `h-16` — sizing for the *unscrolled*
+     bar was reserving up to 72px that nothing was ever going to occupy,
+     and on a short screen that came straight out of the image band.
+     ------------------------------------------------------------------ */
+  .fit-pad {
+    padding-top: max(4.5rem, 9vh);
+    padding-bottom: max(5.25rem, 8vh);
+  }
+
+  @media (min-width: 1024px) {
+    .fit-pad {
+      padding-top: max(6rem, 10vh);
+      padding-bottom: max(3.5rem, 7vh);
+    }
+  }
+
+  .fit-stack {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2.4vh, 2.25rem);
+  }
+
+  .fit-lead {
+    font-size: clamp(1rem, 2vh, 1.55rem);
+    line-height: 1.55;
+  }
+
+  .fit-stat {
+    font-size: clamp(1.75rem, 3.4vh, 3rem);
+    line-height: 1.05;
+  }
+
+  /* ------------------------------------------------------------------
+     Stat row — one line of four, at every width.
+
+     This started as 2×2 on mobile, which is what the design called for
+     and what looks better in isolation. It does not survive the section
+     being exactly one screen. Two rows of stats cost ~90px, and in a
+     fixed-height section that 90px comes out of the only flexible thing
+     in it — the image band. Run the numbers and 2×2 needs a viewport
+     ~890px tall before the band is worth looking at; no phone reports
+     that as `svh`, so the two-column case would have been dead code
+     that only ever fired on a desktop window in portrait.
+
+     A stat row loses very little by being wider and shorter, and an
+     image band loses everything. So the stats fold flat and the band
+     keeps the height.
+
+     Drawn with a plain grid and no dividers: on one row the single rule
+     above it is the whole structure, and Tailwind's `divide-*` would
+     have needed the per-cell `nth-child` work this now avoids.
+     ------------------------------------------------------------------ */
+  /* Column count follows the children rather than being fixed at four.
+     Two of the four figures are claims the clinic may not publish, so the
+     row legitimately renders with three or two — `repeat(4, …)` left an
+     empty track and an off-centre row when it did. */
+  .stats-fit {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    column-gap: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .stats-fit {
+      column-gap: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .stats-fit {
+      column-gap: 2rem;
+    }
+  }
+
+  /* Four labels across a 375px screen is ~75px of column each, which is
+     where "Satisfied patients" wraps to three lines and eats back the
+     height the flat row just bought. A step down, with the tracking
+     closed up, keeps it to two. */
+  @media (max-width: 639px) {
+    .stats-fit dt {
+      font-size: 0.65rem;
+      letter-spacing: 0;
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     The line of service names under each direction in the services
+     index.
+
+     The clamp is written out rather than using Tailwind's
+     `line-clamp-2`, because it has to change at a height breakpoint and
+     the two would be equal-specificity classes in different layers —
+     Tailwind's utilities layer comes last, so the override would never
+     land. Owning both declarations keeps the cascade decidable.
+
+     Why it changes: the rows only divide a fixed band between them from
+     lg, and in a short desktop window that is ~56px each — where the
+     second line of names is the first thing that does not fit, and also
+     the least load-bearing, since the first already carries the
+     direction's headline treatments. Below lg the section grows instead
+     of squeezing, so there is nothing to buy back and both lines stay.
+     ------------------------------------------------------------------ */
+  .index-services {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) and (max-height: 700px) {
+    .index-services {
+      -webkit-line-clamp: 1;
     }
   }
 
@@ -276,18 +490,16 @@
     justify-content: center;
     gap: 0.6rem;
     padding: 0.95rem 1.9rem;
-    border-radius: 999px;
+    border-radius: 12px;
     font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0.01em;
     /* Ink on brand blue = 8.6:1. White on brand blue would be 1.9:1. */
     color: var(--color-ink-900);
-    background: linear-gradient(
-      135deg,
-      var(--color-accent-200),
-      var(--color-accent-300) 55%,
-      var(--color-accent-400)
-    );
+    background: linear-gradient(135deg,
+        var(--color-accent-200),
+        var(--color-accent-300) 55%,
+        var(--color-accent-400));
     box-shadow: var(--shadow-glow);
     transition: transform 0.35s var(--ease-premium), box-shadow 0.35s var(--ease-premium),
       filter 0.35s var(--ease-premium);
@@ -306,7 +518,7 @@
     justify-content: center;
     gap: 0.6rem;
     padding: 0.95rem 1.7rem;
-    border-radius: 999px;
+    border-radius: 12px;
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--color-ink-800);
@@ -326,6 +538,62 @@
     transform: translateY(-2px);
   }
 
+  /* ====================================================================
+     Inverted surface
+     ====================================================================
+     One opt-in class rather than per-element overrides at every call
+     site. Anything inside `.on-dark` assumes a brand-800/900 backdrop.
+
+     Only the tokens that would fail there are touched. `.btn-primary`
+     is deliberately absent: it is already a light blue fill with ink
+     type, which is the single highest-contrast thing on a dark panel
+     and the reason it reads as the primary action.
+     ==================================================================== */
+  .on-dark {
+    color: var(--color-ivory-200);
+  }
+
+  .on-dark h1,
+  .on-dark h2,
+  .on-dark h3 {
+    color: var(--color-ivory-50);
+  }
+
+  .on-dark .eyebrow {
+    /* accent-600 measures 2.1:1 on brand-900 — the label was the first
+       thing to disappear when the section inverted. */
+    color: var(--color-accent-200);
+  }
+
+  .on-dark .eyebrow::before {
+    background: linear-gradient(90deg, transparent, var(--color-accent-300));
+  }
+
+  .on-dark .label-micro {
+    color: var(--color-accent-200);
+  }
+
+  .on-dark .btn-ghost {
+    color: var(--color-ivory-50);
+    /* Control boundary, so still 3:1 — white at 45% over brand-800
+       measures 3.4:1, where the ivory-600 used on the light page
+       would have measured 1.6:1 and vanished. */
+    border-color: rgb(255 255 255 / 0.45);
+    background: rgb(255 255 255 / 0.06);
+  }
+
+  .on-dark .btn-ghost:hover {
+    border-color: var(--color-accent-200);
+    background: rgb(255 255 255 / 0.14);
+    color: #fff;
+  }
+
+  .on-dark :focus-visible {
+    /* accent-600 is the light-page focus ring and is nearly invisible
+       here; accent-200 is the same hue three steps up. */
+    outline-color: var(--color-accent-200);
+  }
+
   /* Form controls ------------------------------------------------------
      The original field border was ivory-300 on an ivory-100 fill: 1.2:1,
      i.e. no perceptible boundary at all. On the one element the whole
@@ -336,7 +604,8 @@
     border: 1px solid var(--color-ivory-600);
     background: var(--color-ivory-50);
     padding: 0.875rem 1rem;
-    font-size: 1rem; /* < 16px triggers iOS Safari zoom-on-focus */
+    font-size: 1rem;
+    /* < 16px triggers iOS Safari zoom-on-focus */
     color: var(--color-ink-900);
     transition: border-color 0.25s var(--ease-premium), box-shadow 0.25s var(--ease-premium);
   }
@@ -371,18 +640,17 @@
 }
 
 @layer utilities {
+
   /* Ambient brand-blue wash behind sections -------------------------- */
   .aura {
     position: absolute;
     pointer-events: none;
-    border-radius: 999px;
+    border-radius: 12px;
     filter: blur(110px);
     opacity: 0.55;
-    background: radial-gradient(
-      circle,
-      color-mix(in oklab, var(--color-accent-300) 42%, transparent) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle,
+        color-mix(in oklab, var(--color-accent-300) 42%, transparent) 0%,
+        transparent 70%);
   }
 
   /* Barely-there paper tooth. Multiply, not overlay — overlay blows out
@@ -412,12 +680,28 @@
 
   @supports (background-clip: text) or (-webkit-background-clip: text) {
     .text-gradient {
-      background: linear-gradient(
-        120deg,
-        var(--color-accent-700) 10%,
-        var(--color-accent-600) 45%,
-        var(--color-accent-500)
-      );
+      background: linear-gradient(120deg,
+          var(--color-accent-700) 10%,
+          var(--color-accent-600) 45%,
+          var(--color-accent-500));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+  }
+
+  /* On the inverted hero the gradient runs the other way — accent-700
+     is barely separable from the brand-900 behind it. */
+  .on-dark .text-gradient {
+    color: var(--color-accent-200);
+  }
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .on-dark .text-gradient {
+      background: linear-gradient(120deg,
+          var(--color-accent-100) 5%,
+          var(--color-accent-200) 40%,
+          var(--color-accent-300));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
@@ -514,6 +798,7 @@
 }
 
 @layer base {
+
   /* Lives in `base` on purpose: for !important declarations the cascade
      *reverses* layer order, so an !important here outranks anything in
      components/utilities — including the button and card transitions. */

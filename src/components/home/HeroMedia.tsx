@@ -8,25 +8,39 @@ import { media } from "@/lib/site";
 import { Pause, Play } from "@/components/ui/icons";
 
 /**
- * Hero media.
+ * Hero media — fills whatever box the hero hands it.
  *
  * The poster is a real <Image priority> and is always what paints first,
  * so it — not the video — is the LCP element. The video is layered on top
- * afterwards and only when it is actually wanted:
+ * afterwards, and in one of two crops:
+ *
+ *   • ≥1024px — the 16:9 master, sitting in the right-hand panel.
+ *   • below that — the 9:16 master, full-bleed behind the copy.
+ *
+ * `orientation` starts as `null` and is only resolved in an effect, which
+ * is what keeps the server and first client render identical: picking a
+ * crop during render would need `window`. It also means exactly one file
+ * is ever requested — the losing crop is never in the DOM, so the browser
+ * never speculatively fetches it.
+ *
+ * The video is still suppressed entirely for:
  *
  *   • `prefers-reduced-motion: reduce` — an autoplaying, looping clip is
  *     precisely what that setting exists to suppress. The global CSS
  *     reduced-motion rule only reaches CSS animations, never a <video>,
  *     so this has to be handled here.
- *   • below 1024px — a decorative clip is not worth the mobile data, and
- *     the 4:3 crop the phone layout needs would mangle the framing.
- *   • Save-Data / metered connections.
+ *   • Save-Data / metered connections. The mobile gate that used to live
+ *     here was a blanket "no video below 1024px"; now that there is a
+ *     purpose-made vertical crop the clip is wanted on phones, and this
+ *     is the check that should have been carrying that decision anyway.
  *
  * Everyone who does get the video also gets a control to stop it. Motion
  * sensitivity is not limited to people who have found the OS setting.
  */
+type Orientation = "wide" | "tall";
+
 export default function HeroMedia({ dict }: { dict: Dictionary }) {
-  const [showVideo, setShowVideo] = useState(false);
+  const [orientation, setOrientation] = useState<Orientation | null>(null);
   const [playing, setPlaying] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -38,7 +52,13 @@ export default function HeroMedia({ dict }: { dict: Dictionary }) {
       (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData ===
         true;
 
-    const decide = () => setShowVideo(motion.matches && wide.matches && !saveData);
+    const decide = () => {
+      if (!motion.matches || saveData) {
+        setOrientation(null);
+        return;
+      }
+      setOrientation(wide.matches ? "wide" : "tall");
+    };
 
     decide();
     motion.addEventListener("change", decide);
@@ -61,19 +81,26 @@ export default function HeroMedia({ dict }: { dict: Dictionary }) {
     }
   };
 
+  const sources = orientation ? media.heroVideo[orientation] : null;
+
   return (
-    <div className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] shadow-lift lg:aspect-[4/5]">
+    <div className="absolute inset-0 overflow-hidden">
       <Image
         src={media.heroPoster}
         alt=""
         fill
         priority
-        sizes="(min-width: 1024px) 45vw, 100vw"
+        sizes="(min-width: 1024px) 46vw, 100vw"
         className="object-cover"
       />
 
-      {showVideo && (
+      {sources && (
         <video
+          /* Keyed on the crop: swapping <source> children on a live
+             <video> does nothing without an explicit .load(), so on a
+             desktop↔mobile resize the element would keep playing the
+             old file. Remounting is the honest fix. */
+          key={orientation}
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover"
           poster={media.heroPoster}
@@ -84,30 +111,21 @@ export default function HeroMedia({ dict }: { dict: Dictionary }) {
           preload="none"
           aria-hidden="true"
         >
-          <source src={media.heroVideo} type="video/mp4" />
+          <source src={sources.webm} type="video/webm" />
+          <source src={sources.mp4} type="video/mp4" />
         </video>
       )}
 
-      {/* Just enough wash to seat the media in the ivory page. */}
-      <div
-        className="pointer-events-none absolute inset-0 mix-blend-soft-light"
-        style={{
-          background:
-            "linear-gradient(200deg, color-mix(in oklab, #7AC7EF 45%, transparent) 0%, transparent 55%)",
-        }}
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute inset-0 rounded-[1.75rem] ring-1 ring-inset ring-ink-900/10"
-        aria-hidden="true"
-      />
-
-      {showVideo && (
+      {sources && (
         <button
           type="button"
           onClick={toggle}
           aria-label={playing ? dict.hero.pauseMotion : dict.hero.playMotion}
-          className="absolute bottom-4 right-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-ivory-600 bg-ivory-50/90 text-ink-800 backdrop-blur transition-colors hover:text-accent-700"
+          /* Top-right on phones, bottom-right on desktop. The mobile
+             hero stacks copy, two CTAs and the fixed action bar into
+             the lower half of the screen — a bottom-anchored control
+             there lands on top of one of them at some viewport height. */
+          className="absolute right-4 top-24 z-20 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-white/10 text-ivory-50 backdrop-blur transition-colors hover:border-accent-200 hover:bg-white/20 lg:bottom-8 lg:right-8 lg:top-auto"
         >
           {playing ? <Pause /> : <Play />}
         </button>

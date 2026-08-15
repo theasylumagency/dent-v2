@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 
 import { htmlLang, locales } from "@/i18n/config";
-import { categoryOrder } from "@/lib/services";
+import { getPostSlugs } from "@/lib/news";
+import { categoryOrder } from "@/lib/services-shared";
 import { site } from "@/lib/site";
 
 /**
@@ -13,19 +14,24 @@ import { site } from "@/lib/site";
  * from, so a new clinical direction cannot land in the navigation and go
  * missing from the sitemap.
  *
- * TODO: extend `paths` as the remaining sub-pages land (clinic, team,
- * contact) — flipping a flag in `lib/routes.ts` changes every link on the
- * site but not this file.
+ * Keep `paths` in sync with route readiness — flipping a flag in
+ * `lib/routes.ts` changes site links but cannot update the sitemap itself.
  */
-const paths = [
-  "",
-  "/services",
-  ...categoryOrder.map((slug) => `/services/${slug}`),
-  "/technology",
-];
-
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
+
+  /* Post URLs come from the CMS, so this list is built per request rather
+     than at module load — a new post must appear here without a rebuild. */
+  const paths = [
+    "",
+    "/services",
+    ...categoryOrder.map((slug) => `/services/${slug}`),
+    "/technology",
+    "/about",
+    "/news",
+    "/contact",
+    ...(await getPostSlugs()).map((slug) => `/news/${slug}`),
+  ];
 
   return paths.flatMap((path) => {
     const languages = Object.fromEntries(

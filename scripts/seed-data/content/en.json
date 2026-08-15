@@ -1,0 +1,487 @@
+{
+  "services": {
+    "items": {
+      "diagnostics": {
+        "title": "Diagnostics",
+        "blurb": "Check-up — a comprehensive oral examination and a rational treatment plan.",
+        "lead": "A check-up is a wide examination that identifies every condition present in the mouth and assesses the state of the teeth and soft tissue. What you get out of it is an accurate diagnosis and a rational treatment plan — or, if no treatment is needed, guidance on how to care for your mouth.",
+        "points": [
+          "Consultation with the chief doctor plus an examination by a therapist, prosthodontist and orthodontist",
+          "3D digital X-ray diagnostics (CT) for a deep analysis of the tissues",
+          "Photo protocol for tracking changes and the effectiveness of treatment",
+          "Assessment of hard and soft tissue, the periodontium, existing fillings and prosthetic work",
+          "After the case conference — a written plan with stages, timelines and costs"
+        ]
+      },
+      "therapy-adults": {
+        "title": "Therapy for adults",
+        "blurb": "Caries, pulpitis, root canals and professional Air Flow hygiene.",
+        "lead": "Adult therapy covers the treatment of caries, pulpitis and root canals, as well as professional hygiene. We start with diagnostics, establish how far the damage goes and choose the most conservative method available — so that as much of your own tooth structure survives as possible.",
+        "points": [
+          "Caries treatment and tooth restoration with high-quality materials",
+          "Pulpitis treatment — from conservative care through to root canal work",
+          "Root canal treatment guided by 3D tomography, under rubber dam isolation",
+          "Professional Air Flow hygiene: plaque, calculus and polishing",
+          "Every stage under anaesthetic — the procedure is painless"
+        ]
+      },
+      "therapy-children": {
+        "title": "Therapy for children",
+        "blurb": "A gentle approach for our youngest patients — from milk teeth to hygiene habits.",
+        "lead": "Young patients are seen only by dentists with paediatric training. A child should visit the dentist once the first teeth appear — that lets us catch a problem at an early stage and turn the appointment into an experience they do not mind repeating.",
+        "points": [
+          "Treatment of milk teeth — they matter for speech, eating and how the adult teeth come through",
+          "Early detection of caries and painless treatment",
+          "Professional hygiene on a protocol chosen specifically for children",
+          "Teaching oral care to both the child and the parent",
+          "A calm room and a pace the child sets"
+        ]
+      },
+      "surgery": {
+        "title": "Surgery",
+        "blurb": "Our experienced surgical team is ready to make your goal a reality.",
+        "lead": "We turn to surgery only once every option for saving the tooth has been exhausted — and then with methods that disturb the surrounding tissue as little as possible. Every stage is explained in advance and the procedure is carried out under effective anaesthetic.",
+        "points": [
+          "Tooth extraction, including piezosurgery (ultrasonic) — less bleeding and faster healing",
+          "Removal of wisdom and retained teeth with precise advance planning",
+          "Bone grafting (osteoplasty) to prepare the site for an implant",
+          "PRP plasma therapy using the patient's own blood to speed up regeneration",
+          "Post-operative care and recommendations for a quick recovery"
+        ]
+      },
+      "implantation": {
+        "title": "Surgery and immediate implantation",
+        "blurb": "Implantation at Total Charm Dent using an innovative protocol.",
+        "lead": "An implant is an artificial root placed where the tooth was lost. We work with surgical guides, which give maximum accuracy in positioning the implant, and where the clinical picture allows it the implant goes in at the same appointment as the extraction.",
+        "points": [
+          "Straumann (Switzerland), DENTIUM (Korea) and Bredent SKY (Germany) systems",
+          "All-on-4, All-on-6 and All-on-8 for complete tooth loss (edentulism)",
+          "Immediate implantation at the time of extraction, where the case allows",
+          "Surgical guides and 3D planning for accurate placement",
+          "Chewing function and aesthetics restored without a removable denture"
+        ]
+      },
+      "periodontology": {
+        "title": "Periodontology",
+        "blurb": "Restore your gum health with periodontitis treatment.",
+        "lead": "Periodontitis is an inflammatory disease of the gums and the tissue that holds the tooth in place; left too long, it ends in tooth loss. We start by establishing the stage precisely and build an individual plan that addresses the cause rather than the symptom.",
+        "points": [
+          "Thorough diagnosis of periodontitis and determination of its stage",
+          "Professional removal of calculus and bacterial plaque",
+          "Treatment of gum recession, including tissue regeneration methods",
+          "Treatment of inflammation and bleeding on an individual plan",
+          "Recommendations for keeping the gums healthy afterwards"
+        ]
+      },
+      "orthodontics": {
+        "title": "Orthodontics",
+        "blurb": "American Orthodontics (AO) — a renowned manufacturer of orthodontic braces.",
+        "lead": "Orthodontic treatment corrects the bite at any age. American Orthodontics (AO) is a well-known US manufacturer of braces, and the system is adapted individually to each patient's anatomy.",
+        "points": [
+          "A wide choice of metal, ceramic and self-ligating brackets",
+          "The self-ligating mechanism reduces friction between bracket and archwire",
+          "Strength and durability that hold up across the whole course of treatment",
+          "Precise bite correction based on individual planning",
+          "The orthodontist selects the system on the evidence from diagnostics"
+        ]
+      },
+      "aligners": {
+        "title": "Aligners",
+        "blurb": "Achieve your ideal bite with comfort and efficiency.",
+        "lead": "Aligners are a set of clear trays that shift the teeth gradually. They are practically invisible, come out for eating and cleaning, and are produced from a 3D scan — which makes every stage of the correction predictable.",
+        "points": [
+          "Practically invisible — bite correction without a visible appliance",
+          "Smooth material that does not irritate the soft tissue of the mouth",
+          "Removable for meals and brushing — hygiene stays straightforward",
+          "3D scanning and digital control at every stage of the correction",
+          "No meaningful restrictions on sport or everyday activity"
+        ]
+      },
+      "veneers": {
+        "title": "Ceramic veneers",
+        "blurb": "Ceramic veneers made with CAD/CAM technology.",
+        "lead": "A ceramic veneer is a thin shell that covers the front surface of the tooth and corrects its shape, colour and proportion. We produce them with CAD/CAM technology — from a digital impression straight to milling — so you see the result before the work begins.",
+        "points": [
+          "Minimal preparation of the tooth",
+          "Ceramic reproduces the optical behaviour of natural enamel",
+          "Corrects distorted shape, staining and minor damage",
+          "Durable — holds its colour and function for years",
+          "You approve the result in digital modelling before any work starts"
+        ]
+      },
+      "digital-modelling": {
+        "title": "Digital modelling",
+        "blurb": "Digital modelling of your future smile before treatment begins.",
+        "lead": "Digital modelling shows you what your smile will look like before treatment starts. It makes the decision an informed one — you agree the result before we touch a tooth.",
+        "points": [
+          "Visualisation of your future smile before treatment begins",
+          "An individual model built around your wishes and your anatomy",
+          "The basis for planning veneers, restorations and prosthetic work",
+          "A predictable result — no surprises at the end",
+          "Digital impressions and 3D scanning instead of conventional putty"
+        ]
+      },
+      "forestadent": {
+        "title": "FORESTADENT braces",
+        "blurb": "The FORESTADENT bracket system is developed and manufactured in Germany.",
+        "lead": "The FORESTADENT bracket system is developed and manufactured in Germany. The range covers classic, self-ligating and aesthetic options, so the system can be matched to both the clinical need and what you want it to look like.",
+        "points": [
+          "Metal, ceramic and self-ligating brackets within one system",
+          "Self-ligating models reduce the number of adjustment visits",
+          "Modern materials — high strength and durability",
+          "Individually adapted to each patient's anatomy",
+          "German manufacturing and quality control"
+        ]
+      },
+      "damon": {
+        "title": "Damon braces",
+        "blurb": "The Damon bracket system is developed and manufactured in the USA.",
+        "lead": "Damon is a self-ligating bracket system developed and manufactured in the USA. Its sliding door mechanism reduces friction between the archwire and the bracket, which makes tooth movement more even and more predictable.",
+        "points": [
+          "Self-ligating door — less friction, more predictable movement",
+          "More even pressure on the teeth and therefore less discomfort",
+          "A shorter overall treatment time",
+          "Finer control of the correction on the clinician's side",
+          "Fewer visits to the clinic for adjustments"
+        ]
+      },
+      "whitening": {
+        "title": "Whitening ZOOM 4",
+        "blurb": "Teeth whitening and cleaning with the ZOOM 4 method.",
+        "lead": "ZOOM 4 (Philips ZOOM! WhiteSpeed) is currently one of the most advanced and safest ways to lighten enamel: under light, the gel releases active oxygen that penetrates deep into the tooth structure and breaks down even set-in pigmentation, including staining from age or smoking.",
+        "points": [
+          "Up to eight shades or more in a single 45-minute session",
+          "Suitable for sensitive enamel — the gel does not cause demineralisation",
+          "Results last up to four years, and longer if you follow the aftercare",
+          "The gel contains amorphous calcium phosphate, which strengthens the enamel",
+          "Preparation stage: treating any decay, professional hygiene and enamel strengthening"
+        ]
+      },
+      "tomography": {
+        "title": "Tomography",
+        "blurb": "Computed tomography of the teeth and oral cavity.",
+        "lead": "Computed tomography gives a three-dimensional picture of the structures inside your mouth. It is the scan that implant planning, root canal treatment and orthodontics are all built on.",
+        "points": [
+          "A 3D picture of the state of the teeth, bone and gums",
+          "Precise assessment of the number, shape and curvature of the roots",
+          "Measurement of bone volume and density before implantation",
+          "A low radiation dose compared with conventional X-ray methods",
+          "Carried out on site — no need to go to another clinic for the scan"
+        ]
+      },
+      "restoration": {
+        "title": "Dental restoration",
+        "blurb": "Restoration is the art of rebuilding the shape and function of a tooth.",
+        "lead": "Aesthetic restoration rebuilds the shape, structure and natural shine of a tooth using composite materials. It is used to correct shape, change colour, repair a chip and finish the treatment of decay.",
+        "points": [
+          "Single-stage restoration — shape and function in one visit",
+          "Two-stage restoration modelled in wax first, for more complex cases",
+          "Professional hygiene beforehand to establish the natural enamel shade",
+          "Contouring and polishing — the restoration is indistinguishable from its neighbours",
+          "Where damage is extensive, an inlay or crown is considered instead"
+        ]
+      },
+      "visiograph": {
+        "title": "Visiograph",
+        "blurb": "Precision and innovation for the health of your smile.",
+        "lead": "A visiograph produces digital X-ray images of the teeth and gums. The image appears on the monitor almost instantly, so the dentist can show you the detail there and then and decide with you rather than for you.",
+        "points": [
+          "High resolution — even the smallest detail is visible",
+          "Digital technology lowers the radiation dose compared with conventional X-ray",
+          "The image is ready in seconds — no waiting",
+          "Convenient for checking root canal treatment stage by stage",
+          "Images are stored and can be compared at later appointments"
+        ]
+      }
+    }
+  },
+  "team": {
+    "members": {
+      "archil-apkhadze": {
+        "name": "Archil Apkhadze",
+        "role": "Chief doctor of the clinic"
+      },
+      "shorena-shioshvili": {
+        "name": "Shorena Shioshvili",
+        "role": "Therapist"
+      },
+      "nino-buluashvili": {
+        "name": "Nino Buluashvili",
+        "role": "Orthodontist"
+      },
+      "salome-gabunia": {
+        "name": "Salome Gabunia",
+        "role": "Prosthodontist"
+      },
+      "nino-osadze": {
+        "name": "Nino Osadze",
+        "role": "Prosthodontist"
+      }
+    }
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Does treatment hurt?",
+        "a": "Every procedure is performed under anaesthesia. Your dentist explains each stage in advance and works at your pace — which is why the adults and children who come to us are no longer afraid of the dentist."
+      },
+      {
+        "q": "How do I book a visit?",
+        "a": "Three ways: fill in the form on this page, call us, or message us on WhatsApp. We are open every day from 9:00 to 21:00, with no closing days."
+      },
+      {
+        "q": "What does the first consultation cost?",
+        "a": "A first consultation is 50 GEL; a follow-up consultation is 25 GEL. That covers the oral examination and a written treatment plan with the costs set out. You only pay for the treatment itself once you have approved the plan."
+      },
+      {
+        "q": "Do you treat children?",
+        "a": "Yes. Paediatric dentistry is handled only by doctors with the relevant specialisation and many years of experience with children — from milk teeth through to teaching good hygiene habits."
+      },
+      {
+        "q": "How do you handle sterilisation?",
+        "a": "The clinic has its own top-class sterilisation department and a three-stage sterilisation and control process. Reusable instruments and handpieces go through a full cycle after every patient, and single-use consumables are always stocked in the quantities required."
+      },
+      {
+        "q": "How many visits will my case take?",
+        "a": "That depends on the diagnosis, which is why we start with imaging — computed tomography and digital planning. You receive the plan after your first visit, with the stages and timeline set out, so there are no surprises later."
+      }
+    ]
+  },
+  "about": {
+    "profiles": {
+      "shorena-shioshvili": {
+        "focus": "Adult and paediatric therapy, aesthetic restoration",
+        "bio": "Shorena treats both adults and children. Alongside dentistry she completed the foreign languages faculty at Tbilisi State Medical University, and trained in Germany at Jena University Hospital in maxillofacial and plastic surgery and in radiology. She works with children having completed a specialisation course in paediatric therapeutic dentistry.",
+        "education": [
+          "Tbilisi State Medical University — Faculty of Dentistry",
+          "Tbilisi State Medical University — Faculty of Foreign Languages (German)",
+          "Goethe-Institut — German language"
+        ],
+        "experience": [
+          "Jena University Hospital, Germany — practice in maxillofacial and plastic surgery",
+          "Jena University Hospital, Germany — practice in radiology",
+          "Albius training centre — specialisation course in paediatric therapeutic dentistry"
+        ],
+        "training": [
+          "FDI World Dental Federation congress",
+          "Tbilisi 5th International Dental Congress",
+          "3rd International Congress of the Georgian Pediatric Dentistry Association",
+          "Dürr Dental Academy — prevention and treatment of periodontitis and oral disease",
+          "Evolution of Direct Composite Restoration — Elena Mendoza",
+          "Posterior Teeth Direct Restoration — Alexey Murashkin"
+        ],
+        "languages": [
+          "Georgian",
+          "German"
+        ]
+      },
+      "nino-buluashvili": {
+        "focus": "",
+        "bio": "",
+        "education": [],
+        "experience": [],
+        "training": [],
+        "languages": []
+      },
+      "salome-gabunia": {
+        "focus": "Prosthetics, veneers, digital protocols",
+        "bio": "Salome studied dentistry at Pirogov Russian National Research Medical University and completed her residency at the Central Research Institute of Dentistry and Maxillofacial Surgery in Moscow, in the department of implantology and prosthetics. She has been with Total Charm Dent since 2023.",
+        "education": [
+          "2012–2017 — Pirogov Russian National Research Medical University, Moscow",
+          "2017–2019 — Central Research Institute of Dentistry and Maxillofacial Surgery, department of implantology and prosthetics, Moscow"
+        ],
+        "experience": [
+          "2017–2019 — Invisalign International Orthodontic Centre, Moscow",
+          "Since 2023 — Total Charm Dent"
+        ],
+        "training": [
+          "2022 — All About Veneers: Full Course from Smile Design to Bonding, Prague",
+          "2022 — Adhesive ceramic restorations: veneers, Tbilisi",
+          "2022 — Perspectives in Digital Dentistry, Tbilisi",
+          "2019 — Functional analysis of occlusion and its pathologies, Moscow",
+          "2019 — Astra Tech Implant System, foundation course",
+          "2017 — Dentsply Sirona: CAD/CAM system Cerec, Moscow",
+          "2016 — Innovations in CAD/CAM technology, Tbilisi",
+          "2015 — Swiss Dental Academy — treating periodontal disease with modern technology"
+        ],
+        "languages": [
+          "Georgian",
+          "Russian"
+        ]
+      },
+      "nino-osadze": {
+        "focus": "Prosthodontics, digital protocols, veneers",
+        "bio": "After her residency in prosthodontics, Nino went on to complete further training in oral surgery and dental implantology. Since 2024 she has lectured in prosthodontics at the University of Georgia — teaching what she does in the surgery.",
+        "education": [
+          "2013–2018 — Tbilisi State Medical University, Faculty of Dentistry",
+          "2019–2020 — Tbilisi State Medical University, residency in prosthodontics",
+          "2022 — Unident training and research centre, residency in oral surgery",
+          "2025 — Dental implantology, Dentexi 95 clinic"
+        ],
+        "experience": [
+          "Since 2024 — University of Georgia, lecturer in prosthodontics",
+          "2017–2018 — dental assistant"
+        ],
+        "training": [
+          "Cerec Fest 3rd and 4th — Dentsply Sirona, digital workflow protocols",
+          "Complete Guide in Veneer Preps: All Types — Belograd Academy",
+          "Impression and Retraction Techniques — Belograd Academy",
+          "Temporary Restorations: Veneers, Crowns, Onlays — Belograd Academy"
+        ],
+        "languages": [
+          "Georgian",
+          "English",
+          "Russian"
+        ]
+      }
+    },
+    "leadProfile": {
+      "education": [
+        "2002 — Omsk State Medical Academy, graduated with distinction",
+        "2002–2003 — clinical internship, Omsk State Medical Academy",
+        "2004–2006 — clinical residency, Central Research Institute of Dentistry and Maxillofacial Surgery, department of periodontology, Moscow",
+        "2011–2012 — RUDN University, department of surgical dentistry and maxillofacial surgery, Moscow",
+        "2013–2016 — postgraduate clinical studies, Central Research Institute of Dentistry and Maxillofacial Surgery, Moscow",
+        "2016 — candidate's dissertation: the effectiveness of bacteriophages in the surgical treatment of inflammatory-destructive periodontal lesions"
+      ],
+      "experience": [
+        "Since 2023 — Total Charm Dent, chief doctor, periodontal surgeon and implantologist, Tbilisi",
+        "2013–2016 — postgraduate clinician, department of periodontology, Central Research Institute, Moscow",
+        "2009 — Polyclinic No. 64, periodontal surgeon and implantologist, Moscow",
+        "2005–2018 — Novostom clinic, oral surgeon, Moscow",
+        "2004–2009 — Moscow Dental Polyclinic No. 1, periodontal surgeon",
+        "2002–2003 — dentist, clinical base of Omsk State Medical Academy"
+      ],
+      "training": [
+        "2025 — PERIO TBILISI 2025 international congress, and the masterclass \"Ridge Preservation: the Rebase Principle\"",
+        "2025 — implantology master course, modules 3–4: soft tissue management, sinus augmentation and peri-implantitis (Prof. Algirdas Puišys), Yerevan",
+        "2024 — Advanced Course: Reconstructive Periodontal and Peri-Implant Plastic Surgery in the Esthetic Zone, Prof. Giovanni Zucchelli, Bologna, Italy",
+        "2024 — \"Think Pink\" international congress on pink aesthetics in periodontology, Prof. Giulio Rasperini, Tbilisi",
+        "2023 — Perio Tbilisi 2023 international congress",
+        "2023 — SIDEX 2023 and the Dentium Seoul Symposium, Seoul",
+        "2022 — V \"ORTO-PERIO-IMPLANT\" Synergies congress, Tbilisi",
+        "2018 — Prof. Leonardo Trombelli: regenerative treatment of intrabony defects, Moscow",
+        "2018 — OSSTEM World Meeting, international implantology conference",
+        "2017 — individual course in implantation and periodontology, University of Gothenburg, Sweden",
+        "2015 — EuroPerio 8, international conference on periodontology and dental implantology, London",
+        "2012 — EuroPerio 7, European Federation of Periodontology conference, Vienna"
+      ],
+      "languages": [
+        "Georgian",
+        "Russian"
+      ]
+    }
+  },
+  "technology": {
+    "page": {
+      "devices": {
+        "vatech-ezray-air": {
+          "summary": "A digital intraoral X-ray with a low dose and automatic settings.",
+          "body": [
+            "Vatech EzRay Air is a digital intraoral X-ray — the instrument dental diagnostics begins with. The image appears on screen in seconds, with no film to develop, and can be repeated within the same visit if needed.",
+            "The unit carries FDA and CE certification and an additional shielding contour, while the automatic settings remove the possibility of over-exposure — the patient receives less radiation than the equivalent film would deliver."
+          ],
+          "highlights": [
+            "Image in seconds, no developing",
+            "FDA and CE certified",
+            "Automatic settings, no excess dose"
+          ]
+        },
+        "vatech-cbct": {
+          "summary": "Cone-beam computed tomography — a three-dimensional image from a single rotation.",
+          "body": [
+            "A single 360-degree rotation produces two results: an orthopantomogram and a full 3D reconstruction of the area under examination. When planning an implant that is the difference between estimating and measuring — bone thickness and nerve position are visible before the surgery rather than during it.",
+            "Taking both studies in one rotation cuts the radiation load fourfold compared with a series of separate images. That matters most across the stages of implantation and during long orthodontic treatment, where checks are repeated several times."
+          ],
+          "highlights": [
+            "One rotation — panorama and 3D reconstruction",
+            "Four times less dose than a series of images",
+            "Implant position planned before surgery"
+          ]
+        },
+        "trios-3-move": {
+          "summary": "An intraoral scanner — a digital impression with no silicone and no tray.",
+          "body": [
+            "TRIOS 3 Move+ scans a full bite in roughly 60 seconds, with accurate colour rendering and into areas that are hard to reach. It replaces the silicone impression — that is, precisely the step most patients remember as the worst part of the visit.",
+            "Digital accuracy sharply reduces the number of errors made in the laboratory, and the Move+ configuration turns the screen towards the patient: with TRIOS Smile Design the expected result is visible from the chair, before anything starts."
+          ],
+          "highlights": [
+            "Full-bite scan in roughly 60 seconds",
+            "No silicone impression needed",
+            "The result is visible before treatment begins"
+          ]
+        },
+        "ems-airflow-master": {
+          "summary": "Professional hygiene using a jet of air, water and powder — with no mechanical scraping.",
+          "body": [
+            "AIRFLOW Prophylaxis Master Premium removes biofilm, staining and less mineralised deposits both above and below the gumline with a fine powder jet. The need for hand instruments and ultrasonic tips drops to a minimum — and with it, the mechanical load on the enamel.",
+            "Water temperature is adjustable and the unit is controlled by a wireless pedal. In practice that means the procedure stays comfortable even with sensitive gums — and the patient returns for hygiene regularly, which is the entire point of periodontal prevention."
+          ],
+          "highlights": [
+            "Subgingival deposits too, without scraping",
+            "Adjustable water temperature",
+            "Caries and periodontitis prevention"
+          ]
+        },
+        "philips-zoom-4": {
+          "summary": "In-chair whitening activated by light — one session, under an hour.",
+          "body": [
+            "The latest generation of the Zoom system activates the whitening gel with a dedicated light: oxygen breaks down pigment molecules inside the enamel rather than on its surface. The whole procedure takes under an hour.",
+            "The formulation is designed for sensitive teeth, and the gums and lips are covered with a protective barrier. According to the manufacturer, a single session improves the shade by up to eight tones, and a repeat procedure strengthens the effect further."
+          ],
+          "highlights": [
+            "Under an hour, a single visit",
+            "Up to eight shades in one session",
+            "Formulated for sensitive teeth"
+          ]
+        },
+        "forestadent": {
+          "summary": "A German orthodontic system — a broad bracket range, aesthetic options included.",
+          "body": [
+            "FORESTADENT is a German family manufacturer that has been producing orthodontic appliances for over a century. Its range covers classic metal brackets as well as ceramic and lingual ones — bonded to the inner surface of the tooth.",
+            "Which system is chosen depends on the clinical picture, not on preference: reaching the same result sometimes calls for strong mechanics and sometimes for the least visible construction possible."
+          ],
+          "highlights": [
+            "Metal, ceramic and lingual brackets",
+            "German manufacturing for over a century"
+          ]
+        },
+        "damon-ormco": {
+          "summary": "A self-ligating bracket system — no ligatures, and fewer adjustment visits.",
+          "body": [
+            "A Damon bracket holds the archwire with a built-in gate rather than an elastic or metal ligature. Friction drops, the wire moves freely and the tooth is repositioned with lighter force.",
+            "The practical difference shows in the appointment schedule: adjustments are needed less often than with a classic ligated system, which matters over a long course of treatment — particularly for teenagers and patients with crowded calendars."
+          ],
+          "highlights": [
+            "No ligatures, low friction",
+            "Fewer adjustment visits"
+          ]
+        },
+        "american-orthodontics": {
+          "summary": "American brackets, archwires and accessories — the third line in the orthodontic arsenal.",
+          "body": [
+            "American Orthodontics is one of the larger American manufacturers of brackets, archwires and orthodontic accessories, with products supplied to more than a hundred countries.",
+            "There is exactly one reason to keep three manufacturers at once: the orthodontist selects the system to fit the case in front of them, rather than to fit what happens to be in the cabinet."
+          ],
+          "highlights": [
+            "Brackets, archwires and accessories",
+            "Supplied to more than a hundred countries"
+          ]
+        }
+      }
+    }
+  },
+  "doctor": {
+    "name": "Archil Apkhadze",
+    "role": "Chief doctor of the clinic",
+    "credentials": "Maxillofacial surgeon, periodontal surgeon, implantologist, candidate of medical sciences.",
+    "bio1": "More than 20 years of experience, having worked in leading clinics. He regularly sharpens his skills through conferences and seminars around the world.",
+    "bio2": "Archil specialises in dental surgery, periodontology and implantology, and holds the highest professional category. He defended his candidate's dissertation in 2016, on the surgical treatment of inflammatory-destructive periodontal lesions, and was awarded the \"Distinguished in Dentistry\" medal in 2015.",
+    "tags": [
+      "Surgery",
+      "Periodontology",
+      "Implantology"
+    ],
+    "experienceValue": "20+"
+  }
+}

@@ -1,11 +1,9 @@
-import Link from "next/link";
-
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { route } from "@/lib/nav";
-import { site, whatsappHref } from "@/lib/site";
+import { getClinic } from "@/lib/clinic";
 import { Phone, WhatsApp } from "@/components/ui/icons";
 import Reveal from "@/components/ui/Reveal";
+import BookingTrigger from "@/components/booking/BookingTrigger";
 
 /**
  * Closing band for the services pages.
@@ -16,8 +14,9 @@ import Reveal from "@/components/ui/Reveal";
  * action links to the form that already exists, and the phone and WhatsApp
  * routes are there for anyone who would rather not type.
  */
-export default function BookingCta({ dict, lang }: { dict: Dictionary; lang: Locale }) {
+export default async function BookingCta({ dict, lang }: { dict: Dictionary; lang: Locale }) {
   const t = dict.services.page;
+  const clinic = await getClinic(lang, dict.contact);
 
   return (
     <section className="section relative overflow-hidden border-t border-ivory-400 bg-ivory-200">
@@ -30,15 +29,15 @@ export default function BookingCta({ dict, lang }: { dict: Dictionary; lang: Loc
           <p className="mt-6 text-base leading-relaxed text-ink-700">{t.ctaLead}</p>
 
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href={route(lang, "contact")} className="btn-primary w-full sm:w-auto">
+            <BookingTrigger className="btn-primary w-full sm:w-auto">
               {dict.nav.book}
-            </Link>
-            <a href={`tel:${site.phoneHref}`} className="btn-ghost w-full sm:w-auto">
+            </BookingTrigger>
+            <a href={`tel:${clinic.phoneHref}`} className="btn-ghost w-full sm:w-auto">
               <Phone className="h-4 w-4 text-accent-600" />
-              {site.phone}
+              {clinic.phone}
             </a>
             <a
-              href={whatsappHref}
+              href={clinic.whatsappHref}
               target="_blank"
               rel="noreferrer"
               className="btn-ghost w-full sm:w-auto"

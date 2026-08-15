@@ -37,10 +37,10 @@ export default function DeviceCard({
           <figure className="relative aspect-[4/3] overflow-hidden rounded-card border border-ivory-400 bg-ivory-50 shadow-soft">
             <Image
               src={device.photo}
-              /* Model plus manufacturer. "Scanner" alone tells an image
-                 search nothing, and this is the one place on the site where
-                 the alt text is also the product query someone would type. */
-              alt={`${device.name} — ${device.manufacturer.name}`}
+              /* Alt text comes from the media library so an editor can write
+                 it once per image. It falls back to model plus manufacturer,
+                 which is also the product query someone would type. */
+              alt={device.photoAlt}
               fill
               sizes="(min-width: 1024px) 38vw, 100vw"
               className="object-contain p-6"
@@ -70,12 +70,21 @@ export default function DeviceCard({
           <h3 className="mt-4 font-display text-2xl leading-snug lg:text-3xl">{device.name}</h3>
           <p className="mt-4 text-base leading-relaxed text-ink-800 sm:text-lg">{device.summary}</p>
 
+          {/* Rich text from the CMS. Headings render as h4, not h3 — the
+              device name above is the h3, and an editor adding a subheading
+              should not end up outranking it. */}
           <div className="mt-6 space-y-4">
-            {device.body.map((paragraph) => (
-              <p key={paragraph.slice(0, 40)} className="text-base leading-relaxed text-ink-700">
-                {paragraph}
-              </p>
-            ))}
+            {device.body.map((block) =>
+              block.type === "h2" ? (
+                <h4 key={block.text} className="pt-2 font-display text-lg leading-snug">
+                  {block.text}
+                </h4>
+              ) : (
+                <p key={block.text} className="text-base leading-relaxed text-ink-700">
+                  {block.text}
+                </p>
+              ),
+            )}
           </div>
 
           <div className="mt-8 rounded-card border border-accent-200 bg-accent-50 p-6">

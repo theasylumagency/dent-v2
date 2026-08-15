@@ -1,187 +1,38 @@
-import type { Dictionary } from "@/i18n/dictionaries";
-import { serviceHref, serviceOrder, type ServiceSlug } from "./services";
+import type { Locale } from "@/i18n/config";
+import { cms, mediaAlt, mediaUrl, toBlocks, toStrings } from "./cms";
+import type { Block } from "./news-shared";
+import { serviceHref, type CategorySlug } from "./services-shared";
 
 /**
- * The clinic's equipment, as data.
+ * The clinic's equipment, read from Payload's `equipment` collection.
  *
- * Same split as `services.ts`: everything that does not change between
- * locales lives here (model name, manufacturer, outbound link, photo,
- * which services the device serves), and the prose lives in
- * `technology.page.devices[slug]` in the dictionaries.
+ * The exported shapes are unchanged from the version that held the catalogue
+ * inline, so `Technology.tsx` and `DeviceCard.tsx` only had to start awaiting
+ * these functions.
  *
- * Model names stay Latin in all three locales on purpose. "Vatech EzRay
- * Air" is the string a patient will find on the manufacturer's site and the
- * string search engines have indexed; transliterating it into Georgian or
- * Cyrillic breaks that match for no reader benefit. The old site did
- * transliterate one of them ("КТ Vatech") and it reads as a typo.
+ * Model names are still not localised — that decision now lives in the
+ * collection (`name` has no `localized: true`) rather than in a comment here.
+ * The reasoning is the same: "Vatech EzRay Air" is the string the
+ * manufacturer and the search index both use.
  */
 
-export const deviceOrder = [
-  "vatech-ezray-air",
-  "vatech-cbct",
-  "trios-3-move",
-  "ems-airflow-master",
-  "philips-zoom-4",
-  "forestadent",
-  "damon-ormco",
-  "american-orthodontics",
-] as const;
-
-export type DeviceSlug = (typeof deviceOrder)[number];
-
-/* --------------------------------------------------------------------------
-   Four groups, ordered the way a treatment actually runs: you are
-   diagnosed, then cleaned, then finished aesthetically. Orthodontics sits
-   last because it is a parallel track rather than a step in that sequence.
-
-   These are not the five `categoryOrder` directions from `services.ts`.
-   Equipment does not map onto clinical directions one-to-one — the TRIOS
-   scanner alone feeds diagnostics, aesthetics and orthodontics — so
-   forcing the two taxonomies to share slugs would only invite someone to
-   assume a relationship that is not there.
-   -------------------------------------------------------------------------- */
-
-export const deviceGroupOrder = [
-  "diagnostics",
-  "hygiene",
-  "aesthetics",
-  "orthodontics",
-] as const;
-
+export const deviceGroupOrder = ["diagnostics", "hygiene", "aesthetics", "orthodontics"] as const;
 export type DeviceGroupSlug = (typeof deviceGroupOrder)[number];
 
 export type Manufacturer = { name: string; url: string };
 
-type DeviceRecord = {
-  group: DeviceGroupSlug;
-  /** Model name as the manufacturer writes it. Never translated. */
-  name: string;
-  manufacturer: Manufacturer;
-  /**
-   * Photo slot under `public/equipment/`. Labelled stand-ins are committed
-   * so the layout is real and swapping in a press photo is a single file
-   * copy — see `docs/equipment-photos.md` for the source per device.
-   */
-  photo: string;
-  /** True while `photo` is still a labelled stand-in rather than the real thing. */
-  photoPending: boolean;
-  /**
-   * Services this device is actually used in. Drives the cross-links on the
-   * card, so a patient reading about a scanner can jump straight to the
-   * treatment it belongs to.
-   */
-  services: readonly ServiceSlug[];
-};
-
-const devices: Record<DeviceSlug, DeviceRecord> = {
-  "vatech-ezray-air": {
-    group: "diagnostics",
-    name: "Vatech EzRay Air",
-    manufacturer: { name: "Vatech", url: "https://www.vatech.com/" },
-    photo: "/equipment/vatech-ezray-air.webp",
-    photoPending: true,
-    services: ["visiograph", "diagnostics"],
-  },
-  "vatech-cbct": {
-    group: "diagnostics",
-    name: "Vatech CBCT",
-    manufacturer: { name: "Vatech", url: "https://www.vatech.com/" },
-    photo: "/equipment/vatech-cbct.webp",
-    photoPending: true,
-    services: ["tomography", "diagnostics", "implantation"],
-  },
-  "trios-3-move": {
-    group: "diagnostics",
-    name: "3Shape TRIOS 3 Move+",
-    manufacturer: { name: "3Shape", url: "https://www.3shape.com/" },
-    photo: "/equipment/trios-3-move.webp",
-    photoPending: true,
-    services: ["digital-modelling", "veneers", "aligners"],
-  },
-  "ems-airflow-master": {
-    group: "hygiene",
-    name: "EMS AIRFLOW Prophylaxis Master Premium",
-    manufacturer: { name: "EMS Dental", url: "https://www.ems-dental.com/" },
-    photo: "/equipment/ems-airflow-master.webp",
-    photoPending: true,
-    services: ["periodontology", "therapy-adults", "therapy-children"],
-  },
-  "philips-zoom-4": {
-    group: "aesthetics",
-    name: "Philips Zoom WhiteSpeed (Zoom 4)",
-    manufacturer: { name: "Philips", url: "https://www.philips.com/" },
-    photo: "/equipment/philips-zoom-4.webp",
-    photoPending: true,
-    services: ["whitening"],
-  },
-  forestadent: {
-    group: "orthodontics",
-    name: "FORESTADENT",
-    manufacturer: { name: "FORESTADENT", url: "https://www.forestadent.com/" },
-    photo: "/equipment/forestadent.webp",
-    photoPending: true,
-    services: ["forestadent", "orthodontics"],
-  },
-  "damon-ormco": {
-    group: "orthodontics",
-    name: "Damon System",
-    manufacturer: { name: "Ormco", url: "https://ormco.com/" },
-    photo: "/equipment/damon-ormco.webp",
-    photoPending: true,
-    services: ["damon", "orthodontics"],
-  },
-  "american-orthodontics": {
-    group: "orthodontics",
-    name: "American Orthodontics",
-    manufacturer: { name: "American Orthodontics", url: "https://americanortho.com/" },
-    photo: "/equipment/american-orthodontics.webp",
-    photoPending: true,
-    services: ["orthodontics"],
-  },
-};
-
-/**
- * TODO(client): the sterilisation line is named "Megalab" on the existing
- * site, but no manufacturer URL was verifiable. It is rendered as a closing
- * band without an outbound link rather than pointed at a guessed domain —
- * a wrong `sameAs` is worse than none, because structured data asserts it
- * as fact. Confirm the vendor and add it to `devices` if it should carry a
- * card of its own.
- */
-
-/**
- * Fails at module load rather than at render if a device points at a
- * service that does not exist, or if a group ends up empty. Both are silent
- * failures otherwise: a bad service slug renders a link to nowhere, and an
- * empty group renders a heading with nothing under it.
- */
-function assertEquipmentIsCoherent() {
-  for (const slug of deviceOrder) {
-    for (const service of devices[slug].services) {
-      if (!(serviceOrder as readonly string[]).includes(service)) {
-        throw new Error(`Device "${slug}" points at unknown service "${service}".`);
-      }
-    }
-  }
-  for (const group of deviceGroupOrder) {
-    if (!deviceOrder.some((slug) => devices[slug].group === group)) {
-      throw new Error(`Device group "${group}" has no devices.`);
-    }
-  }
-}
-
-assertEquipmentIsCoherent();
-
 export type Device = {
-  slug: DeviceSlug;
+  slug: string;
+  group: DeviceGroupSlug;
   name: string;
   manufacturer: Manufacturer;
   photo: string;
+  photoAlt: string;
   photoPending: boolean;
   summary: string;
-  body: string[];
+  body: Block[];
   highlights: string[];
-  services: { slug: ServiceSlug; title: string; href: string }[];
+  services: { slug: string; title: string; href: string }[];
 };
 
 export type DeviceGroup = {
@@ -191,51 +42,145 @@ export type DeviceGroup = {
   items: Device[];
 };
 
-export function getDevice(dict: Dictionary, lang: string, slug: DeviceSlug): Device {
-  const record = devices[slug];
-  const copy = dict.technology.page.devices[slug];
+type EquipmentDoc = {
+  slug: string;
+  name: string;
+  group: DeviceGroupSlug;
+  manufacturerName: string;
+  manufacturerUrl: string;
+  photo?: unknown;
+  photoPending?: boolean;
+  summary: string;
+  body?: unknown;
+  highlights?: unknown;
+  services?: unknown;
+};
 
-  return {
-    slug,
-    name: record.name,
-    manufacturer: record.manufacturer,
-    photo: record.photo,
-    photoPending: record.photoPending,
-    summary: copy.summary,
-    body: copy.body,
-    highlights: copy.highlights,
-    services: record.services.map((service) => ({
-      slug: service,
-      title: dict.services.items[service].title,
-      href: serviceHref(lang, service),
-    })),
-  };
+/** A relationship comes back as an id or a populated doc, depending on depth. */
+function relatedServices(value: unknown, lang: Locale) {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .filter((entry): entry is { slug: string; title: string; category: CategorySlug } =>
+      Boolean(entry && typeof entry === "object" && "slug" in entry),
+    )
+    .map((entry) => ({
+      slug: entry.slug,
+      title: entry.title,
+      /* The category comes from the populated document — it decides which
+         page the anchor lives on, and it is an editor's field now. */
+      href: serviceHref(lang, entry.slug, entry.category),
+    }));
 }
 
-export function getDeviceGroups(dict: Dictionary, lang: string): DeviceGroup[] {
-  return deviceGroupOrder.map((group) => ({
-    slug: group,
-    title: dict.technology.page.groups[group].title,
-    lead: dict.technology.page.groups[group].lead,
-    items: deviceOrder
-      .filter((slug) => devices[slug].group === group)
-      .map((slug) => getDevice(dict, lang, slug)),
+async function findDevices(lang: Locale): Promise<Device[]> {
+  const payload = await cms();
+
+  const result = await payload.find({
+    collection: "equipment",
+    locale: lang,
+    /* 2, so the `services` relationship arrives populated with its title —
+       the device card links to each service by name. */
+    depth: 2,
+    limit: 200,
+    sort: "order",
+  });
+
+  return (result.docs as unknown as EquipmentDoc[]).map((doc) => ({
+    slug: doc.slug,
+    group: doc.group,
+    name: doc.name,
+    manufacturer: { name: doc.manufacturerName, url: doc.manufacturerUrl },
+    photo: mediaUrl(doc.photo),
+    photoAlt: mediaAlt(doc.photo, `${doc.name} — ${doc.manufacturerName}`),
+    photoPending: Boolean(doc.photoPending),
+    summary: doc.summary,
+    body: toBlocks(doc.body),
+    highlights: toStrings(doc.highlights),
+    services: relatedServices(doc.services, lang),
   }));
 }
 
+export async function getDeviceGroups(
+  groupCopy: Record<DeviceGroupSlug, { title: string; lead: string }>,
+  lang: Locale,
+): Promise<DeviceGroup[]> {
+  const devices = await findDevices(lang);
+
+  return (
+    deviceGroupOrder
+      .map((group) => ({
+        slug: group,
+        title: groupCopy[group].title,
+        lead: groupCopy[group].lead,
+        items: devices.filter((device) => device.group === group),
+      }))
+      /* A group with nothing in it renders a heading over empty space. An
+         editor can leave a group unused, so this is handled here rather than
+         asserted at module load as it was when the list lived in code. */
+      .filter((group) => group.items.length > 0)
+  );
+}
+
 /**
- * Distinct manufacturers, in first-appearance order. Vatech supplies two of
- * the devices, so a naive map over `deviceOrder` would list it twice.
+ * The five devices the home page shows, in the order it shows them.
  *
- * This replaced the hand-kept `site.brands` array: the outbound links and
- * the equipment they refer to were two lists that had to be edited
- * together, and one of them was already missing Vatech, 3Shape and EMS.
+ * An editorial choice, and deliberately a commit rather than a checkbox —
+ * same reasoning as `categoryOrder` in `services-shared.ts`. Which
+ * machines carry the home page is a decision about what the page argues,
+ * and the first slug in this list is the one that gets the large tile.
+ *
+ * Chosen for what a patient half-recognises and finds reassuring, not for
+ * what is clinically most important: a CBCT scanner and an intraoral
+ * scanner read as "serious equipment" to someone who cannot evaluate
+ * either. The bracket systems are deliberately absent — three boxes of
+ * brackets photograph as three boxes.
+ *
+ * Missing slugs are skipped rather than throwing, and the list is topped
+ * up from the catalogue if it comes back short, so renaming a device in
+ * the CMS degrades to a different device on the home page instead of an
+ * empty section.
  */
-export function getManufacturers(): Manufacturer[] {
+export const homeShowcase = [
+  "vatech-cbct",
+  "trios-3-move",
+  "philips-zoom-4",
+  "ems-airflow-master",
+  "vatech-ezray-air",
+] as const;
+
+const SHOWCASE_COUNT = 5;
+
+export async function getShowcaseDevices(lang: Locale): Promise<Device[]> {
+  const devices = await findDevices(lang);
+  const bySlug = new Map(devices.map((device) => [device.slug, device]));
+
+  const picked = homeShowcase
+    .map((slug) => bySlug.get(slug))
+    .filter((device): device is Device => Boolean(device));
+
+  if (picked.length >= SHOWCASE_COUNT) return picked.slice(0, SHOWCASE_COUNT);
+
+  const chosen = new Set(picked.map((device) => device.slug));
+  const filler = devices.filter((device) => !chosen.has(device.slug));
+  return [...picked, ...filler].slice(0, SHOWCASE_COUNT);
+}
+
+export async function getDeviceCount(): Promise<number> {
+  const payload = await cms();
+  const result = await payload.count({ collection: "equipment" });
+  return result.totalDocs;
+}
+
+/**
+ * Distinct manufacturers, in catalogue order. Two devices share Vatech, so a
+ * naive map would list it twice.
+ */
+export async function getManufacturers(lang: Locale): Promise<Manufacturer[]> {
+  const devices = await findDevices(lang);
   const seen = new Map<string, Manufacturer>();
-  for (const slug of deviceOrder) {
-    const { manufacturer } = devices[slug];
-    if (!seen.has(manufacturer.url)) seen.set(manufacturer.url, manufacturer);
+  for (const device of devices) {
+    if (!seen.has(device.manufacturer.url)) seen.set(device.manufacturer.url, device.manufacturer);
   }
   return [...seen.values()];
 }
