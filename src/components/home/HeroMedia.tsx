@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { type SyntheticEvent, useEffect, useRef, useState } from "react";
 
 import type { Dictionary } from "@/i18n/dictionaries";
 import { media } from "@/lib/site";
@@ -23,18 +22,16 @@ type NavigatorWithConnection = Navigator & {
 };
 
 /**
- * The poster is the only media request in the critical render. It is served
- * directly (without an additional Next image-optimizer URL), while the video
- * is not mounted until the window load event has passed and the browser gets
- * an idle turn.
+ * One video element owns both the initial poster and the eventual clip. Its
+ * initial HTML has a poster but no `src`, so the poster can paint immediately
+ * without making any video URL discoverable during the critical render.
  *
- * At activation time we choose one crop and one codec, then put exactly one
- * URL on the video element. Keeping the poster as a separate layer means the
- * video needs no `poster` attribute and cannot trigger a second poster fetch.
+ * After window load and an idle turn, we choose one crop and one codec, then
+ * assign exactly one URL to that same element. The native poster remains in
+ * place until the browser has a frame to show, so there is no blank handoff.
  */
 export default function HeroMedia({ dict }: { dict: Dictionary }) {
   const [videoSource, setVideoSource] = useState<VideoSource | null>(null);
-  const [videoReady, setVideoReady] = useState(false);
   const [playing, setPlaying] = useState(true);
   const activeSourceRef = useRef<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -67,7 +64,6 @@ export default function HeroMedia({ dict }: { dict: Dictionary }) {
       if (activeSourceRef.current === nextSource.src) return;
 
       activeSourceRef.current = nextSource.src;
-      setVideoReady(false);
       setPlaying(true);
       setVideoSource(nextSource);
     };
@@ -77,8 +73,12 @@ export default function HeroMedia({ dict }: { dict: Dictionary }) {
       cancelScheduledActivation = undefined;
       activationScheduled = false;
       activeSourceRef.current = null;
-      videoRef.current?.pause();
-      setVideoReady(false);
+      const node = videoRef.current;
+      if (node) {
+        node.pause();
+        node.removeAttribute("src");
+        node.load();
+      }
       setVideoSource(null);
     };
 
@@ -151,45 +151,30 @@ export default function HeroMedia({ dict }: { dict: Dictionary }) {
     }
   };
 
-  const handleVideoError = () => {
+  const handleVideoError = (event: SyntheticEvent<HTMLVideoElement>) => {
     activeSourceRef.current = null;
-    setVideoReady(false);
+    event.currentTarget.removeAttribute("src");
+    event.currentTarget.load();
     setVideoSource(null);
   };
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      <Image
-        src={media.heroPoster}
-        alt=""
-        fill
-        unoptimized
-        loading="eager"
-        fetchPriority="high"
-        sizes="(min-width: 1024px) 46vw, 100vw"
-        className="object-cover"
+      <video
+        ref={videoRef}
+        src={videoSource?.src}
+        poster={media.heroPoster}
+        className="absolute inset-0 h-full w-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload={videoSource ? "auto" : "none"}
+        aria-hidden="true"
+        onPlaying={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onError={handleVideoError}
       />
-
-      {videoSource && (
-        <video
-          key={videoSource.src}
-          ref={videoRef}
-          src={videoSource.src}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-            videoReady ? "opacity-100" : "opacity-0"
-          }`}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          aria-hidden="true"
-          onLoadedData={() => setVideoReady(true)}
-          onPlaying={() => setPlaying(true)}
-          onPause={() => setPlaying(false)}
-          onError={handleVideoError}
-        />
-      )}
 
       {videoSource && (
         <button
