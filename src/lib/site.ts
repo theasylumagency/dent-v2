@@ -93,13 +93,31 @@ export const media = {
    * `HeroMedia` picks the orientation at runtime and mounts only that
    * one, so the other is never fetched.
    *
-   * `HeroMedia` tests WebM support before mounting the video and assigns
-   * one URL only. WebM is roughly a quarter the size of the MP4 files;
-   * MP4 is selected only when the browser reports no WebM support.
+   * **One codec, not two.** There used to be a WebM/MP4 pair per crop and a
+   * `canPlayType` probe in `HeroMedia` to choose between them, because the
+   * VP9 files were a quarter the size of the H.264 ones. That was true of
+   * those particular encodes and not of the codecs: the MP4s had been
+   * exported at ~9 Mbit/s for a muted, seven-second background loop that
+   * spends its life behind a scrim. Re-encoded at a sane bitrate — same
+   * 1080p, CRF 31, no audio track — H.264 comes out *smaller* than the VP9
+   * it was losing to, 1.1 MB against 2.1 MB.
+   *
+   * So the trade the probe existed to make no longer exists. H.264 in MP4
+   * plays everywhere, decodes in hardware on phones where VP9 often does
+   * not, and is now the smaller file. Adding a WebM back would mean
+   * maintaining two encodes to save nothing.
+   *
+   * If these are ever re-exported, mind the bitrate rather than the codec:
+   *   ffmpeg -i in.mp4 -c:v libx264 -crf 31 -preset slow -profile:v main \
+   *          -pix_fmt yuv420p -an -movflags +faststart out.mp4
+   *
+   * Filenames are the cache key. `next.config.ts` serves everything under
+   * `/media/` with a thirty-day `max-age`, so replacing a clip means giving
+   * it a new name, not overwriting this one.
    */
   heroVideo: {
-    wide: { webm: "/media/hero_video_16_9.webm", mp4: "/media/hero_video_16_9.mp4" },
-    tall: { webm: "/media/hero_video_9_16.webm", mp4: "/media/hero_video_9_16.mp4" },
+    wide: "/media/hero-wide.mp4",
+    tall: "/media/hero-tall.mp4",
   },
   heroPoster: "/media/hero-poster.webp",
   interior: ["/interior/totcharm_dentinner2.webp", "/interior/totcharm_dentinner1.webp"],

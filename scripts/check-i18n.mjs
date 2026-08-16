@@ -135,7 +135,7 @@ const assets = [
   ...basePaths
     .map((p) => valueAt(baseDict, p))
     .filter((v) => typeof v === "string" && v.startsWith("/") && /\.(webp|jpg|png|svg|mp4)$/.test(v)),
-  ...["/brand/logo.svg", "/media/hero.mp4", "/media/hero-poster.webp"],
+  ...["/brand/logo.svg", "/media/hero-wide.mp4", "/media/hero-poster.webp"],
 ];
 
 const sources = ["services", "team", "site", "equipment"]

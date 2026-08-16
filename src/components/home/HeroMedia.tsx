@@ -7,7 +7,6 @@ import { media } from "@/lib/site";
 import { Pause, Play } from "@/components/ui/icons";
 
 type Orientation = "wide" | "tall";
-type Codec = keyof (typeof media.heroVideo)[Orientation];
 type VideoSource = {
   orientation: Orientation;
   src: string;
@@ -26,9 +25,13 @@ type NavigatorWithConnection = Navigator & {
  * initial HTML has a poster but no `src`, so the poster can paint immediately
  * without making any video URL discoverable during the critical render.
  *
- * After window load and an idle turn, we choose one crop and one codec, then
- * assign exactly one URL to that same element. The native poster remains in
- * place until the browser has a frame to show, so there is no blank handoff.
+ * After window load and an idle turn, we choose one crop and assign exactly
+ * one URL to that same element. The native poster remains in place until the
+ * browser has a frame to show, so there is no blank handoff.
+ *
+ * There is no codec probe any more — `site.heroVideo` ships a single H.264
+ * MP4 per crop, and the note there explains why the WebM alternative stopped
+ * earning its keep.
  */
 export default function HeroMedia({ dict }: { dict: Dictionary }) {
   const [videoSource, setVideoSource] = useState<VideoSource | null>(null);
@@ -40,8 +43,6 @@ export default function HeroMedia({ dict }: { dict: Dictionary }) {
     const motion = window.matchMedia("(prefers-reduced-motion: no-preference)");
     const wide = window.matchMedia("(min-width: 1024px)");
     const connection = (navigator as NavigatorWithConnection).connection;
-    const codecProbe = document.createElement("video");
-    const codec: Codec = codecProbe.canPlayType("video/webm") ? "webm" : "mp4";
 
     let pageLoaded = document.readyState === "complete";
     let activationScheduled = false;
@@ -53,7 +54,7 @@ export default function HeroMedia({ dict }: { dict: Dictionary }) {
       const orientation: Orientation = wide.matches ? "wide" : "tall";
       return {
         orientation,
-        src: media.heroVideo[orientation][codec],
+        src: media.heroVideo[orientation],
       };
     };
 
