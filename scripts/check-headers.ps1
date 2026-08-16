@@ -120,16 +120,21 @@ foreach ($asset in @("/media/hero-poster.webp", "/brand/logo.svg")) {
 Write-Host ""
 Write-Host "=== 6. Is the hero poster preloaded? ========================" -ForegroundColor Cyan
 # Only meaningful after the layout change has been built and deployed.
-# Expect exactly 2 font preloads (the Georgian pair) and one image preload
-# for the poster; /brand/logo.svg should no longer be preloaded at all.
+# Targets: no font preloads at all (they were starving the stylesheet that
+# gates the poster's paint), one image preload for the poster, no logo
+# preload, and the stylesheet inlined as <style> rather than fetched.
 $body = curl.exe -sS $page 2>$null
 if ($body) {
-    $fonts = ([regex]::Matches($body, 'rel="preload"[^>]*as="font"')).Count
+    $fonts  = ([regex]::Matches($body, 'rel="preload"[^>]*as="font"')).Count
     $poster = if ($body -match 'rel="preload"[^>]*hero-poster') { "yes" } else { "NO" }
-    $logo = if ($body -match 'rel="preload"[^>]*logo\.svg') { "yes (should be no)" } else { "no" }
-    "  font preloads in <head> : $fonts   (target: 2)"
+    $logo   = if ($body -match 'rel="preload"[^>]*logo\.svg') { "yes (should be no)" } else { "no" }
+    $sheets = ([regex]::Matches($body, 'rel="stylesheet"')).Count
+    $inline = ([regex]::Matches($body, '<style')).Count
+    "  font preloads in <head> : $fonts   (target: 0)"
     "  hero poster preloaded   : $poster (target: yes)"
     "  logo preloaded          : $logo"
+    "  <link rel=stylesheet>   : $sheets   (target: 0, CSS is inlined)"
+    "  <style> blocks          : $inline   (target: 1 or more)"
 }
 
 Write-Host ""

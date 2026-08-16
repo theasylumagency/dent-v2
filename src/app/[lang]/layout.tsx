@@ -32,18 +32,32 @@ import BookingProvider from "@/components/booking/BookingProvider";
    surplus weight is another `@font-face` block in the render-blocking
    stylesheet, which is where 80 of them came from.
 
-   `preload: false` on the two Latin families is the important line here.
-   next/font preloads one file per declared subset, and on `ka` — the
-   default locale — the Latin display face renders almost nothing while
-   still claiming 92 KB of the highest-priority band in `<head>`, ahead of
-   the hero poster that is the LCP element. Dropping the hint takes
-   147 KB off the critical path; the files still load, just once the
-   stylesheet has been parsed and the browser knows they are wanted. The
-   `swap` + `adjustFontFallback` pair already covers the gap, so the trade
-   is a brief fallback render, not invisible text — and CLS stays at 0.
+   `preload: false` on all four is the important line, and it was arrived
+   at in two passes.
 
-   The Georgian companions keep their preload: on `ka` they are what
-   actually paints the headline and the lead. */
+   next/font preloads one file per declared subset, which put 253 KB of
+   woff2 in the highest-priority band of `<head>`. The Latin families went
+   first: on `ka` — the default locale — they render almost nothing, so
+   92 KB of that was pure waste. The Georgian pair was kept, on the theory
+   that it paints the headline and the lead.
+
+   Measuring afterwards showed that theory was wrong about what it was
+   competing with. The LCP element is the hero poster, which covers the
+   full viewport on mobile and dwarfs the headline by area; no font can
+   make it arrive sooner. What the remaining 107 KB of preload *did* do
+   was starve the render-blocking stylesheet sharing that band — the
+   poster finished downloading at 527 ms and then sat idle until the CSS
+   landed at 939 ms, because nothing paints before the stylesheet parses.
+
+   So the hint helped the wrong element and delayed the one that gates
+   everything. Removed. The fonts are still fetched at high priority the
+   moment the stylesheet declares them; `swap` plus `adjustFontFallback`
+   means text paints immediately in a metric-matched fallback and CLS
+   stays at 0. The cost is a visible swap on the headline, which is the
+   trade being made deliberately.
+
+   If this is ever revisited: preloading a font is only worth it when the
+   LCP element is *text*. Check which it is before adding the hint back. */
 
 const body = Manrope({
   subsets: ["latin", "latin-ext", "cyrillic"],
@@ -58,6 +72,7 @@ const bodyKa = Noto_Sans_Georgian({
   weight: ["400", "500", "600"],
   variable: "--font-body-ka",
   display: "swap",
+  preload: false,
 });
 
 const display = Cormorant_Garamond({
@@ -73,6 +88,7 @@ const displayKa = Noto_Serif_Georgian({
   weight: ["400", "500"],
   variable: "--font-display-ka",
   display: "swap",
+  preload: false,
 });
 
 export const viewport: Viewport = {

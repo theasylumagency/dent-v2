@@ -14,6 +14,35 @@ import type { NextConfig } from "next";
 const CACHEABLE_PUBLIC_DIRS = "media|interior|images|brand|doctors|equipment|services|placeholder";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    /**
+     * Ship the stylesheet as a `<style>` block in the document instead of a
+     * `<link>`.
+     *
+     * The measurement that motivated this: on a warm HTTP/2 connection the
+     * hero poster finished downloading at 527 ms and then did nothing until
+     * 939 ms, because a render-blocking stylesheet has to parse before
+     * anything paints. Four hundred milliseconds of the LCP was one 17 KB
+     * request's round trip.
+     *
+     * Next's own guidance points here for exactly this shape of site:
+     * Tailwind keeps the sheet small and roughly constant regardless of how
+     * much UI is added, so inlining buys the round trip without meaningfully
+     * bloating the HTML.
+     *
+     * The trade is real and worth stating: inlined CSS cannot be cached
+     * separately, so a returning visitor re-downloads it with every page.
+     * Taken knowingly — this is a clinic's marketing site where first-time
+     * visitors are the traffic that matters, and the HTML is gzipped
+     * anyway. If analytics ever show heavy repeat visitation, this is the
+     * first flag to reconsider.
+     *
+     * Flagged experimental in this version of Next. Verify the `<style>`
+     * block actually appears in the built HTML after upgrading.
+     */
+    inlineCss: true,
+  },
+
   async headers() {
     return [
       {
