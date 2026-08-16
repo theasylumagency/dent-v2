@@ -93,21 +93,21 @@ export default async function Hero({ dict, lang }: { dict: Dictionary; lang: Loc
           centres it in the space the header actually leaves over —
           `pt-[8.5rem]` is the unscrolled header (40px utility strip +
           96px bar), so `justify-center` centres below it, not behind it. */}
-      <div className="relative z-10 flex h-full flex-col justify-end pb-32 pt-24 lg:justify-center lg:pb-0 lg:pt-[8.5rem]">
+      <div className="hero-copy-layout relative z-10 flex h-full flex-col justify-end pb-32 pt-24 lg:justify-center lg:pb-0 lg:pt-[8.5rem]">
         <div className="shell">
           <div className="max-w-[34rem]">
             <p className="eyebrow">{dict.hero.eyebrow}</p>
 
-            <h1 className="mt-6 fluid-display font-display lg:mt-7">
+            <h1 className="hero-title mt-6 fluid-display font-display lg:mt-7">
               <span className="block">{dict.hero.titleTop}</span>
               <span className="block text-gradient display-italic">{dict.hero.titleBottom}</span>
             </h1>
 
-            <p className="mt-6 max-w-lg text-base leading-relaxed text-ivory-200/90 sm:text-lg lg:mt-8">
+            <p className="hero-lead mt-6 max-w-lg text-base leading-relaxed text-ivory-200/90 sm:text-lg lg:mt-8">
               {dict.hero.lead}
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center lg:mt-10">
+            <div className="hero-actions mt-8 flex flex-col gap-3 sm:flex-row sm:items-center lg:mt-10">
               <BookingTrigger className="btn-primary">
                 {dict.hero.ctaPrimary}
               </BookingTrigger>
@@ -124,7 +124,7 @@ export default async function Hero({ dict, lang }: { dict: Dictionary; lang: Loc
                 section, so the sentence carries the whole meaning here and
                 the images are hidden from assistive tech rather than read
                 out as four unlabelled photos. */}
-            <div className="mt-8 flex items-center gap-4 sm:gap-5 lg:mt-10">
+            <div className="hero-trust mt-8 flex items-center gap-4 sm:gap-5 lg:mt-10">
               <ul className="flex shrink-0" aria-hidden="true">
                 {faces.map((member, index) => (
                   <li

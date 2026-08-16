@@ -19,12 +19,12 @@ export default async function LeadDoctor({ dict, lang }: { dict: Dictionary; lan
   if (!doctor) return null;
 
   return (
-    <section className="section relative overflow-hidden bg-ivory-100">
+    <section className="lead-doctor-section section relative overflow-hidden bg-ivory-100">
       <div className="aura -right-24 top-0 h-[26rem] w-[26rem] opacity-30" aria-hidden="true" />
 
-      <div className="shell relative grid grid-cols-1 items-center gap-14 lg:grid-cols-12 lg:gap-20">
+      <div className="lead-doctor-grid shell relative grid grid-cols-1 items-center gap-14 lg:grid-cols-12 lg:gap-20">
         <Reveal className="lg:col-span-5">
-          <div className="relative">
+          <div className="lead-doctor-media relative">
             <div
               className="absolute -inset-x-6 -top-6 bottom-16 rounded-[2rem] border border-accent-200 bg-accent-50/50"
               aria-hidden="true"
@@ -64,13 +64,13 @@ export default async function LeadDoctor({ dict, lang }: { dict: Dictionary; lan
           </Reveal>
 
           <Reveal delay={100}>
-            <p className="mt-10 font-display text-xl leading-relaxed text-ink-800 sm:text-2xl">
+            <p className="lead-doctor-focus mt-10 font-display text-xl leading-relaxed text-ink-800 sm:text-2xl">
               {doctor.focus}
             </p>
           </Reveal>
 
           <Reveal delay={160}>
-            <ul className="mt-8 flex flex-wrap gap-2.5">
+            <ul className="lead-doctor-tags mt-8 flex flex-wrap gap-2.5">
               {doctor.tags.map((tag) => (
                 <li
                   key={tag}
@@ -85,7 +85,7 @@ export default async function LeadDoctor({ dict, lang }: { dict: Dictionary; lan
           <Reveal delay={220}>
             <Link
               href={doctor.href}
-              className="group mt-9 inline-flex items-center gap-2.5 text-sm font-medium text-accent-600 transition-colors hover:text-accent-700"
+              className="lead-doctor-cta group mt-9 inline-flex items-center gap-2.5 text-sm font-medium text-accent-600 transition-colors hover:text-accent-700"
             >
               {dict.doctor.teaserCta}
               <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-accent-300 bg-ivory-50 transition-all duration-500 group-hover:bg-accent-300 group-hover:text-ink-900">

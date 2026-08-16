@@ -236,6 +236,15 @@
     }
   }
 
+  /* The drawer body must be the scrolling flex child. The explicit
+     min-height prevents long forms from increasing the panel beyond the
+     viewport; compact spacing keeps the primary fields visible sooner. */
+  .booking-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
   /* ====================================================================
      Fixed-height sections
      ====================================================================
@@ -640,6 +649,70 @@
 }
 
 @layer utilities {
+
+  /* Short desktop viewports (the usable browser area on a 1366×768
+     laptop is often only ~600–700px high) need a vertical rhythm of
+     their own. These live in the utilities layer so they can override
+     the width-based `lg:*` utilities used by the components. */
+  @media (min-width: 1024px) and (max-height: 800px) {
+    .hero-copy-layout {
+      justify-content: flex-start;
+      padding-top: clamp(7.5rem, 19vh, 8.5rem);
+      padding-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      margin-top: 1rem;
+    }
+
+    .hero-lead,
+    .hero-actions,
+    .hero-trust {
+      margin-top: 1.25rem;
+    }
+
+    .lead-doctor-section {
+      padding-block: 3.5rem;
+    }
+
+    .lead-doctor-grid {
+      gap: 3rem;
+    }
+
+    .lead-doctor-media {
+      width: 100%;
+      max-width: min(100%, calc((100svh - 13rem) * 0.8));
+      margin-inline: auto;
+    }
+
+    .lead-doctor-focus,
+    .lead-doctor-tags,
+    .lead-doctor-cta {
+      margin-top: 1.5rem;
+    }
+  }
+
+  @media (max-height: 800px) {
+    .booking-drawer-header {
+      padding-block: 1rem;
+    }
+
+    .booking-drawer-body {
+      padding-block: 1rem;
+    }
+
+    .booking-form {
+      gap: 0.875rem;
+    }
+
+    .booking-form > .grid {
+      gap: 0.875rem;
+    }
+
+    .booking-drawer .field {
+      padding-block: 0.7rem;
+    }
+  }
 
   /* Ambient brand-blue wash behind sections -------------------------- */
   .aura {

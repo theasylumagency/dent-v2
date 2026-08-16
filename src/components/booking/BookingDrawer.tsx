@@ -88,11 +88,11 @@ export default function BookingDrawer({
         role="dialog"
         aria-modal="true"
         aria-labelledby="booking-drawer-title"
-        className={`absolute inset-y-0 right-0 flex w-[min(100%,460px)] flex-col bg-ivory-100 shadow-[-18px_0_55px_-28px_rgba(4,18,29,0.45)] transition-transform duration-300 ease-[var(--ease-premium)] motion-reduce:transition-none ${
+        className={`booking-drawer absolute inset-y-0 right-0 flex w-[min(100%,460px)] flex-col overflow-hidden bg-ivory-100 shadow-[-18px_0_55px_-28px_rgba(4,18,29,0.45)] transition-transform duration-300 ease-[var(--ease-premium)] motion-reduce:transition-none ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="sticky top-0 z-10 border-b border-ivory-400 bg-ivory-100/95 px-6 py-5 backdrop-blur-lg sm:px-8 sm:py-6">
+        <div className="booking-drawer-header relative z-10 shrink-0 border-b border-ivory-400 bg-ivory-100/95 px-6 py-5 backdrop-blur-lg sm:px-8 sm:py-6">
           <button
             type="button"
             onClick={onClose}
@@ -103,14 +103,14 @@ export default function BookingDrawer({
           </button>
           <div className="pr-12">
             <p className="eyebrow">{copy.title}</p>
-            <h2 id="booking-drawer-title" className="mt-3 font-display text-3xl leading-tight text-ink-900 sm:text-4xl">
+            <h2 id="booking-drawer-title" className="sr-only">
               {copy.title}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-ink-600">{copy.intro}</p>
           </div>
         </div>
 
-        <div className="no-scrollbar flex-1 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
+        <div className="booking-drawer-body no-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-6 sm:px-8 sm:py-8">
           <BookingForm copy={copy} options={options} onClose={onClose} />
         </div>
       </aside>

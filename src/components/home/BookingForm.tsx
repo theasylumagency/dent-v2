@@ -86,7 +86,7 @@ export default function BookingForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+    <form onSubmit={handleSubmit} noValidate className="booking-form">
       <div>
         <label htmlFor="booking-name" className="label-micro mb-2">
           {t.name} <span aria-hidden="true">*</span>
@@ -164,7 +164,7 @@ export default function BookingForm({
         <label htmlFor="booking-message" className="label-micro mb-2">
           {t.message} <span className="normal-case tracking-normal">({t.optional})</span>
         </label>
-        <textarea id="booking-message" name="message" rows={4} placeholder={t.messagePlaceholder} className="field resize-none" />
+        <textarea id="booking-message" name="message" rows={3} placeholder={t.messagePlaceholder} className="field resize-none" />
       </div>
 
       <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
