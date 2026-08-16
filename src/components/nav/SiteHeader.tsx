@@ -301,7 +301,13 @@ export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
               alt=""
               width={160}
               height={140}
-              priority
+              /* Deliberately not `priority`. It emitted a
+                 `<link rel="preload" as="image">` for the logo into every
+                 page's `<head>`, where it competed with — and on the home
+                 page beat — the hero poster, which is the actual LCP
+                 element. The mark is a small inline SVG in the first
+                 paintable row; it does not need the hint to arrive on
+                 time. */
               unoptimized
               className={`w-auto transition-[height] duration-500 ${scrolled ? "h-9" : "h-11 lg:h-12"}`}
             />

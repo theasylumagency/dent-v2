@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { preload } from "react-dom";
 import { notFound } from "next/navigation";
 import { Cormorant_Garamond, Manrope, Noto_Sans_Georgian, Noto_Serif_Georgian } from "next/font/google";
 
@@ -24,30 +25,52 @@ import BookingProvider from "@/components/booking/BookingProvider";
    actually render. See the `:lang(ka)` block in globals.css for the
    metric corrections that follow from that.                            */
 
+/* Weights are exactly what the stylesheet asks for and nothing more.
+   300 was declared but never used — `h1,h2,h3` are pinned to 400 (see the
+   note in globals.css), the only Tailwind weight class in the tree is
+   `font-medium`, and 600 is spent on `.eyebrow` and `.btn-primary`. Each
+   surplus weight is another `@font-face` block in the render-blocking
+   stylesheet, which is where 80 of them came from.
+
+   `preload: false` on the two Latin families is the important line here.
+   next/font preloads one file per declared subset, and on `ka` — the
+   default locale — the Latin display face renders almost nothing while
+   still claiming 92 KB of the highest-priority band in `<head>`, ahead of
+   the hero poster that is the LCP element. Dropping the hint takes
+   147 KB off the critical path; the files still load, just once the
+   stylesheet has been parsed and the browser knows they are wanted. The
+   `swap` + `adjustFontFallback` pair already covers the gap, so the trade
+   is a brief fallback render, not invisible text — and CLS stays at 0.
+
+   The Georgian companions keep their preload: on `ka` they are what
+   actually paints the headline and the lead. */
+
 const body = Manrope({
   subsets: ["latin", "latin-ext", "cyrillic"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500", "600"],
   variable: "--font-body",
   display: "swap",
+  preload: false,
 });
 
 const bodyKa = Noto_Sans_Georgian({
   subsets: ["georgian"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500", "600"],
   variable: "--font-body-ka",
   display: "swap",
 });
 
 const display = Cormorant_Garamond({
   subsets: ["latin", "latin-ext", "cyrillic"],
-  weight: ["300", "400", "500"],
+  weight: ["400", "500"],
   variable: "--font-display-latin",
   display: "swap",
+  preload: false,
 });
 
 const displayKa = Noto_Serif_Georgian({
   subsets: ["georgian"],
-  weight: ["300", "400", "500"],
+  weight: ["400", "500"],
   variable: "--font-display-ka",
   display: "swap",
 });
@@ -133,6 +156,23 @@ export default async function LocaleLayout({
 }) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
+
+  /* The hero poster is the LCP element on every locale, and it is carried
+     by `<video poster>` — which Chrome fetches at Low priority and which
+     no preload scanner will promote. Without this hint a 20 KB image sits
+     behind every font, stylesheet and script in the queue, which is the
+     whole of the gap between FCP and LCP. Declared here rather than in
+     HeroMedia so it is emitted with the document shell instead of
+     whenever the hero's own subtree happens to flush.
+
+     `<link rel="preload">` is not something the Metadata API models; the
+     documented route is ReactDOM's preload, which React hoists into
+     `<head>`. */
+  preload(media.heroPoster, {
+    as: "image",
+    type: "image/webp",
+    fetchPriority: "high",
+  });
 
   const locale = lang as Locale;
   const dict = await getDictionary(locale);
