@@ -14,6 +14,29 @@ import type { NextConfig } from "next";
 const CACHEABLE_PUBLIC_DIRS = "media|interior|images|brand|doctors|equipment|services|placeholder";
 
 const nextConfig: NextConfig = {
+  /**
+   * Compression is nginx's job now, not Next's.
+   *
+   * Next gzips its own responses by default, and a reverse proxy will not
+   * touch a body that already carries a `Content-Encoding`. So as long as
+   * this was `true`, nginx's brotli module sat loaded and configured and
+   * never got a chance to run — the site served gzip no matter what was in
+   * the nginx config.
+   *
+   * Turning it off hands the whole negotiation to nginx, which offers
+   * brotli to clients that accept it and falls back to gzip for the rest.
+   *
+   * **This is only safe while nginx is actually compressing.** It needs
+   * `gzip on` *and* `gzip_proxied any` — without the latter nginx declines
+   * to compress proxied responses at all, which is its default, and the
+   * site would start serving ~320 KB of uncompressed HTML. If the nginx
+   * config is ever rebuilt from scratch, check that before trusting this
+   * line.
+   *
+   *     curl -sI -H "Accept-Encoding: br, gzip" https://.../ka | grep -i content-encoding
+   */
+  compress: false,
+
   experimental: {
     /**
      * Ship the stylesheet as a `<style>` block in the document instead of a
