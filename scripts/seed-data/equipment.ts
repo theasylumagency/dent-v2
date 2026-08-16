@@ -16,6 +16,7 @@ export type SeedDevice = {
   manufacturerName: string;
   manufacturerUrl: string;
   photo: string;
+  photoPending?: boolean;
   /** Service slugs this device is used in. */
   services: string[];
 };

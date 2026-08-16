@@ -21,6 +21,8 @@ export type DeviceGroupSlug = (typeof deviceGroupOrder)[number];
 
 export type Manufacturer = { name: string; url: string };
 
+type DevicePhotoFit = "contain" | "cover";
+
 export type Device = {
   slug: string;
   group: DeviceGroupSlug;
@@ -29,6 +31,7 @@ export type Device = {
   photo: string;
   photoAlt: string;
   photoPending: boolean;
+  photoFit: DevicePhotoFit;
   summary: string;
   body: Block[];
   highlights: string[];
@@ -54,6 +57,19 @@ type EquipmentDoc = {
   body?: unknown;
   highlights?: unknown;
   services?: unknown;
+};
+
+/* Real local product photography can replace a seeded CMS placeholder
+   without waiting for every deployed database to be reseeded. The TRIOS
+   image is a full-frame editorial shot, so it fills the card rather than
+   inheriting the padding used for transparent product cut-outs. */
+const localPhotoOverrides: Partial<
+  Record<string, { src: string; fit: DevicePhotoFit }>
+> = {
+  "trios-3-move": {
+    src: "/images/home/technology/trios-3-move.webp",
+    fit: "cover",
+  },
 };
 
 /** A relationship comes back as an id or a populated doc, depending on depth. */
@@ -86,19 +102,24 @@ async function findDevices(lang: Locale): Promise<Device[]> {
     sort: "order",
   });
 
-  return (result.docs as unknown as EquipmentDoc[]).map((doc) => ({
-    slug: doc.slug,
-    group: doc.group,
-    name: doc.name,
-    manufacturer: { name: doc.manufacturerName, url: doc.manufacturerUrl },
-    photo: mediaUrl(doc.photo),
-    photoAlt: mediaAlt(doc.photo, `${doc.name} — ${doc.manufacturerName}`),
-    photoPending: Boolean(doc.photoPending),
-    summary: doc.summary,
-    body: toBlocks(doc.body),
-    highlights: toStrings(doc.highlights),
-    services: relatedServices(doc.services, lang),
-  }));
+  return (result.docs as unknown as EquipmentDoc[]).map((doc) => {
+    const photoOverride = localPhotoOverrides[doc.slug];
+
+    return {
+      slug: doc.slug,
+      group: doc.group,
+      name: doc.name,
+      manufacturer: { name: doc.manufacturerName, url: doc.manufacturerUrl },
+      photo: photoOverride?.src ?? mediaUrl(doc.photo),
+      photoAlt: mediaAlt(doc.photo, `${doc.name} — ${doc.manufacturerName}`),
+      photoPending: photoOverride ? false : Boolean(doc.photoPending),
+      photoFit: photoOverride?.fit ?? "contain",
+      summary: doc.summary,
+      body: toBlocks(doc.body),
+      highlights: toStrings(doc.highlights),
+      services: relatedServices(doc.services, lang),
+    };
+  });
 }
 
 export async function getDeviceGroups(

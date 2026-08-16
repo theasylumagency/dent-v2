@@ -307,9 +307,9 @@ async function main() {
         manufacturerName: device.manufacturerName,
         manufacturerUrl: device.manufacturerUrl,
         photo,
-        /* The seeded images are labelled stand-ins. The badge stays until an
-           editor unticks it after uploading a real photograph. */
-        photoPending: true,
+        /* Most seeded images are labelled stand-ins. Individual entries can
+           opt out once a real, approved photograph is available. */
+        photoPending: device.photoPending ?? true,
         services: device.services.map((slug) => serviceIds.get(slug)).filter(Boolean),
       },
       (locale) => {

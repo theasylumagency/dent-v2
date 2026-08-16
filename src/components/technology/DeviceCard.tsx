@@ -43,7 +43,7 @@ export default function DeviceCard({
               alt={device.photoAlt}
               fill
               sizes="(min-width: 1024px) 38vw, 100vw"
-              className="object-contain p-6"
+              className={device.photoFit === "cover" ? "object-cover" : "object-contain p-6"}
             />
             {device.photoPending && (
               <figcaption className="absolute bottom-3 left-3 rounded-full bg-ivory-50/90 px-3 py-1 text-[0.6875rem] uppercase tracking-[0.12em] text-ink-600 ring-1 ring-inset ring-ivory-500">
