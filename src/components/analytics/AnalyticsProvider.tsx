@@ -25,6 +25,10 @@ import type { AnalyticsConfig, ConsentChoice } from "@/lib/analytics/types";
 
 const CONSENT_KEY = "total-charm-consent";
 const CONSENT_VERSION = 1;
+/** Temporary business decision: hide the first-visit notice and treat a
+ * visitor with no stored choice as granted. Set this back to `false` to
+ * restore the explicit opt-in notice without changing the consent model. */
+const TEMPORARILY_AUTO_GRANT_CONSENT = true;
 
 type ConsentCopy = {
   title: string;
@@ -108,9 +112,11 @@ export default function AnalyticsProvider({
   useEffect(() => {
     setAnalyticsConfig(config);
     const stored = readStoredConsent();
-    setProviderConsent(stored === "granted");
+    const initialConsent = stored ?? (TEMPORARILY_AUTO_GRANT_CONSENT ? "granted" : null);
+    if (stored === null && initialConsent) storeConsent(initialConsent);
+    setProviderConsent(initialConsent === "granted");
     const frame = window.requestAnimationFrame(() => {
-      setConsent(stored);
+      setConsent(initialConsent);
       setReady(true);
     });
     return () => window.cancelAnimationFrame(frame);
@@ -146,7 +152,8 @@ export default function AnalyticsProvider({
   }, [choose, consent, settingsOpen]);
 
   const openSettings = useCallback(() => setSettingsOpen(true), []);
-  const showNotice = ready && (consent === null || settingsOpen);
+  const showNotice =
+    ready && (settingsOpen || (!TEMPORARILY_AUTO_GRANT_CONSENT && consent === null));
 
   return (
     <ConsentContext.Provider value={{ openSettings }}>
