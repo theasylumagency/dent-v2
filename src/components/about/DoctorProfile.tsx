@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import type { Doctor } from "@/lib/team";
+import TrackedView from "@/components/analytics/TrackedView";
 import Reveal from "@/components/ui/Reveal";
 import Credentials, { LanguageChips } from "./Credentials";
 
@@ -30,6 +31,7 @@ export default function DoctorProfile({
 }) {
   return (
     <article id={profile.slug} className="scroll-mt-28">
+      <TrackedView type="doctor" viewKey={`doctor:${profile.slug}`} />
       <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-14">
         <Reveal className={`lg:col-span-4 ${flipped ? "lg:order-last" : ""}`}>
           <div className="lg:sticky lg:top-28">

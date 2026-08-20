@@ -419,7 +419,20 @@
     "contactLabel": "Contact",
     "rights": "All rights reserved.",
     "privacy": "Privacy",
+    "privacySettings": "Privacy settings",
     "terms": "Terms & conditions"
+  },
+  "analyticsConsent": {
+    "title": "Privacy",
+    "message": "With your permission, we use analytics to measure website and advertising performance. GA4 and Meta Pixel stay off unless you allow them.",
+    "allow": "Allow",
+    "deny": "No, thanks",
+    "close": "Close",
+    "settingsTitle": "Privacy settings",
+    "settingsMessage": "Analytics & advertising measurement",
+    "enabled": "Currently allowed.",
+    "disabled": "Currently disabled.",
+    "disable": "Disable"
   },
   "common": {
     "readMore": "Details",

@@ -74,6 +74,8 @@ export interface Config {
     faq: Faq;
     media: Media;
     users: User;
+    'analytics-aggregates': AnalyticsAggregate;
+    'audit-logs': AuditLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,6 +90,8 @@ export interface Config {
     faq: FaqSelect<false> | FaqSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'analytics-aggregates': AnalyticsAggregatesSelect<false> | AnalyticsAggregatesSelect<true>;
+    'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -100,10 +104,12 @@ export interface Config {
   globals: {
     'clinic-info': ClinicInfo;
     seo: Seo;
+    'analytics-settings': AnalyticsSetting;
   };
   globalsSelect: {
     'clinic-info': ClinicInfoSelect<false> | ClinicInfoSelect<true>;
     seo: SeoSelect<false> | SeoSelect<true>;
+    'analytics-settings': AnalyticsSettingsSelect<false> | AnalyticsSettingsSelect<true>;
   };
   locale: 'ka' | 'en' | 'ru';
   widgets: {
@@ -449,12 +455,17 @@ export interface Faq {
   createdAt: string;
 }
 /**
+ * Who can log in. Administrators manage accounts; editors can change content and their own password, nothing else.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
   name: string;
+  /**
+   * Administrators can add and remove accounts. Editors can change content only.
+   */
   role: 'admin' | 'editor';
   updatedAt: string;
   createdAt: string;
@@ -474,6 +485,55 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * Anonymous daily totals. These rows contain no visitor, session, cookie, fingerprint, or IP data.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "analytics-aggregates".
+ */
+export interface AnalyticsAggregate {
+  id: number;
+  /**
+   * UTC calendar day (YYYY-MM-DD).
+   */
+  bucket: string;
+  event: 'page_view' | 'booking_open' | 'booking_complete';
+  /**
+   * Set only for page views.
+   */
+  route: string;
+  count: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Immutable history of CMS changes. Entries are created automatically and cannot be edited or deleted.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-logs".
+ */
+export interface AuditLog {
+  id: number;
+  user?: (number | null) | User;
+  action: 'create' | 'update' | 'delete';
+  targetType: 'collection' | 'global';
+  target: string;
+  documentId?: string | null;
+  /**
+   * Only changed fields are included; sensitive field names are always removed.
+   */
+  changes:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -526,6 +586,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'analytics-aggregates';
+        value: number | AnalyticsAggregate;
+      } | null)
+    | ({
+        relationTo: 'audit-logs';
+        value: number | AuditLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -771,6 +839,32 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "analytics-aggregates_select".
+ */
+export interface AnalyticsAggregatesSelect<T extends boolean = true> {
+  bucket?: T;
+  event?: T;
+  route?: T;
+  count?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-logs_select".
+ */
+export interface AuditLogsSelect<T extends boolean = true> {
+  user?: T;
+  action?: T;
+  targetType?: T;
+  target?: T;
+  documentId?: T;
+  changes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -989,6 +1083,25 @@ export interface Seo {
   createdAt?: string | null;
 }
 /**
+ * Public provider IDs. A provider stays disabled when its ID is empty, and the website loads it only after visitor consent.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "analytics-settings".
+ */
+export interface AnalyticsSetting {
+  id: number;
+  /**
+   * Optional. GA4 is not loaded when this field is empty.
+   */
+  ga4MeasurementId?: string | null;
+  /**
+   * Optional. Meta Pixel is not loaded when this field is empty.
+   */
+  metaPixelId?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clinic-info_select".
  */
@@ -1087,6 +1200,17 @@ export interface SeoSelect<T extends boolean = true> {
               description?: T;
             };
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "analytics-settings_select".
+ */
+export interface AnalyticsSettingsSelect<T extends boolean = true> {
+  ga4MeasurementId?: T;
+  metaPixelId?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

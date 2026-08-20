@@ -15,6 +15,7 @@ import PageHero from "@/components/services/PageHero";
 import BookingCta from "@/components/services/BookingCta";
 import DoctorProfile from "@/components/about/DoctorProfile";
 import Credentials, { LanguageChips } from "@/components/about/Credentials";
+import TrackedView from "@/components/analytics/TrackedView";
 
 /* `generateStaticParams` is not repeated here — the `[lang]` layout already
    declares it, and a page only needs its own when it adds a segment. */
@@ -293,6 +294,7 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
           id={lead.slug}
           className="section relative scroll-mt-20 overflow-hidden border-b border-ivory-400 bg-ivory-200"
         >
+          <TrackedView type="doctor" viewKey={`doctor:${lead.slug}`} />
           <div className="aura -left-40 top-0 h-[26rem] w-[26rem] opacity-25" aria-hidden="true" />
 
           <div className="shell relative grid grid-cols-1 items-center gap-14 lg:grid-cols-12 lg:gap-20">

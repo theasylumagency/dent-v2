@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { site } from "@/lib/site";
+import { incrementAggregate } from "@/lib/analytics/aggregate-server";
 
 export const runtime = "nodejs";
 /* Never cached, never statically evaluated at build time. */
@@ -77,7 +78,7 @@ export async function POST(request: Request) {
   /* Honeypot. A human never sees this field, so anything in it is a bot.
      Answer 200 so the bot has no signal that it was caught. */
   if (clean(body.company)) {
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, accepted: false });
   }
 
   const name = clean(body.name, 120);
@@ -166,5 +167,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "delivery_failed" }, { status: 502 });
   }
 
-  return NextResponse.json({ ok: true });
+  try {
+    await incrementAggregate("booking_complete");
+  } catch (error) {
+    /* Delivery succeeded, so analytics failure must never turn an accepted
+       patient request into a visible form error or prompt a duplicate send. */
+    console.error("[booking] aggregate increment failed", error);
+  }
+
+  return NextResponse.json({ ok: true, accepted: true });
 }

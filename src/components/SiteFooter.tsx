@@ -9,6 +9,7 @@ import type { Clinic } from "@/lib/clinic";
 import { media, site } from "@/lib/site";
 import { ArrowUpRight, Clock, Mail, Phone, Pin, WhatsApp } from "@/components/ui/icons";
 import BookingTrigger from "@/components/booking/BookingTrigger";
+import { PrivacySettingsButton } from "@/components/analytics/AnalyticsProvider";
 
 /* `categories` and `clinic` are passed in rather than fetched: the layout
    already queries both for the header, and one round trip is enough. The
@@ -187,7 +188,8 @@ export default function SiteFooter({
             published privacy notice is a requirement under Georgia's
             personal data protection law — this needs a real page before
             launch, not a link to nowhere. */}
-        <div className="flex gap-6">
+        <div className="flex flex-wrap gap-x-6 gap-y-2">
+          <PrivacySettingsButton>{dict.footer.privacySettings}</PrivacySettingsButton>
           <span className="cursor-default">{dict.footer.privacy}</span>
           <span className="cursor-default">{dict.footer.terms}</span>
         </div>

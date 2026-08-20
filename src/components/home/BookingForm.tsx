@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import type { BookingCopy, BookingOption } from "@/components/booking/types";
+import { trackBookingComplete } from "@/lib/analytics";
 
 type Status = "idle" | "sending" | "sent" | "error";
 type FieldErrors = Partial<Record<"name" | "phone" | "email", string>>;
@@ -58,11 +59,13 @@ export default function BookingForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(Object.fromEntries(data)),
       });
-      if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+      const result = (await response.json()) as { accepted?: boolean };
+      if (!response.ok || result.accepted !== true) throw new Error(`Request failed: ${response.status}`);
 
       form.reset();
       setErrors({});
       setStatus("sent");
+      trackBookingComplete();
     } catch {
       setStatus("error");
     }

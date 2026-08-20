@@ -15,6 +15,8 @@ import SiteHeader from "@/components/nav/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import MobileActionBar from "@/components/nav/MobileActionBar";
 import BookingProvider from "@/components/booking/BookingProvider";
+import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
+import { getAnalyticsConfig } from "@/lib/analytics/settings";
 
 /* --- Type stack -------------------------------------------------------
    Latin + Cyrillic come from the first family in each stack, Georgian
@@ -192,11 +194,12 @@ export default async function LocaleLayout({
 
   const locale = lang as Locale;
   const dict = await getDictionary(locale);
-  const [categories, team, clinic, meta] = await Promise.all([
+  const [categories, team, clinic, meta, analyticsConfig] = await Promise.all([
     getServiceCategories(dict.services.categories, locale),
     getDoctors(locale),
     getClinic(locale, dict.contact),
     getSeo("home", locale, { title: dict.meta.title, description: dict.meta.description }),
+    getAnalyticsConfig(),
   ]);
 
   const jsonLd = {
@@ -333,7 +336,8 @@ export default async function LocaleLayout({
           dangerouslySetInnerHTML={{ __html: `document.documentElement.classList.add("js")` }}
         />
 
-        <BookingProvider copy={bookingCopy} options={bookingOptions}>
+        <AnalyticsProvider config={analyticsConfig} copy={dict.analyticsConsent}>
+          <BookingProvider copy={bookingCopy} options={bookingOptions}>
           <a
             href="#main"
             className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent-300 focus:px-5 focus:py-3 focus:text-sm focus:font-medium focus:text-ink-900"
@@ -351,7 +355,8 @@ export default async function LocaleLayout({
 
           <SiteFooter dict={dict} lang={locale} categories={categories} clinic={clinic} />
           <MobileActionBar dict={dict} lang={locale} clinic={clinic} />
-        </BookingProvider>
+          </BookingProvider>
+        </AnalyticsProvider>
 
         <script
           type="application/ld+json"

@@ -12,6 +12,7 @@ import {
 
 import BookingDrawer from "./BookingDrawer";
 import type { BookingCopy, BookingOption } from "./types";
+import { recordAggregateEvent, trackBookingOpen } from "@/lib/analytics";
 
 type BookingContextValue = {
   isOpen: boolean;
@@ -50,6 +51,8 @@ export default function BookingProvider({
         "",
         window.location.href,
       );
+      trackBookingOpen();
+      recordAggregateEvent("booking_open");
       setIsOpen(true);
     },
     [isOpen],
