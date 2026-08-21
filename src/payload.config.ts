@@ -11,6 +11,7 @@ import { AuditLogs } from "./collections/AuditLogs";
 import { Equipment } from "./collections/Equipment";
 import { Faq } from "./collections/Faq";
 import { Media } from "./collections/Media";
+import { LandingPages } from "./collections/LandingPages";
 import { Posts } from "./collections/Posts";
 import { Services } from "./collections/Services";
 import { Users } from "./collections/Users";
@@ -68,7 +69,7 @@ export default buildConfig({
        sidebar, and an editor opens Posts far more often than Users.
        Services is declared before Equipment because Equipment holds a
        relationship into it. */
-    collections: [Posts, Services, Equipment, Doctors, Faq, Media, Users, AnalyticsAggregates, AuditLogs],
+    collections: [Posts, LandingPages, Services, Equipment, Doctors, Faq, Media, Users, AnalyticsAggregates, AuditLogs],
 
     /* Settings rather than content — one document each, no list view. */
     globals: [ClinicInfo, Seo, AnalyticsSettings],

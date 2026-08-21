@@ -25,10 +25,7 @@ export default function MobileActionBar({
 }) {
   return (
     <div
-      /* Opaque rather than frosted on purpose: a fixed bar with
-         `backdrop-filter` makes the compositor re-blur the strip behind it on
-         every scrolled frame, and at 95% fill nobody could see the blur. */
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-ivory-500 bg-ivory-50 lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-ivory-500 bg-ivory-50/95 backdrop-blur-lg lg:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="grid grid-cols-[auto_auto_1fr] items-center gap-2 px-4 py-2.5">

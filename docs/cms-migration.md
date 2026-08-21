@@ -18,6 +18,7 @@ should replace the body of those helpers and leave the components untouched.
 | `doctors` | ✅ | `lib/team.ts`. `published` replaced the hard-coded pending map; `isLead` replaced the hard-coded slug. |
 | `faq` | ✅ | `lib/faq.ts`. |
 | `services` | ✅ | `lib/services.ts`. The mega menu's categories are fetched in the layout and passed to `SiteHeader` and `SiteFooter` as props — a client component cannot await a query. |
+| `landing-pages` | ✅ | `lib/landing-pages.ts`. One constrained, localized document per campaign; no generic page-builder blocks. |
 
 All five now read from Payload. The migrated blocks can be deleted from the dictionaries in one
 commit once the pages have been checked against the CMS in all three locales. What stays: UI

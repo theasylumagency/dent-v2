@@ -277,18 +277,13 @@ export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
       </div>
 
       {/* Main bar ------------------------------------------------------ */}
-      {/* `backdrop-filter` is charged per scrolled frame: the compositor has
-          to copy the region behind a fixed bar and blur it again every time
-          the page moves. At 90% fill the blur is barely visible anyway, so
-          below `lg` the bar simply becomes near-opaque and costs nothing —
-          which is most of what made scrolling feel sticky on a phone. */}
       <div
         className={`border-b transition-[background-color,border-color,box-shadow] duration-500 ${
           scrolled || megaOpen || drawerOpen || bookingOpen
-            ? "border-ivory-400 bg-ivory-50/97 shadow-soft lg:bg-ivory-50/90 lg:backdrop-blur-xl"
+            ? "border-ivory-400 bg-ivory-50/90 shadow-soft backdrop-blur-xl"
             : overlay
               ? "border-transparent bg-transparent"
-              : "border-transparent bg-ivory-100/97 lg:bg-ivory-100/80 lg:backdrop-blur-md"
+              : "border-transparent bg-ivory-100/80 backdrop-blur-md"
         }`}
       >
         <div
@@ -484,7 +479,7 @@ export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
         role="dialog"
         aria-modal="true"
         aria-label={dict.nav.primaryLabel}
-        className={`fixed inset-0 top-0 z-40 flex flex-col bg-ivory-100 transition-[opacity,visibility] duration-300 lg:hidden ${
+        className={`fixed inset-0 top-0 z-40 flex flex-col bg-ivory-100/98 backdrop-blur-2xl transition-[opacity,visibility] duration-300 lg:hidden ${
           drawerOpen ? "visible opacity-100" : "pointer-events-none invisible opacity-0"
         }`}
       >

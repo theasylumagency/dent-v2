@@ -137,12 +137,12 @@ export function sendGA4Event(name: string, parameters?: Record<string, unknown>)
   window.gtag?.("event", name, parameters ?? {});
 }
 
-export function sendMetaEvent(name: string): void {
+export function sendMetaEvent(name: string, parameters?: Record<string, unknown>): void {
   if (!consentGranted || !configuredMetaId) return;
-  window.fbq?.("track", name);
+  window.fbq?.("track", name, parameters ?? {});
 }
 
-export function sendMetaCustomEvent(name: string): void {
+export function sendMetaCustomEvent(name: string, parameters?: Record<string, unknown>): void {
   if (!consentGranted || !configuredMetaId) return;
-  window.fbq?.("trackCustom", name);
+  window.fbq?.("trackCustom", name, parameters ?? {});
 }

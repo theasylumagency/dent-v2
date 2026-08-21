@@ -14,9 +14,29 @@ export function trackBookingOpen(): void {
   sendMetaCustomEvent("BookingOpen");
 }
 
-export function trackBookingComplete(): void {
-  sendGA4Event("generate_lead");
-  sendMetaEvent("Lead");
+export type LandingAnalyticsContext = {
+  landingSlug: string;
+  campaignName?: string;
+};
+
+function landingParameters(context?: LandingAnalyticsContext): Record<string, string> | undefined {
+  if (!context) return undefined;
+  return {
+    landing_slug: context.landingSlug,
+    ...(context.campaignName ? { campaign_name: context.campaignName } : {}),
+  };
+}
+
+export function trackBookingComplete(context?: LandingAnalyticsContext): void {
+  const parameters = landingParameters(context);
+  sendGA4Event("generate_lead", parameters);
+  sendMetaEvent("Lead", parameters);
+}
+
+export function trackLandingCta(context: LandingAnalyticsContext): void {
+  const parameters = landingParameters(context);
+  sendGA4Event("landing_cta_click", parameters);
+  sendMetaCustomEvent("LandingCtaClick", parameters);
 }
 
 export function trackPhoneClick(): void {

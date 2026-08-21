@@ -58,17 +58,14 @@ committed migrations in `src/migrations/` are the schema.
 npm run migrate
 ```
 
-**There is one migration still to generate.** `satisfiedPercent` and `yearsOnMarket`
-were added to the `clinic-info` global after the last migration was written. Run this
-once, locally, and commit the result:
+Migration history is current. `20260815_193656` already adds
+`clinic_info.satisfied_percent` and `clinic_info.years_on_market`; do not generate or
+hand-write a duplicate for those columns. `20260821_064018_campaign_landing_pages`
+adds the campaign landing-page tables, localized content tables, enums, indexes and
+relationships. It is additive and does not alter existing content tables.
 
-```bash
-npm run generate:types
-npm run migrate:create
-```
-
-Without it those two columns do not exist in production, and `getClinic()` runs on
-every page.
+Always migrate before building. Landing-page documents can be created after deploy
+without a code change, but the collection schema must exist before Next reads it.
 
 ### 5. Content
 
@@ -117,6 +114,12 @@ npm run build
 ```
 
 `npm start` serves it. Put a reverse proxy in front for TLS.
+
+Archived campaign redirects use HTTP 307 deliberately. Their target is an editable
+CMS relationship and may need correction; a browser-cached permanent redirect would
+keep sending returning visitors to the old target after an editor fixes it. Redirect
+targets are limited to other landing-page documents, and draft/self/looping targets
+are rejected.
 
 Consider adding `output: "standalone"` to `next.config.ts` if the server is tight on
 space — it emits a self-contained `.next/standalone` that does not need

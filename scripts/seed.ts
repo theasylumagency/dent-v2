@@ -80,6 +80,7 @@ const readJson = (...segments: string[]) =>
 
 const dict = Object.fromEntries(
   LOCALES.map((locale) => [locale, readJson("src/i18n/dictionaries", `${locale}.json`)]),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- locale JSON is runtime seed input with heterogeneous nested records.
 ) as Record<Locale, any>;
 
 if (!fs.existsSync(path.join(root, "scripts/seed-data/content/ka.json"))) {
@@ -93,6 +94,7 @@ if (!fs.existsSync(path.join(root, "scripts/seed-data/content/ka.json"))) {
 
 const archive = Object.fromEntries(
   LOCALES.map((locale) => [locale, readJson("scripts/seed-data/content", `${locale}.json`)]),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- archived seed JSON intentionally mirrors several collection shapes.
 ) as Record<Locale, any>;
 
 /* --------------------------------------------------------------------------
@@ -144,6 +146,7 @@ const rows = (items: readonly string[] | undefined) =>
   (items ?? []).map((text) => ({ text }));
 
 /** Meta pair for one service category, as the `seo` global wants it. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- this helper receives the runtime dictionary parsed above.
 const metaOf = (d: any, slug: string) => ({
   title: d.services.categories[slug].metaTitle,
   description: d.services.categories[slug].metaDescription,

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useSyncExternalStore } from "react";
+import { useRef } from "react";
 import {
   motion,
   useReducedMotion,
@@ -49,8 +49,6 @@ const SCENE_ASSETS: Record<
   {
     number: string;
     src: string;
-    /** Theatre-only override for `src`, where one exists. */
-    sceneSrc?: string;
     imageClass: string;
     staticPosition: string;
   }
@@ -64,18 +62,7 @@ const SCENE_ASSETS: Record<
   trios: {
     number: "02",
     src: "/images/home/technology/trios-3-move.webp",
-    /* This scene used to be `mix-blend-mode: luminosity` over the brand-950
-       field. The blend result never varied — the layer carries its own
-       opaque background, so the backdrop is always the same navy — but the
-       browser recomputed it on every scrolled frame and the layer could
-       never be promoted while it did. `-duotone` is that exact composite
-       baked into the file (mean channel error 0.5/255 against a rendered
-       reference), so the same picture now costs nothing to draw.
-
-       The catalogue crop below still points at the unblended original,
-       which is what the reduced-motion layout wants. */
-    sceneSrc: "/images/home/technology/trios-3-move-duotone.webp",
-    imageClass: "object-cover object-center opacity-70",
+    imageClass: "object-cover object-center opacity-70 mix-blend-luminosity",
     staticPosition: "object-center",
   },
   airflow: {
@@ -94,95 +81,14 @@ const SCENE_ASSETS: Record<
 
 const SCENE_KEYS: SceneKey[] = ["cbct", "trios", "airflow", "zoom"];
 
-const DESKTOP_QUERY = "(min-width: 1024px)";
-
-/**
- * Which grade of the choreography to run.
- *
- * Three of the effects here — the animated `clip-path` wipe, `mix-blend-mode`
- * on a full-bleed image, and a large blur that also changes scale — never
- * reach the compositor, so each scrolled frame repaints the entire viewport.
- * Measured on a desktop the TRIOS reveal alone averages ~39ms per frame
- * (p95 127ms); a mid-range handset is several times worse, which is what
- * reads as the section "jamming" under a thumb.
- *
- * So the section ships two grades of the same story: the full theatre from
- * `lg` up, and a transform/opacity-only cut below it. Everything the copy
- * says, and the order it says it in, is identical.
- *
- * Read through `useSyncExternalStore` rather than an effect so the first
- * client render already knows which grade it is — a desktop never commits a
- * mobile frame it would have to replace one tick later.
- */
-function useIsDesktop() {
-  return useSyncExternalStore(
-    (onChange) => {
-      const query = window.matchMedia(DESKTOP_QUERY);
-      query.addEventListener("change", onChange);
-      return () => query.removeEventListener("change", onChange);
-    },
-    () => window.matchMedia(DESKTOP_QUERY).matches,
-    () => false,
-  );
-}
-
-/**
- * `useTransform` against a scroll progress, with both ends of the input range
- * pinned to 0 and 1.
- *
- * Motion hands scroll-linked transforms to the browser as a WAAPI animation
- * on a `ViewTimeline`, and the keyframe offsets come straight from the input
- * range. WAAPI then fills any gap at either end of the timeline with an
- * *implicit* keyframe holding the element's underlying style — so a curve
- * that ends at 0.065 does not hold its last value for the rest of the
- * section. It interpolates from that value back to the element's base style
- * across the remaining 93%, and the title card that had just faded out crept
- * back to full opacity by the end of the scroll. The MotionValue read 0 the
- * whole way; the animation doing the damage was running in the compositor,
- * where JS could not see it.
- *
- * Pinning both ends states the entire timeline explicitly, leaving WAAPI
- * nothing to fill in. Every scroll-linked value in this section goes through
- * here — a range that stops short is the bug, not a style choice.
- */
-function useScrollCurve(
-  progress: MotionValue<number>,
-  input: readonly number[],
-  output: readonly number[],
-): MotionValue<number>;
-function useScrollCurve(
-  progress: MotionValue<number>,
-  input: readonly number[],
-  output: readonly string[],
-): MotionValue<string>;
-function useScrollCurve<T extends number | string>(
-  progress: MotionValue<number>,
-  input: readonly number[],
-  output: readonly T[],
-): MotionValue<T> {
-  const inputRange = [...input];
-  const outputRange = [...output];
-
-  if (inputRange[0] > 0) {
-    inputRange.unshift(0);
-    outputRange.unshift(outputRange[0]);
-  }
-  if (inputRange[inputRange.length - 1] < 1) {
-    inputRange.push(1);
-    outputRange.push(outputRange[outputRange.length - 1]);
-  }
-
-  return useTransform(progress, inputRange, outputRange) as MotionValue<T>;
-}
-
 function useSceneMotion(
   progress: MotionValue<number>,
   range: [number, number, number, number],
   scaleRange: [number, number, number, number] = [1.04, 1, 1, 1],
 ) {
   return {
-    opacity: useScrollCurve(progress, range, [0, 1, 1, 0]),
-    scale: useScrollCurve(progress, range, scaleRange),
+    opacity: useTransform(progress, range, [0, 1, 1, 0]),
+    scale: useTransform(progress, range, scaleRange),
   };
 }
 
@@ -195,69 +101,44 @@ export default function TechnologyExperience({
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
-  const isDesktop = useIsDesktop();
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
-  /* `scrollYProgress` is pinned at 0 for the whole time the section climbs
-     into view — a full viewport height of scrolling — so progress 0 is not
-     the start of the section, it is everything up to and including the
-     moment the panel stops. Whatever is on screen at progress 0 is what the
-     section looks like the entire way in.
 
-     Hence: the title card is already at full opacity, and so is scene one.
-     The panel arrives named and already showing a picture, and the card is
-     gone shortly after the panel settles rather than holding a third of the
-     way into the pinned timeline. */
-  const introOpacity = useScrollCurve(scrollYProgress, [0, 0.035, 0.065], [1, 1, 0]);
-  const introY = useScrollCurve(scrollYProgress, [0, 0.035, 0.065], [0, 0, -18]);
+  const introOpacity = useTransform(scrollYProgress, [0, 0.035, 0.085, 0.11], [0, 1, 1, 0]);
+  const introY = useTransform(scrollYProgress, [0, 0.035, 0.085, 0.11], [18, 0, 0, -16]);
 
-  const cbctOpacity = useScrollCurve(scrollYProgress, [0.49, 0.51], [1, 0]);
-  /* The one bit of motion in the opening beat: a slow settle that runs while
-     the title card clears, so the pinned stretch is not dead before the
-     first caption arrives. */
-  const cbctScale = useScrollCurve(scrollYProgress, [0, 0.12], [1.03, 1]);
-  const cbctCopyOpacity = useScrollCurve(scrollYProgress, [0.055, 0.1, 0.27, 0.32], [0, 1, 1, 0]);
-  const cbctCopyY = useScrollCurve(scrollYProgress, [0.055, 0.1, 0.27, 0.32], [16, 0, 0, -12]);
+  const cbctMotion = useSceneMotion(scrollYProgress, [0.08, 0.14, 0.49, 0.51], [1.05, 1, 1, 1]);
+  const cbctCopyOpacity = useTransform(scrollYProgress, [0.1, 0.14, 0.27, 0.32], [0, 1, 1, 0]);
+  const cbctCopyY = useTransform(scrollYProgress, [0.1, 0.14, 0.27, 0.32], [16, 0, 0, -12]);
 
-  const triosClipPath = useScrollCurve(
+  const triosClipPath = useTransform(
     scrollYProgress,
     [0.3, 0.48],
     ["circle(7% at 72% 46%)", "circle(150% at 72% 46%)"],
   );
-  const triosLayerOpacity = useScrollCurve(scrollYProgress, [0.295, 0.3, 0.64, 0.68], [0, 1, 1, 0]);
-  const triosScale = useScrollCurve(scrollYProgress, [0.3, 0.48, 0.65], [1.025, 1, 1.01]);
-  /* Mobile stand-in for the circular wipe: opacity, which the compositor
-     can carry on its own. It settles at 0.40 rather than tracking the
-     circle all the way to 0.48 — while both layers are part-transparent
-     the browser has two full-bleed images to draw instead of one, so the
-     shorter the overlap the better, and the copy still lands at 0.45 over
-     a picture that has already come to rest. */
-  const triosMobileOpacity = useScrollCurve(
-    scrollYProgress,
-    [0.3, 0.4, 0.64, 0.68],
-    [0, 1, 1, 0],
-  );
-  const triosCopyOpacity = useScrollCurve(scrollYProgress, [0.45, 0.49, 0.61, 0.66], [0, 1, 1, 0]);
-  const triosCopyY = useScrollCurve(scrollYProgress, [0.45, 0.49, 0.61, 0.66], [14, 0, 0, -10]);
+  const triosLayerOpacity = useTransform(scrollYProgress, [0.295, 0.3, 0.64, 0.68], [0, 1, 1, 0]);
+  const triosScale = useTransform(scrollYProgress, [0.3, 0.48, 0.65], [1.025, 1, 1.01]);
+  const triosCopyOpacity = useTransform(scrollYProgress, [0.45, 0.49, 0.61, 0.66], [0, 1, 1, 0]);
+  const triosCopyY = useTransform(scrollYProgress, [0.45, 0.49, 0.61, 0.66], [14, 0, 0, -10]);
 
   const airflowMotion = useSceneMotion(
     scrollYProgress,
     [0.62, 0.67, 0.77, 0.81],
     [1.12, 1.03, 1.02, 1.02],
   );
-  const airflowCopyOpacity = useScrollCurve(scrollYProgress, [0.65, 0.69, 0.75, 0.79], [0, 1, 1, 0]);
-  const airflowCopyY = useScrollCurve(scrollYProgress, [0.65, 0.69, 0.75, 0.79], [14, 0, 0, -10]);
+  const airflowCopyOpacity = useTransform(scrollYProgress, [0.65, 0.69, 0.75, 0.79], [0, 1, 1, 0]);
+  const airflowCopyY = useTransform(scrollYProgress, [0.65, 0.69, 0.75, 0.79], [14, 0, 0, -10]);
 
   const zoomMotion = useSceneMotion(scrollYProgress, [0.75, 0.8, 0.91, 0.95], [1.055, 1, 1, 1]);
-  const zoomCopyOpacity = useScrollCurve(scrollYProgress, [0.78, 0.82, 0.88, 0.92], [0, 1, 1, 0]);
-  const zoomCopyY = useScrollCurve(scrollYProgress, [0.78, 0.82, 0.88, 0.92], [14, 0, 0, -10]);
-  const zoomGlowOpacity = useScrollCurve(scrollYProgress, [0.78, 0.86, 0.92], [0.08, 0.72, 0.18]);
-  const zoomGlowScale = useScrollCurve(scrollYProgress, [0.78, 0.88], [0.78, 1.08]);
+  const zoomCopyOpacity = useTransform(scrollYProgress, [0.78, 0.82, 0.88, 0.92], [0, 1, 1, 0]);
+  const zoomCopyY = useTransform(scrollYProgress, [0.78, 0.82, 0.88, 0.92], [14, 0, 0, -10]);
+  const zoomGlowOpacity = useTransform(scrollYProgress, [0.78, 0.86, 0.92], [0.08, 0.72, 0.18]);
+  const zoomGlowScale = useTransform(scrollYProgress, [0.78, 0.88], [0.78, 1.08]);
 
-  const finaleOpacity = useScrollCurve(scrollYProgress, [0.9, 0.94, 1], [0, 1, 1]);
-  const finaleY = useScrollCurve(scrollYProgress, [0.9, 0.94], [18, 0]);
+  const finaleOpacity = useTransform(scrollYProgress, [0.9, 0.94, 1], [0, 1, 1]);
+  const finaleY = useTransform(scrollYProgress, [0.9, 0.94], [18, 0]);
 
   if (reduceMotion) {
     return <StaticExperience copy={copy} technologyHref={technologyHref} />;
@@ -268,7 +149,7 @@ export default function TechnologyExperience({
       ref={sectionRef}
       id="technology"
       aria-labelledby="technology-experience-title"
-      className="on-dark relative isolate h-[260svh] bg-brand-950 lg:h-[450svh]"
+      className="on-dark relative isolate h-[330svh] bg-brand-950 lg:h-[450svh]"
     >
       <div className="sticky top-0 h-svh overflow-hidden bg-brand-950">
         <div
@@ -279,7 +160,7 @@ export default function TechnologyExperience({
 
         <motion.div
           className="absolute inset-0 z-10"
-          style={{ opacity: cbctOpacity, scale: cbctScale }}
+          style={{ opacity: cbctMotion.opacity, scale: cbctMotion.scale }}
         >
           <SceneImage scene="cbct" alt={copy.scenes.cbct.alt} />
         </motion.div>
@@ -287,8 +168,8 @@ export default function TechnologyExperience({
         <motion.div
           className="absolute inset-0 z-20 bg-brand-950"
           style={{
-            clipPath: isDesktop ? triosClipPath : "none",
-            opacity: isDesktop ? triosLayerOpacity : triosMobileOpacity,
+            clipPath: triosClipPath,
+            opacity: triosLayerOpacity,
             scale: triosScale,
           }}
         >
@@ -308,12 +189,8 @@ export default function TechnologyExperience({
         >
           <SceneImage scene="zoom" alt={copy.scenes.zoom.alt} />
           <motion.div
-            /* Scaling a blurred box re-rasterises the blur every frame, and
-               `mix-blend-screen` stops the layer being promoted at all. On a
-               phone the glow is a fixed-size, unblended halo that only
-               fades; desktop keeps the full treatment. */
-            className="absolute right-[18%] top-[22%] h-64 w-64 rounded-full bg-accent-300/45 blur-2xl lg:right-[22%] lg:top-[27%] lg:h-80 lg:w-80 lg:mix-blend-screen lg:blur-3xl"
-            style={{ opacity: zoomGlowOpacity, scale: isDesktop ? zoomGlowScale : 1 }}
+            className="absolute right-[18%] top-[22%] h-64 w-64 rounded-full bg-accent-300/45 mix-blend-screen blur-3xl lg:right-[22%] lg:top-[27%] lg:h-80 lg:w-80"
+            style={{ opacity: zoomGlowOpacity, scale: zoomGlowScale }}
             aria-hidden="true"
           />
         </motion.div>
@@ -408,7 +285,7 @@ function SceneImage({ scene, alt }: { scene: SceneKey; alt: string }) {
     <>
       <div className="absolute inset-x-0 top-0 h-[59svh] lg:inset-0 lg:h-full">
         <Image
-          src={asset.sceneSrc ?? asset.src}
+          src={asset.src}
           alt={alt}
           fill
           sizes="100vw"

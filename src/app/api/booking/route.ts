@@ -15,6 +15,13 @@ type Payload = {
   preferredTime?: string;
   message?: string;
   company?: string;
+  landingSlug?: string;
+  campaignName?: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_content?: string;
+  utm_term?: string;
 };
 
 /* --------------------------------------------------------------------------
@@ -87,6 +94,18 @@ export async function POST(request: Request) {
   const service = clean(body.service, 120);
   const preferredTime = clean(body.preferredTime, 60);
   const message = clean(body.message);
+  const submittedLandingSlug = clean(body.landingSlug, 120);
+  const landingSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(submittedLandingSlug)
+    ? submittedLandingSlug
+    : "";
+  const campaignName = clean(body.campaignName, 160);
+  const attribution = {
+    utmSource: clean(body.utm_source, 200),
+    utmMedium: clean(body.utm_medium, 200),
+    utmCampaign: clean(body.utm_campaign, 200),
+    utmContent: clean(body.utm_content, 200),
+    utmTerm: clean(body.utm_term, 200),
+  };
 
   /* Server-side validation is the real gate — the client checks exist to
      give fast feedback, not to be trusted. */
@@ -126,6 +145,17 @@ export async function POST(request: Request) {
     ["Area of interest", service || "—"],
     ["Best time to call", preferredTime || "—"],
     ["Message", message || "—"],
+    ...(landingSlug ? ([["Landing page / slug", landingSlug]] as [string, string][]) : []),
+    ...(campaignName ? ([["Campaign name", campaignName]] as [string, string][]) : []),
+    ...(attribution.utmSource ? ([["UTM Source", attribution.utmSource]] as [string, string][]) : []),
+    ...(attribution.utmMedium ? ([["UTM Medium", attribution.utmMedium]] as [string, string][]) : []),
+    ...(attribution.utmCampaign
+      ? ([["UTM Campaign", attribution.utmCampaign]] as [string, string][])
+      : []),
+    ...(attribution.utmContent
+      ? ([["UTM Content", attribution.utmContent]] as [string, string][])
+      : []),
+    ...(attribution.utmTerm ? ([["UTM Term", attribution.utmTerm]] as [string, string][]) : []),
   ];
 
   const html = `

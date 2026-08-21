@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     posts: Post;
+    'landing-pages': LandingPage;
     services: Service;
     equipment: Equipment;
     doctors: Doctor;
@@ -84,6 +85,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
+    'landing-pages': LandingPagesSelect<false> | LandingPagesSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     equipment: EquipmentSelect<false> | EquipmentSelect<true>;
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
@@ -242,100 +244,153 @@ export interface Media {
   };
 }
 /**
- * The 16 services, grouped into five clinical directions. Individual services do not get their own URL — they render as anchors on their category page.
+ * Controlled, campaign-specific landing pages. Keep old campaign documents and slugs for history; archive them instead of reusing a URL for an unrelated campaign.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "services".
+ * via the `definition` "landing-pages".
  */
-export interface Service {
-  id: number;
-  title: string;
-  /**
-   * Must match an entry in components/ui/ServiceIcons.tsx — the icon is picked by slug.
-   */
-  slug: string;
-  category: 'diagnostics-planning' | 'therapy-prevention' | 'surgery-implantation' | 'orthodontics' | 'aesthetic';
-  /**
-   * Lower first, within the category.
-   */
-  order: number;
-  /**
-   * One sentence. Shown on cards and in the mega menu.
-   */
-  blurb: string;
-  /**
-   * Longer opening paragraph on the category page.
-   */
-  lead?: string | null;
-  whatsIncluded?:
-    | {
-        text: string;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Devices and systems in the clinic. Model names are NOT translated — 'Vatech EzRay Air' is what the manufacturer and the search index both use.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "equipment".
- */
-export interface Equipment {
+export interface LandingPage {
   id: number;
   /**
-   * Model name as the manufacturer writes it. Same in all languages.
+   * Internal name shown in the admin, e.g. Veneers — Summer 2026.
    */
-  name: string;
+  campaignName: string;
+  /**
+   * Permanent campaign URL segment, e.g. veneers-summer-2026. Do not reuse an old slug for a different campaign.
+   */
   slug: string;
-  group: 'diagnostics' | 'hygiene' | 'aesthetics' | 'orthodontics';
+  status: 'draft' | 'active' | 'archived';
   /**
-   * Lower first, within the group.
+   * Optional campaign reference date. Status remains the publishing control.
    */
-  order: number;
-  manufacturerName: string;
+  startsAt?: string | null;
   /**
-   * Official site. Published as sameAs in structured data, so it must be right.
+   * Optional campaign reference date. It does not archive the page automatically.
    */
-  manufacturerUrl: string;
-  photo?: (number | null) | Media;
+  endsAt?: string | null;
+  archivedBehavior?: ('keep-public' | 'ended-page' | 'redirect') | null;
   /**
-   * On = the card shows a 'photo coming' badge. The images seeded initially are labelled stand-ins; untick this once a real photograph replaces one.
+   * Only a CMS landing page can be selected; draft and looping targets are rejected.
    */
-  photoPending?: boolean | null;
+  redirectTarget?: (number | null) | LandingPage;
   /**
-   * Where this device is actually used. Drives the cross-links from the device card into the service catalogue.
+   * Off by default for paid-campaign destinations. Only active, indexable pages enter the sitemap.
    */
-  services?: (number | Service)[] | null;
-  /**
-   * One sentence: what it does.
-   */
-  summary: string;
-  body: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
+  indexable?: boolean | null;
+  header: {
+    preset: 'minimal' | 'brand' | 'ultra-minimal';
+    /**
+     * Used by the Brand preset only.
+     */
+    trustText?: string | null;
+    showPhone?: boolean | null;
+    ctaLabel: string;
   };
+  hero: {
+    layout: 'copy-only' | 'image-right' | 'image-left' | 'full-bleed' | 'centered-editorial';
+    eyebrow?: string | null;
+    headline: string;
+    subheadline?: string | null;
+    ctaLabel: string;
+    /**
+     * Recommended desktop hero: 1920 × 1200 px, 16:10. Upload WebP, JPEG or PNG; Payload will optimize it. Keep the original reasonably compressed, ideally under 2 MB. Keep important subjects away from extreme edges because responsive cropping may occur.
+     */
+    desktopImage?: (number | null) | Media;
+    /**
+     * Optional dedicated mobile crop. Recommended: 1080 × 1350 px, 4:5. If omitted, the desktop image is reused and cropped responsively using its focal point.
+     */
+    mobileImage?: (number | null) | Media;
+  };
+  reasons: {
+    title: string;
+    text: string;
+    id?: string | null;
+  }[];
+  problemSolution?: {
+    enabled?: boolean | null;
+    eyebrow?: string | null;
+    title?: string | null;
+    body?: string | null;
+  };
+  doctor?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    intro?: string | null;
+    /**
+     * Uses the selected doctor's existing name, role, photo and credentials.
+     */
+    practitioner?: (number | null) | Doctor;
+  };
+  stepsHeading: string;
   /**
-   * Two or three short facts. These are what answer engines quote.
+   * Make clear that sending the form is not a confirmed appointment.
    */
-  highlights?:
-    | {
-        text: string;
-        id?: string | null;
-      }[]
-    | null;
+  stepsIntro?: string | null;
+  steps: {
+    title: string;
+    text: string;
+    id?: string | null;
+  }[];
+  testimonials?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    /**
+     * Only publish reviews the clinic can substantiate.
+     */
+    items?:
+      | {
+          quote: string;
+          displayName: string;
+          sourceLabel?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  clinicSection?: {
+    enabled?: boolean | null;
+    image?: (number | null) | Media;
+    title?: string | null;
+    text?: string | null;
+  };
+  form: {
+    showService?: boolean | null;
+    showPreferredTime?: boolean | null;
+    showEmail?: boolean | null;
+    showMessage?: boolean | null;
+    /**
+     * Optional campaign service, submitted even when the service selector is hidden.
+     */
+    defaultService?: (number | null) | Service;
+    title: string;
+    intro?: string | null;
+    submitLabel: string;
+    successTitle: string;
+    successText: string;
+  };
+  finalCta: {
+    title: string;
+    text?: string | null;
+    buttonLabel: string;
+  };
+  ended?: {
+    title?: string | null;
+    text?: string | null;
+    ctaLabel?: string | null;
+  };
+  seo?: {
+    /**
+     * Falls back to the campaign hero headline when empty.
+     */
+    metaTitle?: string | null;
+    /**
+     * Falls back to the hero subheadline when empty.
+     */
+    metaDescription?: string | null;
+    /**
+     * Optional sharing image. Falls back to the desktop hero, then the site image.
+     */
+    socialImage?: (number | null) | Media;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -429,6 +484,104 @@ export interface Doctor {
    * Only languages the doctor has confirmed.
    */
   languages?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * The 16 services, grouped into five clinical directions. Individual services do not get their own URL — they render as anchors on their category page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  title: string;
+  /**
+   * Must match an entry in components/ui/ServiceIcons.tsx — the icon is picked by slug.
+   */
+  slug: string;
+  category: 'diagnostics-planning' | 'therapy-prevention' | 'surgery-implantation' | 'orthodontics' | 'aesthetic';
+  /**
+   * Lower first, within the category.
+   */
+  order: number;
+  /**
+   * One sentence. Shown on cards and in the mega menu.
+   */
+  blurb: string;
+  /**
+   * Longer opening paragraph on the category page.
+   */
+  lead?: string | null;
+  whatsIncluded?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Devices and systems in the clinic. Model names are NOT translated — 'Vatech EzRay Air' is what the manufacturer and the search index both use.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "equipment".
+ */
+export interface Equipment {
+  id: number;
+  /**
+   * Model name as the manufacturer writes it. Same in all languages.
+   */
+  name: string;
+  slug: string;
+  group: 'diagnostics' | 'hygiene' | 'aesthetics' | 'orthodontics';
+  /**
+   * Lower first, within the group.
+   */
+  order: number;
+  manufacturerName: string;
+  /**
+   * Official site. Published as sameAs in structured data, so it must be right.
+   */
+  manufacturerUrl: string;
+  photo?: (number | null) | Media;
+  /**
+   * On = the card shows a 'photo coming' badge. The images seeded initially are labelled stand-ins; untick this once a real photograph replaces one.
+   */
+  photoPending?: boolean | null;
+  /**
+   * Where this device is actually used. Drives the cross-links from the device card into the service catalogue.
+   */
+  services?: (number | Service)[] | null;
+  /**
+   * One sentence: what it does.
+   */
+  summary: string;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Two or three short facts. These are what answer engines quote.
+   */
+  highlights?:
     | {
         text: string;
         id?: string | null;
@@ -564,6 +717,10 @@ export interface PayloadLockedDocument {
         value: number | Post;
       } | null)
     | ({
+        relationTo: 'landing-pages';
+        value: number | LandingPage;
+      } | null)
+    | ({
         relationTo: 'services';
         value: number | Service;
       } | null)
@@ -586,14 +743,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
-      } | null)
-    | ({
-        relationTo: 'analytics-aggregates';
-        value: number | AnalyticsAggregate;
-      } | null)
-    | ({
-        relationTo: 'audit-logs';
-        value: number | AuditLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -654,6 +803,130 @@ export interface PostsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "landing-pages_select".
+ */
+export interface LandingPagesSelect<T extends boolean = true> {
+  campaignName?: T;
+  slug?: T;
+  status?: T;
+  startsAt?: T;
+  endsAt?: T;
+  archivedBehavior?: T;
+  redirectTarget?: T;
+  indexable?: T;
+  header?:
+    | T
+    | {
+        preset?: T;
+        trustText?: T;
+        showPhone?: T;
+        ctaLabel?: T;
+      };
+  hero?:
+    | T
+    | {
+        layout?: T;
+        eyebrow?: T;
+        headline?: T;
+        subheadline?: T;
+        ctaLabel?: T;
+        desktopImage?: T;
+        mobileImage?: T;
+      };
+  reasons?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  problemSolution?:
+    | T
+    | {
+        enabled?: T;
+        eyebrow?: T;
+        title?: T;
+        body?: T;
+      };
+  doctor?:
+    | T
+    | {
+        enabled?: T;
+        heading?: T;
+        intro?: T;
+        practitioner?: T;
+      };
+  stepsHeading?: T;
+  stepsIntro?: T;
+  steps?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  testimonials?:
+    | T
+    | {
+        enabled?: T;
+        heading?: T;
+        items?:
+          | T
+          | {
+              quote?: T;
+              displayName?: T;
+              sourceLabel?: T;
+              id?: T;
+            };
+      };
+  clinicSection?:
+    | T
+    | {
+        enabled?: T;
+        image?: T;
+        title?: T;
+        text?: T;
+      };
+  form?:
+    | T
+    | {
+        showService?: T;
+        showPreferredTime?: T;
+        showEmail?: T;
+        showMessage?: T;
+        defaultService?: T;
+        title?: T;
+        intro?: T;
+        submitLabel?: T;
+        successTitle?: T;
+        successText?: T;
+      };
+  finalCta?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        buttonLabel?: T;
+      };
+  ended?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        ctaLabel?: T;
+      };
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        socialImage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

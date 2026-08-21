@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { preload } from "react-dom";
 
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -11,6 +12,7 @@ import Team from "@/components/home/Team";
 import Technology from "@/components/home/Technology";
 import Faq from "@/components/home/Faq";
 import FinalBookingCta from "@/components/home/FinalBookingCta";
+import { media } from "@/lib/site";
 
 export default async function HomePage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
@@ -18,6 +20,14 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
 
   const locale = lang as Locale;
   const dict = await getDictionary(locale);
+
+  /* The poster is the homepage's LCP, but no longer a locale-layout concern:
+     campaign pages and inner routes must not pay for homepage hero media. */
+  preload(media.heroPoster, {
+    as: "image",
+    type: "image/webp",
+    fetchPriority: "high",
+  });
 
   return (
     <>

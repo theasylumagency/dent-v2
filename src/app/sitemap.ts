@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { htmlLang, locales } from "@/i18n/config";
 import { getPostSlugs } from "@/lib/news";
+import { getIndexableLandingPages } from "@/lib/landing-pages";
 import { categoryOrder } from "@/lib/services-shared";
 import { site } from "@/lib/site";
 
@@ -22,6 +23,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   /* Post URLs come from the CMS, so this list is built per request rather
      than at module load — a new post must appear here without a rebuild. */
+  const [postSlugs, landingPages] = await Promise.all([
+    getPostSlugs(),
+    getIndexableLandingPages(),
+  ]);
+
   const paths = [
     "",
     "/services",
@@ -30,10 +36,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/about",
     "/news",
     "/contact",
-    ...(await getPostSlugs()).map((slug) => `/news/${slug}`),
+    ...postSlugs.map((slug) => `/news/${slug}`),
   ];
 
-  return paths.flatMap((path) => {
+  const siteEntries = paths.flatMap((path) => {
     const languages = Object.fromEntries(
       locales.map((l) => [htmlLang[l], `${site.url}/${l}${path}`]),
     );
@@ -48,4 +54,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       alternates: { languages },
     }));
   });
+
+  const campaignEntries = landingPages.flatMap((campaign) => {
+    const path = `/lp/${campaign.slug}`;
+    const languages = Object.fromEntries(
+      locales.map((locale) => [htmlLang[locale], `${site.url}/${locale}${path}`]),
+    );
+
+    return locales.map((locale) => ({
+      url: `${site.url}/${locale}${path}`,
+      lastModified: new Date(campaign.updatedAt),
+      changeFrequency: "monthly" as const,
+      priority: locale === "ka" ? 0.7 : 0.56,
+      alternates: { languages },
+    }));
+  });
+
+  return [...siteEntries, ...campaignEntries];
 }
