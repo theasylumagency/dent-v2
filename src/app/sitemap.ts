@@ -56,7 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   const campaignEntries = landingPages.flatMap((campaign) => {
-    const path = `/lp/${campaign.slug}`;
+    const path = `/${campaign.slug}`;
     const languages = Object.fromEntries(
       locales.map((locale) => [htmlLang[locale], `${site.url}/${locale}${path}`]),
     );

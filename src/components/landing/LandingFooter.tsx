@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { htmlLang, localeLabels, locales } from "@/i18n/config";
 import type { Clinic } from "@/lib/clinic";
+import { campaignPath } from "@/lib/campaign-slug";
 import { media, site } from "@/lib/site";
 import { PrivacySettingsButton } from "@/components/analytics/AnalyticsProvider";
 
@@ -23,7 +24,10 @@ export default function LandingFooter({
   rightsLabel: string;
 }) {
   return (
-    <footer className="border-t border-ivory-400 bg-ivory-50 py-10">
+    /* The bottom padding clears the fixed mobile call bar, which would
+       otherwise sit on top of the language switcher — the one control a
+       Russian- or English-speaking visitor needs from this footer. */
+    <footer className="border-t border-ivory-400 bg-ivory-50 py-10 pb-28 lg:pb-10">
       <div className="shell flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <Image
@@ -43,7 +47,7 @@ export default function LandingFooter({
               {locales.map((locale) => (
                 <li key={locale}>
                   <Link
-                    href={`/${locale}/lp/${slug}`}
+                    href={campaignPath(locale, slug)}
                     hrefLang={htmlLang[locale]}
                     aria-current={locale === lang ? "page" : undefined}
                     className={`inline-flex rounded-full border px-3 py-1.5 text-xs transition-colors ${

@@ -438,5 +438,51 @@
     "readMore": "Details",
     "back": "Back",
     "loading": "Loading…"
+  },
+  "landing": {
+    "ctaDefault": "Leave your number",
+    "call": "Call",
+    "reasonsHeading": "Why leave your number",
+    "reasons": [
+      {
+        "title": "Free consultation",
+        "text": "The first visit and the treatment plan discussion cost nothing — you decide afterwards."
+      },
+      {
+        "title": "We call back the same day",
+        "text": "Working hours are 9:00 – 21:00. Requests sent overnight are answered in the morning."
+      },
+      {
+        "title": "A clear price",
+        "text": "You get the full cost at the consultation itself, with nothing added later."
+      }
+    ],
+    "stepsHeading": "What happens next",
+    "stepsIntro": "Sending the form is not a confirmed appointment yet — we call first and pick a time together.",
+    "steps": [
+      {
+        "title": "We call you",
+        "text": "A few short questions, so you reach the right dentist straight away."
+      },
+      {
+        "title": "We agree on a time",
+        "text": "You get the free slots and choose whichever one suits you."
+      },
+      {
+        "title": "Consultation at the clinic",
+        "text": "Examination, treatment plan and price — all in one visit."
+      }
+    ],
+    "formTitle": "Leave your number",
+    "formIntro": "Two fields — your name and phone. We sort out the rest on the call.",
+    "formSubmit": "Send",
+    "formSuccessTitle": "Request received",
+    "formSuccessText": "Thank you. We will call you during working hours, 9:00 – 21:00.",
+    "finalCtaTitle": "Ready for the first step?",
+    "finalCtaText": "Leave your number and we take care of the rest.",
+    "finalCtaButton": "Leave your number",
+    "endedTitle": "This campaign has ended",
+    "endedText": "The offer is no longer running, but the clinic is still here for you.",
+    "endedCta": "Go to the home page"
   }
 }

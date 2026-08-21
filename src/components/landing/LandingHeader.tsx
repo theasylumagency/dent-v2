@@ -4,21 +4,27 @@ import Link from "next/link";
 import type { LandingPage } from "@/payload-types";
 import type { Locale } from "@/i18n/config";
 import type { Clinic } from "@/lib/clinic";
+import type { LandingCopy } from "@/lib/landing-copy";
 import { media, site } from "@/lib/site";
 import LandingCtaLink from "./LandingCtaLink";
 
 export default function LandingHeader({
   campaign,
   clinic,
+  copy,
   lang,
 }: {
   campaign: LandingPage;
   clinic: Clinic;
+  copy: LandingCopy;
   lang: Locale;
 }) {
-  const { header } = campaign;
-  const showTrust = header.preset === "brand" && Boolean(header.trustText);
-  const showPhone = header.preset !== "ultra-minimal" && header.showPhone !== false;
+  const header = campaign.header;
+  const preset = header?.preset ?? "minimal";
+  const trustText = header?.trustText?.trim() ?? "";
+  const showTrust = preset === "brand" && Boolean(trustText);
+  const showPhone =
+    preset !== "ultra-minimal" && header?.showPhone !== false && Boolean(clinic.phoneHref);
   const context = { landingSlug: campaign.slug, campaignName: campaign.campaignName };
 
   return (
@@ -37,7 +43,7 @@ export default function LandingHeader({
 
         {showTrust ? (
           <p className="hidden max-w-sm text-center text-xs leading-relaxed text-ink-600 lg:block">
-            {header.trustText}
+            {trustText}
           </p>
         ) : null}
 
@@ -50,8 +56,12 @@ export default function LandingHeader({
               {clinic.phone}
             </a>
           ) : null}
-          <LandingCtaLink href="#landing-lead-form" context={context} className="btn-primary !px-5 !py-2.5 text-xs sm:!px-6">
-            {header.ctaLabel}
+          <LandingCtaLink
+            href="#landing-lead-form"
+            context={context}
+            className="btn-primary !px-5 !py-2.5 text-xs sm:!px-6"
+          >
+            {copy.headerCta}
           </LandingCtaLink>
         </div>
       </div>

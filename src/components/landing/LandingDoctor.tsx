@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import type { LandingPage } from "@/payload-types";
 import { landingMediaAsset, populatedDoctor } from "@/lib/landing-pages";
+import Reveal from "@/components/ui/Reveal";
 
 export default function LandingDoctor({ campaign }: { campaign: LandingPage }) {
   const section = campaign.doctor;
@@ -15,7 +16,7 @@ export default function LandingDoctor({ campaign }: { campaign: LandingPage }) {
     <section className="section border-b border-ivory-400 bg-ivory-200">
       <div className="shell grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-20">
         {photo ? (
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-lift lg:col-span-5">
+          <Reveal className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-lift lg:col-span-5">
             <Image
               src={photo.url}
               alt={photo.alt}
@@ -24,9 +25,9 @@ export default function LandingDoctor({ campaign }: { campaign: LandingPage }) {
               className="object-cover"
               style={{ objectPosition: photo.objectPosition }}
             />
-          </div>
+          </Reveal>
         ) : null}
-        <div className={photo ? "lg:col-span-7" : "lg:col-span-9 lg:col-start-3"}>
+        <Reveal delay={photo ? 120 : 0} className={photo ? "lg:col-span-7" : "lg:col-span-9 lg:col-start-3"}>
           <p className="eyebrow">{doctor.role}</p>
           <h2 className="mt-6 fluid-title font-display">{section.heading || doctor.name}</h2>
           {section.heading ? (
@@ -46,7 +47,7 @@ export default function LandingDoctor({ campaign }: { campaign: LandingPage }) {
               ))}
             </ul>
           ) : null}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

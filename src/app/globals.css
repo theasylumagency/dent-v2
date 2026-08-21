@@ -890,3 +890,88 @@
     }
   }
 }
+
+/* ====================================================================
+   Campaign landing pages.
+
+   A campaign page has one job and about eight seconds to do it, so the
+   motion here is louder than on the rest of the site: the first screen
+   animates on load rather than on scroll, and a call/CTA bar follows the
+   visitor on small screens.
+
+   Everything is scoped to `.js` for the same reason `.reveal` is — the
+   served state must be visible, so a blocked bundle degrades to a plain
+   page rather than a blank one. The global reduced-motion rule in the
+   `base` layer collapses every duration below to 0.001ms, which lands
+   each `forwards` animation on its end state immediately.
+   ==================================================================== */
+@layer components {
+
+  @keyframes lp-rise {
+    from {
+      opacity: 0;
+      transform: translateY(26px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .js .lp-rise {
+    opacity: 0;
+    animation: lp-rise 0.85s var(--ease-premium) forwards;
+    animation-delay: var(--lp-delay, 0ms);
+  }
+
+  /* The hero photograph settles instead of appearing. Scale only — no
+     opacity — so it still counts as painted for LCP at the first frame. */
+  @keyframes lp-settle {
+    from {
+      transform: scale(1.06);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  .js .lp-settle {
+    animation: lp-settle 1.6s var(--ease-premium) forwards;
+  }
+
+  /* Fixed call / CTA bar, phones and tablets only. Opaque rather than
+     frosted: a `backdrop-filter` on a fixed bar makes the compositor
+     re-blur the strip behind it on every scrolled frame. */
+  .lp-bar {
+    transform: translateY(120%);
+    opacity: 0;
+    transition: transform 0.4s var(--ease-premium), opacity 0.3s var(--ease-premium);
+    pointer-events: none;
+  }
+
+  .lp-bar[data-shown="true"] {
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Counts the numbered cards in the "why leave your number" strip and the
+     three next steps. Kept in CSS so the markup stays a plain list. */
+  .lp-step-number {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  /* A card that lifts under the pointer, but never under a finger — a
+     touch device would leave it stuck in the hover state after a tap. */
+  @media (hover: hover) {
+    .lp-lift {
+      transition: transform 0.35s var(--ease-premium), box-shadow 0.35s var(--ease-premium);
+    }
+
+    .lp-lift:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px -24px rgb(4 18 29 / 0.35);
+    }
+  }
+}

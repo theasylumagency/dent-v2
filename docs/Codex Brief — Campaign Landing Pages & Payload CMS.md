@@ -1,3 +1,8 @@
+> **Superseded in part.** Campaigns now live at `/:lang/:slug`, not
+> `/:lang/lp/:slug`, and almost every field described below is optional with a
+> dictionary-backed default. See `docs/campaign-landing-pages.md` for what the
+> code does today; this brief is kept for the reasoning behind it.
+
 # Codex Brief — Campaign Landing Pages & Payload CMS
 
 ## Objective

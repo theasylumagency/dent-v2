@@ -66,6 +66,22 @@ const nextConfig: NextConfig = {
     inlineCss: true,
   },
 
+  /**
+   * Campaign pages used to live under `/:lang/lp/:slug` and now sit at the
+   * root of the locale. Ads, QR codes and printed material carrying the old
+   * shape keep working — permanently, because the new URL is the canonical
+   * one and there is no plan to move back.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/:lang(ka|en|ru)/lp/:slug",
+        destination: "/:lang/:slug",
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
