@@ -22,9 +22,9 @@ export const BookingRequests: CollectionConfig = {
     plural: "Booking Requests",
   },
   access: {
-    read: ({ req }) => isAdmin(req.user),
+    read: ({ req }) => Boolean(req.user),
     create: () => false,
-    update: ({ req }) => isAdmin(req.user),
+    update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => isAdmin(req.user),
   },
   admin: {
@@ -35,7 +35,6 @@ export const BookingRequests: CollectionConfig = {
     description:
       "Patient booking requests, newest first. Update the workflow status as each lead is contacted; notification failures remain visible for follow-up.",
     hideAPIURL: true,
-    hidden: ({ user }) => !isAdmin(user as { role?: string | null }),
   },
   defaultSort: "-createdAt",
   disableDuplicate: true,
@@ -75,7 +74,7 @@ export const BookingRequests: CollectionConfig = {
         { label: "Spam", value: "spam" },
       ],
       admin: {
-        description: "The workflow field administrators update during lead follow-up.",
+        description: "The workflow field clinic staff update during lead follow-up.",
       },
     },
     {
