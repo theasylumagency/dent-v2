@@ -74,6 +74,7 @@ export interface Config {
     doctors: Doctor;
     faq: Faq;
     media: Media;
+    'booking-requests': BookingRequest;
     users: User;
     'analytics-aggregates': AnalyticsAggregate;
     'audit-logs': AuditLog;
@@ -91,6 +92,7 @@ export interface Config {
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'booking-requests': BookingRequestsSelect<false> | BookingRequestsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'analytics-aggregates': AnalyticsAggregatesSelect<false> | AnalyticsAggregatesSelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
@@ -107,11 +109,13 @@ export interface Config {
     'clinic-info': ClinicInfo;
     seo: Seo;
     'analytics-settings': AnalyticsSetting;
+    'booking-settings': BookingSetting;
   };
   globalsSelect: {
     'clinic-info': ClinicInfoSelect<false> | ClinicInfoSelect<true>;
     seo: SeoSelect<false> | SeoSelect<true>;
     'analytics-settings': AnalyticsSettingsSelect<false> | AnalyticsSettingsSelect<true>;
+    'booking-settings': BookingSettingsSelect<false> | BookingSettingsSelect<true>;
   };
   locale: 'ka' | 'en' | 'ru';
   widgets: {
@@ -639,6 +643,44 @@ export interface Faq {
   createdAt: string;
 }
 /**
+ * Patient booking requests, newest first. Update the workflow status as each lead is contacted; notification failures remain visible for follow-up.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "booking-requests".
+ */
+export interface BookingRequest {
+  id: number;
+  name: string;
+  phone: string;
+  email?: string | null;
+  service?: string | null;
+  preferredTime?: string | null;
+  message?: string | null;
+  landingSlug?: string | null;
+  campaignName?: string | null;
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
+  utmContent?: string | null;
+  utmTerm?: string | null;
+  /**
+   * The workflow field administrators update during lead follow-up.
+   */
+  status: 'new' | 'contacted' | 'confirmed' | 'closed' | 'spam';
+  emailNotificationStatus: 'pending' | 'sent' | 'failed' | 'skipped';
+  /**
+   * Safe provider summary only. Secrets and authorization data are never stored.
+   */
+  emailNotificationError?: string | null;
+  telegramNotificationStatus: 'pending' | 'sent' | 'failed' | 'skipped';
+  /**
+   * Safe provider summary only. Secrets and authorization data are never stored.
+   */
+  telegramNotificationError?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Who can log in. Administrators manage accounts; editors can change content and their own password, nothing else.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1119,6 +1161,32 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "booking-requests_select".
+ */
+export interface BookingRequestsSelect<T extends boolean = true> {
+  name?: T;
+  phone?: T;
+  email?: T;
+  service?: T;
+  preferredTime?: T;
+  message?: T;
+  landingSlug?: T;
+  campaignName?: T;
+  utmSource?: T;
+  utmMedium?: T;
+  utmCampaign?: T;
+  utmContent?: T;
+  utmTerm?: T;
+  status?: T;
+  emailNotificationStatus?: T;
+  emailNotificationError?: T;
+  telegramNotificationStatus?: T;
+  telegramNotificationError?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -1406,6 +1474,21 @@ export interface AnalyticsSetting {
   createdAt?: string | null;
 }
 /**
+ * Operational booking delivery settings. This recipient is separate from the public email in Clinic Info.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "booking-settings".
+ */
+export interface BookingSetting {
+  id: number;
+  /**
+   * Private recipient for new booking alerts. When empty, BOOKING_INBOX is used as a backwards-compatible fallback.
+   */
+  notificationEmail?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clinic-info_select".
  */
@@ -1515,6 +1598,16 @@ export interface SeoSelect<T extends boolean = true> {
 export interface AnalyticsSettingsSelect<T extends boolean = true> {
   ga4MeasurementId?: T;
   metaPixelId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "booking-settings_select".
+ */
+export interface BookingSettingsSelect<T extends boolean = true> {
+  notificationEmail?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

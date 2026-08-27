@@ -7,6 +7,7 @@ import * as migration_20260815_193656 from './20260815_193656';
 import * as migration_20260820_063311_analytics_consent_audit from './20260820_063311_analytics_consent_audit';
 import * as migration_20260821_064018_campaign_landing_pages from './20260821_064018_campaign_landing_pages';
 import * as migration_20260821_090027_landing_pages_simplified from './20260821_090027_landing_pages_simplified';
+import * as migration_20260827_133147_booking_requests from './20260827_133147_booking_requests';
 
 export const migrations = [
   {
@@ -52,6 +53,11 @@ export const migrations = [
   {
     up: migration_20260821_090027_landing_pages_simplified.up,
     down: migration_20260821_090027_landing_pages_simplified.down,
-    name: '20260821_090027_landing_pages_simplified'
+    name: '20260821_090027_landing_pages_simplified',
+  },
+  {
+    up: migration_20260827_133147_booking_requests.up,
+    down: migration_20260827_133147_booking_requests.down,
+    name: '20260827_133147_booking_requests'
   },
 ];

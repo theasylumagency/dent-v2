@@ -282,8 +282,15 @@ export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
           the page moves. At 90% fill the blur is barely visible anyway, so
           below `lg` the bar simply becomes near-opaque and costs nothing —
           which is most of what made scrolling feel sticky on a phone. */}
+      {/* `relative z-50` is load-bearing: <header> is `fixed z-50`, so it owns
+          a stacking context of its own and the z-50 applies to the header, not
+          to this bar. Left static, the bar paints *below* the mobile drawer
+          (`fixed z-40`) — which hid both the logo and the close button, and
+          made the close button unclickable, since the drawer swallowed the
+          pointer. Any positioned descendant of <header> that must stay above
+          the drawer needs its own z-index above 40. */}
       <div
-        className={`border-b transition-[background-color,border-color,box-shadow] duration-500 ${
+        className={`relative z-50 border-b transition-[background-color,border-color,box-shadow] duration-500 ${
           scrolled || megaOpen || drawerOpen || bookingOpen
             ? "border-ivory-400 bg-ivory-50/97 shadow-soft lg:bg-ivory-50/90 lg:backdrop-blur-xl"
             : overlay

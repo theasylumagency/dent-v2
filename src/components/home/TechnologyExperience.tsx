@@ -435,7 +435,7 @@ function SceneCopyPanel({
   y: MotionValue<number>;
 }) {
   return (
-    <div className="shell pointer-events-none absolute inset-x-0 bottom-[7svh] z-50 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2">
+    <div className="tech-scene-caption shell pointer-events-none absolute inset-x-0 z-50 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2">
       <motion.article className="relative max-w-md" style={{ opacity, y }}>
         <span
           className="absolute -top-16 left-0 -z-10 font-display text-[7.5rem] leading-none text-white/[0.055] lg:-top-24 lg:text-[10rem]"

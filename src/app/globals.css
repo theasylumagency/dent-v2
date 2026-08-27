@@ -116,6 +116,15 @@
     background-color: var(--color-ivory-100);
   }
 
+  :root {
+    /* Measured height of the fixed mobile action bar (`MobileActionBar`,
+       below `lg`), *excluding* the safe-area inset it adds for itself on a
+       device with a home indicator. Anything that must not end up beneath
+       it clears this plus that inset. Keep in step with the bar's own
+       `py-2.5` + `h-12` + 1px border. */
+    --action-bar-h: 4.375rem;
+  }
+
   body {
     background-color: var(--color-ivory-100);
     color: var(--color-ink-700);
@@ -123,6 +132,17 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: clip;
+  }
+
+  /* The action bar is `fixed`, so nothing in normal flow reserves room for
+     it and the document simply ends underneath. Mid-page sections handle
+     this themselves (`.fit-pad`), but the last thing on the page has no
+     such padding: measured at 390×820 the footer's legal links end 26px
+     above the bar, which the home-indicator inset then swallows whole. */
+  @media (max-width: 1023.98px) {
+    body {
+      padding-bottom: calc(var(--action-bar-h) + env(safe-area-inset-bottom));
+    }
   }
 
   ::selection {
@@ -323,6 +343,21 @@
       padding-top: max(6rem, 10vh);
       padding-bottom: max(3.5rem, 7vh);
     }
+  }
+
+  /* ------------------------------------------------------------------
+     Scene captions in the technology theatre are anchored to the bottom
+     of a *pinned* viewport, so `.fit-pad` never applies to them. The old
+     `bottom: 7svh` (57px at 820px tall) sat inside the 70px action bar,
+     which cut the last line of every scene description — and 7svh only
+     gets worse as the screen gets shorter, while the bar does not. A
+     fixed clearance is the correct unit here.
+
+     `lg:bottom-auto` (utilities layer) still wins above 1024px, where the
+     caption is vertically centred and the bar does not exist.
+     ------------------------------------------------------------------ */
+  .tech-scene-caption {
+    bottom: calc(var(--action-bar-h) + env(safe-area-inset-bottom) + 1.25rem);
   }
 
   .fit-stack {

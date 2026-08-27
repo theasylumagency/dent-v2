@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test:booking": "tsx --test src/lib/booking/*.test.ts",
     "check:i18n": "node scripts/check-i18n.mjs",
     "payload": "payload",
     "generate:types": "payload generate:types",
