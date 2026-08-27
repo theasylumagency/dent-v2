@@ -1,10 +1,14 @@
 import type { GlobalConfig } from "payload";
-import { revalidatePath } from "next/cache";
 
-import { locales } from "@/i18n/config";
+import { clinicInfo as t, groups } from "@/admin/labels";
+import { safeRevalidate } from "@/collections/hooks/revalidate";
 
 /**
  * Contact details, editable by the clinic.
+ *
+ * Grouped with the site content rather than with settings on purpose: fixing
+ * a phone number is an ordinary editorial job, and an editor should not need
+ * an administrator to do it.
  *
  * **One phone number field, not two.** The site needs it in two forms — the
  * readable `+995 511 21 16 16` and the diallable `995511211616` that `tel:`
@@ -20,22 +24,24 @@ import { locales } from "@/i18n/config";
 export const ClinicInfo: GlobalConfig = {
     slug: "clinic-info",
 
+    label: t.label,
+
     access: {
         read: () => true,
     },
 
     admin: {
-        description:
-            "Phone numbers, email and address. These appear across the site and in the structured data search engines read, so a typo here is visible everywhere.",
+        group: groups.content,
+        description: t.description,
     },
 
     hooks: {
         afterChange: [
             () => {
-                /* Contact details are in the header, footer and mobile bar —
-                   which is to say, on every page. */
-                for (const locale of locales) revalidatePath(`/${locale}`, "layout");
-                revalidatePath("/sitemap.xml");
+                /* Clinic data is rendered by this shared layout and by campaign pages.
+                   Route patterns refresh every locale; a CMS save must never rely on a PM2 restart. */
+                safeRevalidate("/[lang]/(site)", "layout");
+                safeRevalidate("/[lang]/[slug]", "page");
             },
         ],
     },
@@ -43,93 +49,96 @@ export const ClinicInfo: GlobalConfig = {
     fields: [
         {
             type: "collapsible",
-            label: "Phone",
+            label: t.phoneBlock,
             fields: [
                 {
                     name: "phone",
                     type: "text",
+                    label: t.phone,
                     required: true,
-                    admin: {
-                        description:
-                            "The mobile line — the one on WhatsApp, and the one the mobile bar dials. Write it as a person reads it: +995 511 21 16 16. The dialling format is derived automatically.",
-                    },
+                    admin: { description: t.phoneHelp },
                 },
                 {
                     name: "phoneAlt",
                     type: "text",
-                    admin: {
-                        description: "Landline, shown as a secondary number. Leave empty to hide it.",
-                    },
+                    label: t.phoneAlt,
+                    admin: { description: t.phoneAltHelp },
                 },
                 {
                     name: "whatsappSameAsPhone",
                     type: "checkbox",
+                    label: t.whatsappSameAsPhone,
                     defaultValue: true,
-                    admin: {
-                        description: "Untick only if WhatsApp is on a different number.",
-                    },
+                    admin: { description: t.whatsappSameAsPhoneHelp },
                 },
                 {
                     name: "whatsapp",
                     type: "text",
+                    label: t.whatsapp,
                     admin: {
                         condition: (data) => !data?.whatsappSameAsPhone,
-                        description: "The WhatsApp number, if it differs from the one above.",
                     },
                 },
             ],
         },
         {
             type: "collapsible",
-            label: "Address and email",
+            label: t.addressBlock,
             fields: [
-                { name: "email", type: "text", required: true },
+                { name: "email", type: "text", label: t.email, required: true },
                 {
                     name: "address",
                     type: "text",
+                    label: t.address,
                     localized: true,
                     required: true,
-                    admin: { description: "As shown on the contact page and in the footer." },
+                    admin: { description: t.addressHelp },
                 },
                 {
                     name: "mapsUrl",
                     type: "text",
-                    admin: { description: "Google Maps share link for the 'directions' button." },
+                    label: t.mapsUrl,
+                    admin: { description: t.mapsUrlHelp },
                 },
                 {
                     name: "hoursText",
                     type: "text",
+                    label: t.hoursText,
                     localized: true,
-                    admin: {
-                        description:
-                            "Opening hours as a sentence, e.g. 'ყოველდღე 9:00-დან 21:00-მდე'. The machine-readable version used by search engines is set in code — tell the developer if the actual hours change.",
-                    },
+                    admin: { description: t.hoursTextHelp },
                 },
             ],
         },
         {
             type: "collapsible",
-            label: "Consultation fees",
+            label: t.feesBlock,
+            admin: { description: t.feesHelp },
             fields: [
                 {
                     type: "row",
                     fields: [
-                        { name: "consultationFirst", type: "number", required: true },
-                        { name: "consultationRepeat", type: "number", required: true },
+                        {
+                            name: "consultationFirst",
+                            type: "number",
+                            label: t.consultationFirst,
+                            required: true,
+                        },
+                        {
+                            name: "consultationRepeat",
+                            type: "number",
+                            label: t.consultationRepeat,
+                            required: true,
+                        },
                     ],
                 },
             ],
-            admin: {
-                description:
-                    "Published on the services and news pages, and in the structured data. If these change, check the FAQ answers too — one of them quotes the figure in prose.",
-            },
         },
         {
             type: "collapsible",
-            label: "Published figures",
+            label: t.figuresBlock,
             admin: {
-                description:
-                    "Both are optional and both are claims. Leave one empty and that counter simply does not appear — which is the right outcome if the number cannot be backed up. The other two figures on the page (how many specialists, how many services) are counted from the CMS and are not editable here.",
+                initCollapsed: true,
+                description: t.figuresHelp,
             },
             fields: [
                 {
@@ -138,18 +147,16 @@ export const ClinicInfo: GlobalConfig = {
                         {
                             name: "satisfiedPercent",
                             type: "number",
+                            label: t.satisfiedPercent,
                             min: 0,
                             max: 100,
-                            admin: {
-                                description:
-                                    "Percentage of satisfied patients. On a medical site an unsourced figure is a liability — publish it only if there is a survey behind it.",
-                            },
+                            admin: { description: t.satisfiedPercentHelp },
                         },
                         {
                             name: "yearsOnMarket",
                             type: "number",
+                            label: t.yearsOnMarket,
                             min: 0,
-                            admin: { description: "Years the clinic has been operating." },
                         },
                     ],
                 },
@@ -157,17 +164,16 @@ export const ClinicInfo: GlobalConfig = {
         },
         {
             type: "collapsible",
-            label: "Social",
+            label: t.socialBlock,
+            admin: { initCollapsed: true },
             fields: [
-                { name: "facebook", type: "text" },
-                { name: "instagram", type: "text" },
+                { name: "facebook", type: "text", label: t.facebook },
+                { name: "instagram", type: "text", label: t.instagram },
                 {
                     name: "google",
                     type: "text",
-                    admin: {
-                        description:
-                            "Google Business Profile URL. The single strongest trust link a local clinic can publish — it ties the site to the entity Google already ranks in Maps.",
-                    },
+                    label: t.google,
+                    admin: { description: t.googleHelp },
                 },
             ],
         },

@@ -1,5 +1,7 @@
 import type { CollectionConfig } from "payload";
 
+import { groups, posts as t } from "@/admin/labels";
+import { autoSlug } from "./hooks/auto-slug";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
 
 /** Every route a post appears on. The list page shows all of them. */
@@ -8,15 +10,17 @@ const postPaths = (doc: Record<string, unknown>) => ["/news", `/news/${doc.slug 
 export const Posts: CollectionConfig = {
     slug: "posts",
 
+    labels: { singular: t.singular, plural: t.plural },
+
     access: {
         read: () => true,
     },
 
     admin: {
+        group: groups.content,
         useAsTitle: "title",
         defaultColumns: ["title", "category", "publishedAt", "_status"],
-        description:
-            "News and articles. Georgian is the source language — a post left untranslated falls back to Georgian rather than disappearing.",
+        description: t.description,
     },
 
     /* Drafts, so a half-written article is never live. `_status` also gives
@@ -26,6 +30,7 @@ export const Posts: CollectionConfig = {
     },
 
     hooks: {
+        beforeValidate: [autoSlug({ collection: "posts", source: "title" })],
         afterChange: [afterChangeRevalidate(postPaths)],
         afterDelete: [afterDeleteRevalidate(postPaths)],
     },
@@ -34,12 +39,14 @@ export const Posts: CollectionConfig = {
         {
             name: "title",
             type: "text",
+            label: t.title,
             localized: true,
             required: true,
         },
         {
             name: "slug",
             type: "text",
+            label: t.slug,
             required: true,
             unique: true,
             index: true,
@@ -48,23 +55,25 @@ export const Posts: CollectionConfig = {
                competing with itself. */
             admin: {
                 position: "sidebar",
-                description: "URL segment, Latin letters and hyphens. Shared by all three languages.",
+                description: t.slugHelp,
             },
         },
         {
             name: "category",
             type: "select",
+            label: t.category,
             required: true,
             defaultValue: "guide",
             admin: { position: "sidebar" },
             options: [
-                { label: "Clinic news", value: "clinic" },
-                { label: "Article", value: "guide" },
+                { label: t.categoryClinic, value: "clinic" },
+                { label: t.categoryGuide, value: "guide" },
             ],
         },
         {
             name: "publishedAt",
             type: "date",
+            label: t.publishedAt,
             required: true,
             admin: {
                 position: "sidebar",
@@ -74,46 +83,48 @@ export const Posts: CollectionConfig = {
         {
             name: "cover",
             type: "upload",
+            label: t.cover,
             relationTo: "media",
             required: true,
         },
         {
             name: "excerpt",
             type: "textarea",
+            label: t.excerpt,
             localized: true,
             required: true,
-            admin: {
-                description:
-                    "One or two sentences. Used on the card, in the meta description and in search results.",
-            },
+            admin: { description: t.excerptHelp },
         },
         {
             name: "body",
             type: "richText",
+            label: t.body,
             localized: true,
             required: true,
         },
         {
             type: "collapsible",
-            label: "Search engine listing",
+            label: t.seoBlock,
             admin: {
-                description:
-                    "Leave both empty and the title and excerpt above are used, which is usually right. Fill them in when the headline reads well on the page but poorly in a list of search results.",
+                initCollapsed: true,
+                description: t.seoBlockHelp,
             },
             fields: [
                 {
                     name: "metaTitle",
                     type: "text",
+                    label: t.metaTitle,
                     localized: true,
                     maxLength: 65,
-                    admin: { description: "Up to about 60 characters." },
+                    admin: { description: t.metaTitleHelp },
                 },
                 {
                     name: "metaDescription",
                     type: "textarea",
+                    label: t.metaDescription,
                     localized: true,
                     maxLength: 175,
-                    admin: { description: "Up to about 155 characters." },
+                    admin: { description: t.metaDescriptionHelp },
                 },
             ],
         },

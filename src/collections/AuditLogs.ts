@@ -1,5 +1,6 @@
 import type { CollectionConfig } from "payload";
 
+import { auditLogs as t, groups } from "@/admin/labels";
 import { isAdmin } from "../access/roles";
 
 /**
@@ -13,6 +14,8 @@ import { isAdmin } from "../access/roles";
 export const AuditLogs: CollectionConfig = {
   slug: "audit-logs",
 
+  labels: { singular: t.singular, plural: t.plural },
+
   access: {
     read: ({ req }) => isAdmin(req.user),
     create: () => false,
@@ -21,11 +24,10 @@ export const AuditLogs: CollectionConfig = {
   },
 
   admin: {
-    group: "Settings",
+    group: groups.settings,
     useAsTitle: "target",
     defaultColumns: ["createdAt", "user", "action", "target"],
-    description:
-      "Immutable history of CMS changes. Entries are created automatically and cannot be edited or deleted.",
+    description: t.description,
     hideAPIURL: true,
     hidden: ({ user }) => !isAdmin(user as { role?: string | null }),
   },
@@ -39,33 +41,37 @@ export const AuditLogs: CollectionConfig = {
     {
       name: "user",
       type: "relationship",
+      label: t.user,
       relationTo: "users",
       admin: { readOnly: true },
     },
     {
       name: "action",
       type: "select",
+      label: t.action,
       required: true,
       options: [
-        { label: "Create", value: "create" },
-        { label: "Update", value: "update" },
-        { label: "Delete", value: "delete" },
+        { label: t.actionCreate, value: "create" },
+        { label: t.actionUpdate, value: "update" },
+        { label: t.actionDelete, value: "delete" },
       ],
       admin: { readOnly: true },
     },
     {
       name: "targetType",
       type: "select",
+      label: t.targetType,
       required: true,
       options: [
-        { label: "Collection", value: "collection" },
-        { label: "Global", value: "global" },
+        { label: t.targetTypeCollection, value: "collection" },
+        { label: t.targetTypeGlobal, value: "global" },
       ],
       admin: { readOnly: true },
     },
     {
       name: "target",
       type: "text",
+      label: t.target,
       required: true,
       index: true,
       admin: { readOnly: true },
@@ -73,15 +79,17 @@ export const AuditLogs: CollectionConfig = {
     {
       name: "documentId",
       type: "text",
+      label: t.documentId,
       admin: { readOnly: true },
     },
     {
       name: "changes",
       type: "json",
+      label: t.changes,
       required: true,
       admin: {
         readOnly: true,
-        description: "Only changed fields are included; sensitive field names are always removed.",
+        description: t.changesHelp,
       },
     },
   ],

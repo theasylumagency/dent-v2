@@ -2,6 +2,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import type { CollectionConfig } from "payload";
 
+import { groups, media as t } from "@/admin/labels";
+
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
@@ -23,14 +25,45 @@ const staticDir = process.env.MEDIA_DIR || path.resolve(dirname, "../../media");
 export const Media: CollectionConfig = {
     slug: "media",
 
+    labels: { singular: t.singular, plural: t.plural },
+
     access: {
         read: () => true,
     },
 
     admin: {
+        group: groups.content,
         useAsTitle: "internalName",
-        description:
-            "Photographs and images used across the site. Brand assets — the logo, icons and the hero video — deliberately stay in the codebase: they change with the design, not with the content.",
+        /* `filename` first, because for an upload collection Payload renders
+           that column as the image itself. A picture library listed as rows
+           of text is a picture library nobody browses — the previous default
+           showed name, alt and caption and not one thumbnail. */
+        defaultColumns: ["filename", "internalName", "alt", "updatedAt"],
+        description: t.description,
+    },
+
+    hooks: {
+        /**
+         * Never leave an upload nameless.
+         *
+         * `internalName` is what the list view and every relationship picker
+         * show, and it was optional — so an upload made in a hurry appeared
+         * as a bare id in the media library and as nothing at all in the
+         * dropdown where a doctor's photo is chosen. Falling back to the
+         * file name is not a great title, but it is always better than none,
+         * and the editor can still overwrite it.
+         */
+        beforeChange: [
+            ({ data }) => {
+                const named = typeof data.internalName === "string" && data.internalName.trim();
+                if (named) return data;
+
+                const filename = typeof data.filename === "string" ? data.filename : "";
+                if (!filename) return data;
+
+                return { ...data, internalName: filename.replace(/\.[^.]+$/, "") };
+            },
+        ],
     },
 
     upload: {
@@ -61,26 +94,25 @@ export const Media: CollectionConfig = {
         {
             name: "internalName",
             type: "text",
+            label: t.internalName,
             required: false,
-            admin: {
-                description: "For finding it in the library. Not shown on the site.",
-            },
+            admin: { description: t.internalNameHelp },
         },
         {
             name: "alt",
             type: "text",
+            label: t.alt,
             localized: true,
             required: true,
-            admin: {
-                description:
-                    "Describe what is in the picture, for screen readers and image search. Not a caption — 'Nino Osadze, prosthodontist', not 'doctor photo'.",
-            },
+            admin: { description: t.altHelp },
         },
         {
             name: "caption",
             type: "text",
+            label: t.caption,
             localized: true,
             required: false,
+            admin: { description: t.captionHelp },
         },
     ],
 };

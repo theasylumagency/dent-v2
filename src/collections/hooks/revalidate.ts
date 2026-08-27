@@ -34,9 +34,9 @@ let warnedOutsideNext = false;
  * than merely convenient. It is logged once so a real misconfiguration in
  * production does not pass unnoticed.
  */
-function safeRevalidate(target: string) {
+export function safeRevalidate(target: string, type?: "page" | "layout") {
   try {
-    revalidatePath(target);
+    revalidatePath(target, type);
   } catch {
     if (!warnedOutsideNext) {
       warnedOutsideNext = true;

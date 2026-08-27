@@ -6,6 +6,7 @@ import type {
   Payload,
 } from "payload";
 
+import { groups, landingPages as t } from "@/admin/labels";
 import { RESERVED_SLUGS, SLUG_PATTERN, slugify } from "@/lib/campaign-slug";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
 
@@ -197,7 +198,7 @@ const validateArchivedRedirect: CollectionBeforeChangeHook = async ({ data, orig
 export const LandingPages: CollectionConfig = {
   slug: "landing-pages",
 
-  labels: { singular: "ლენდინგ გვერდი", plural: "ლენდინგ გვერდები" },
+  labels: { singular: t.singular, plural: t.plural },
 
   access: {
     read: ({ req }) => (req.user ? true : { status: { not_equals: "draft" } }),
@@ -207,6 +208,7 @@ export const LandingPages: CollectionConfig = {
   },
 
   admin: {
+    group: groups.marketing,
     useAsTitle: "campaignName",
     defaultColumns: ["campaignName", "slug", "status", "updatedAt"],
     description:

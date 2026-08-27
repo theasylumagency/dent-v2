@@ -1,5 +1,6 @@
 import type { CollectionConfig } from "payload";
 
+import { analyticsAggregates as t, groups } from "@/admin/labels";
 import { isAdmin } from "../access/roles";
 
 /** One row per UTC day, event, and route. The public endpoint atomically
@@ -7,6 +8,8 @@ import { isAdmin } from "../access/roles";
  * row growth and no visitor identifier is needed. */
 export const AnalyticsAggregates: CollectionConfig = {
   slug: "analytics-aggregates",
+
+  labels: { singular: t.singular, plural: t.plural },
 
   access: {
     read: ({ req }) => isAdmin(req.user),
@@ -16,11 +19,10 @@ export const AnalyticsAggregates: CollectionConfig = {
   },
 
   admin: {
-    group: "Analytics",
+    group: groups.marketing,
     useAsTitle: "route",
     defaultColumns: ["bucket", "event", "route", "count"],
-    description:
-      "Anonymous daily totals. These rows contain no visitor, session, cookie, fingerprint, or IP data.",
+    description: t.description,
     hideAPIURL: true,
     hidden: ({ user }) => !isAdmin(user as { role?: string | null }),
   },
@@ -38,30 +40,34 @@ export const AnalyticsAggregates: CollectionConfig = {
     {
       name: "bucket",
       type: "text",
+      label: t.bucket,
       required: true,
-      admin: { readOnly: true, description: "UTC calendar day (YYYY-MM-DD)." },
+      admin: { readOnly: true, description: t.bucketHelp },
     },
     {
       name: "event",
       type: "select",
+      label: t.event,
       required: true,
       options: [
-        { label: "Page view", value: "page_view" },
-        { label: "Booking opened", value: "booking_open" },
-        { label: "Booking completed", value: "booking_complete" },
+        { label: t.eventPageView, value: "page_view" },
+        { label: t.eventBookingOpen, value: "booking_open" },
+        { label: t.eventBookingComplete, value: "booking_complete" },
       ],
       admin: { readOnly: true },
     },
     {
       name: "route",
       type: "text",
+      label: t.route,
       required: true,
       defaultValue: "",
-      admin: { readOnly: true, description: "Set only for page views." },
+      admin: { readOnly: true, description: t.routeHelp },
     },
     {
       name: "count",
       type: "number",
+      label: t.count,
       required: true,
       min: 0,
       defaultValue: 0,

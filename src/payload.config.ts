@@ -5,20 +5,21 @@ import { buildConfig } from "payload";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
 
-import { Doctors } from "./collections/Doctors";
+import { payloadKa } from "./admin/payload-ka";
 import { AnalyticsAggregates } from "./collections/AnalyticsAggregates";
 import { AuditLogs } from "./collections/AuditLogs";
 import { BookingRequests } from "./collections/BookingRequests";
+import { Doctors } from "./collections/Doctors";
 import { Equipment } from "./collections/Equipment";
 import { Faq } from "./collections/Faq";
-import { Media } from "./collections/Media";
 import { LandingPages } from "./collections/LandingPages";
+import { Media } from "./collections/Media";
 import { Posts } from "./collections/Posts";
 import { Services } from "./collections/Services";
 import { Users } from "./collections/Users";
-import { ClinicInfo } from "./globals/ClinicInfo";
 import { AnalyticsSettings } from "./globals/AnalyticsSettings";
 import { BookingSettings } from "./globals/BookingSettings";
+import { ClinicInfo } from "./globals/ClinicInfo";
 import { Seo } from "./globals/Seo";
 
 const filename = fileURLToPath(import.meta.url);
@@ -58,7 +59,11 @@ export default buildConfig({
            start at `src/`. Run `npm run generate:importmap` after changing
            them — Payload compiles this list into
            `app/(payload)/admin/importMap.js` and will not find a component
-           that is missing from it. */
+           that is missing from it.
+
+           `YesNoCell` is referenced from the field configs rather than here
+           (`admin.components.Cell` on the checkbox fields in Doctors and
+           Equipment), but the same rule applies to it. */
         components: {
             graphics: {
                 Logo: "/components/admin/Logo#Logo",
@@ -67,14 +72,75 @@ export default buildConfig({
         },
     },
 
-    /* Content first, plumbing last — this is the order of the admin
-       sidebar, and an editor opens Posts far more often than Users.
-       Services is declared before Equipment because Equipment holds a
-       relationship into it. */
-    collections: [Posts, LandingPages, Services, Equipment, Doctors, Faq, Media, BookingRequests, Users, AnalyticsAggregates, AuditLogs],
+    /**
+     * The admin panel speaks Georgian.
+     *
+     * Payload ships 43 languages and Georgian is not among them — and it
+     * cannot be added, because `AcceptedLanguages` is a closed union in
+     * `@payloadcms/translations`. What *is* supported is overriding an
+     * existing language's dictionary, so the panel stays on "English" and
+     * that English is written in Georgian. The strings live in
+     * `src/admin/payload-ka.ts`; everything this project names itself —
+     * collections, fields, groups — lives in `src/admin/labels.ts`.
+     *
+     * `fallbackLanguage: "en"` is what makes a browser set to Georgian land
+     * here rather than on a half-translated other language.
+     *
+     * A browser set to one of Payload's real 43 (Russian, most plausibly
+     * here) still gets that language. If the clinic ever needs Georgian
+     * enforced for everyone regardless of browser, add:
+     *
+     *     import { en } from "@payloadcms/translations/languages/en";
+     *     …
+     *     supportedLanguages: { en },
+     */
+    i18n: {
+        fallbackLanguage: "en",
+        translations: { en: payloadKa },
+    },
 
-    /* Settings rather than content — one document each, no list view. */
-    globals: [ClinicInfo, Seo, AnalyticsSettings, BookingSettings],
+    /**
+     * Sidebar order.
+     *
+     * This array is the nav, twice over: it sets the order of entries inside
+     * a group, and — because Payload creates a group the first time it meets
+     * one — the order of the groups themselves. Globals are appended after
+     * collections, so a global always lands at the end of whichever group it
+     * joins.
+     *
+     * Every entry declares `admin.group`. That is not tidiness: an entry
+     * without one falls into Payload's built-in "Collections" / "Globals"
+     * buckets, which always render first. One omission is enough to put an
+     * English heading back at the top of the panel.
+     *
+     * Services stays declared before Equipment, which holds a relationship
+     * into it.
+     */
+    collections: [
+        /* ყოველდღიური — the screen the clinic opens every day, first. */
+        BookingRequests,
+
+        /* საიტის შიგთავსი */
+        Posts,
+        Services,
+        Doctors,
+        Equipment,
+        Faq,
+        Media,
+
+        /* მარკეტინგი */
+        LandingPages,
+        AnalyticsAggregates,
+
+        /* პარამეტრები */
+        Users,
+        AuditLogs,
+    ],
+
+    /* Settings rather than content — one document each, no list view.
+       ClinicInfo joins the content group and Seo the marketing one; only the
+       last two are actually administrator territory. */
+    globals: [ClinicInfo, Seo, BookingSettings, AnalyticsSettings],
 
     editor: lexicalEditor(),
 

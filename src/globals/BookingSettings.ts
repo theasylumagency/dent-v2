@@ -1,28 +1,33 @@
 import type { GlobalConfig } from "payload";
 
+import { bookingSettings as t, groups } from "@/admin/labels";
 import { isAdmin } from "../access/roles";
 import { auditGlobal } from "../lib/audit/logger";
 
 export const BookingSettings: GlobalConfig = {
   slug: "booking-settings",
-  label: "Booking Settings",
+
+  label: t.label,
+
   access: {
     read: ({ req }) => isAdmin(req.user),
     update: ({ req }) => isAdmin(req.user),
   },
+
   admin: {
-    group: "Settings",
-    description:
-      "Operational booking delivery settings. This recipient is separate from the public email in Clinic Info.",
+    group: groups.settings,
+    description: t.description,
     hidden: ({ user }) => !isAdmin(user as { role?: string | null }),
   },
+
   hooks: {
     afterChange: [auditGlobal(["notificationEmail"])],
   },
+
   fields: [
     {
       name: "notificationEmail",
-      label: "Notification email",
+      label: t.notificationEmail,
       type: "email",
       hooks: {
         beforeValidate: [
@@ -30,8 +35,7 @@ export const BookingSettings: GlobalConfig = {
         ],
       },
       admin: {
-        description:
-          "Private recipient for new booking alerts. When empty, BOOKING_INBOX is used as a backwards-compatible fallback.",
+        description: t.notificationEmailHelp,
       },
     },
   ],

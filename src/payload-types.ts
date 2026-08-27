@@ -67,16 +67,16 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    'booking-requests': BookingRequest;
     posts: Post;
-    'landing-pages': LandingPage;
     services: Service;
-    equipment: Equipment;
     doctors: Doctor;
+    equipment: Equipment;
     faq: Faq;
     media: Media;
-    'booking-requests': BookingRequest;
-    users: User;
+    'landing-pages': LandingPage;
     'analytics-aggregates': AnalyticsAggregate;
+    users: User;
     'audit-logs': AuditLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -85,16 +85,16 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    'booking-requests': BookingRequestsSelect<false> | BookingRequestsSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
-    'landing-pages': LandingPagesSelect<false> | LandingPagesSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
-    equipment: EquipmentSelect<false> | EquipmentSelect<true>;
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
+    equipment: EquipmentSelect<false> | EquipmentSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    'booking-requests': BookingRequestsSelect<false> | BookingRequestsSelect<true>;
-    users: UsersSelect<false> | UsersSelect<true>;
+    'landing-pages': LandingPagesSelect<false> | LandingPagesSelect<true>;
     'analytics-aggregates': AnalyticsAggregatesSelect<false> | AnalyticsAggregatesSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -108,14 +108,14 @@ export interface Config {
   globals: {
     'clinic-info': ClinicInfo;
     seo: Seo;
-    'analytics-settings': AnalyticsSetting;
     'booking-settings': BookingSetting;
+    'analytics-settings': AnalyticsSetting;
   };
   globalsSelect: {
     'clinic-info': ClinicInfoSelect<false> | ClinicInfoSelect<true>;
     seo: SeoSelect<false> | SeoSelect<true>;
-    'analytics-settings': AnalyticsSettingsSelect<false> | AnalyticsSettingsSelect<true>;
     'booking-settings': BookingSettingsSelect<false> | BookingSettingsSelect<true>;
+    'analytics-settings': AnalyticsSettingsSelect<false> | AnalyticsSettingsSelect<true>;
   };
   locale: 'ka' | 'en' | 'ru';
   widgets: {
@@ -146,7 +146,45 @@ export interface UserAuthOperations {
   };
 }
 /**
- * News and articles. Georgian is the source language — a post left untranslated falls back to Georgian rather than disappearing.
+ * პაციენტების მოთხოვნები — ახალი ყველაზე ზემოთ. ყოველი დარეკვის შემდეგ შეცვალე სტატუსი, რომ სხვამ იგივე ადამიანს აღარ დაურეკოს. მონაცემები არ იცვლება — მხოლოდ სტატუსი.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "booking-requests".
+ */
+export interface BookingRequest {
+  id: number;
+  /**
+   * ერთადერთი ველი, რომელიც აქ იცვლება.
+   */
+  status: 'new' | 'contacted' | 'confirmed' | 'closed' | 'spam';
+  name: string;
+  phone: string;
+  email?: string | null;
+  service?: string | null;
+  preferredTime?: string | null;
+  message?: string | null;
+  landingSlug?: string | null;
+  campaignName?: string | null;
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
+  utmContent?: string | null;
+  utmTerm?: string | null;
+  emailNotificationStatus: 'pending' | 'sent' | 'failed' | 'skipped';
+  /**
+   * მხოლოდ პროვაიდერის მოკლე პასუხი. პაროლები და გასაღებები არასდროს ინახება.
+   */
+  emailNotificationError?: string | null;
+  telegramNotificationStatus: 'pending' | 'sent' | 'failed' | 'skipped';
+  /**
+   * მხოლოდ პროვაიდერის მოკლე პასუხი. პაროლები და გასაღებები არასდროს ინახება.
+   */
+  telegramNotificationError?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * სიახლეები და სტატიები. ქართული წყარო ენაა — უთარგმნელი სტატია საიტიდან არ ქრება, ქართულად ჩანს.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
@@ -155,14 +193,14 @@ export interface Post {
   id: number;
   title: string;
   /**
-   * URL segment, Latin letters and hyphens. Shared by all three languages.
+   * მისამართის ბოლო ნაწილი: /ka/news/მისამართი. ლათინური ასოები და დეფისი. სამივე ენას ერთი და იგივე აქვს.
    */
   slug: string;
   category: 'clinic' | 'guide';
   publishedAt: string;
   cover: number | Media;
   /**
-   * One or two sentences. Used on the card, in the meta description and in search results.
+   * ერთი-ორი წინადადება. ჩანს ბარათზე და Google-ის შედეგებში — ანუ ხშირად ეს იკითხება სტატიაზე ადრე.
    */
   excerpt: string;
   body: {
@@ -181,11 +219,11 @@ export interface Post {
     [k: string]: unknown;
   };
   /**
-   * Up to about 60 characters.
+   * დაახლოებით 60 სიმბოლომდე.
    */
   metaTitle?: string | null;
   /**
-   * Up to about 155 characters.
+   * დაახლოებით 155 სიმბოლომდე.
    */
   metaDescription?: string | null;
   updatedAt: string;
@@ -193,7 +231,7 @@ export interface Post {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Photographs and images used across the site. Brand assets — the logo, icons and the hero video — deliberately stay in the codebase: they change with the design, not with the content.
+ * საიტის ყველა ფოტო და სურათი. ლოგო, ხატულები და მთავარი ვიდეო აქ არ არის — ისინი დიზაინის ნაწილია და კოდში ცხოვრობს.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
@@ -201,13 +239,16 @@ export interface Post {
 export interface Media {
   id: number;
   /**
-   * For finding it in the library. Not shown on the site.
+   * მხოლოდ იმისთვის, რომ ბიბლიოთეკაში იპოვო. საიტზე არ ჩანს. ცარიელი დატოვე და ფაილის სახელი ჩაიწერება.
    */
   internalName?: string | null;
   /**
-   * Describe what is in the picture, for screen readers and image search. Not a caption — 'Nino Osadze, prosthodontist', not 'doctor photo'.
+   * რა ჩანს სურათზე — ეკრანის მკითხველისთვის და სურათების ძებნისთვის. ეს ხელმოწერა არაა: „ნინო ოსაძე, ორთოპედი“, არა „ექიმის ფოტო“.
    */
   alt: string;
+  /**
+   * არასავალდებულო. ჩანს სურათის ქვემოთ, სადაც დიზაინი ითვალისწინებს.
+   */
   caption?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -246,6 +287,234 @@ export interface Media {
       filename?: string | null;
     };
   };
+}
+/**
+ * 16 სერვისი, ხუთ მიმართულებად დაჯგუფებული. ცალკე სერვისს თავისი გვერდი არ აქვს — ის თავისი მიმართულების გვერდზე ჩნდება.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  title: string;
+  /**
+   * ხატულა სწორედ ამ მისამართით არჩევა — თუ შეცვლი, სერვისი ხატულის გარეშე დარჩება. ცვლილებამდე დამირეკე.
+   */
+  slug: string;
+  category: 'diagnostics-planning' | 'therapy-prevention' | 'surgery-implantation' | 'orthodontics' | 'aesthetic';
+  /**
+   * რიგითობა მიმართულების შიგნით. რაც უფრო მცირე რიცხვია, მით ზემოთ.
+   */
+  order: number;
+  /**
+   * ჩანს ბარათზე და ზედა მენიუში. მოკლედ — რას აკეთებს.
+   */
+  blurb: string;
+  /**
+   * გრძელი აბზაცი მიმართულების გვერდის დასაწყისში.
+   */
+  lead?: string | null;
+  whatsIncluded?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * კლინიკის გუნდი. სანამ ექიმის მონაცემები დაზუსტებულია, „საიტზე გამოჩნდეს“ გამორთული დატოვე — გვერდი მაშინ მოკლე შენიშვნას აჩვენებს, ცარიელი სათაურების ნაცვლად.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "doctors".
+ */
+export interface Doctor {
+  id: number;
+  /**
+   * გამორთული = გვერდი წერს „პროფილი მზადდება“.
+   */
+  published?: boolean | null;
+  /**
+   * მთავარ ექიმს გვერდის თავში დიდი ბლოკი ეთმობა. ერთი უნდა იყოს მონიშნული.
+   */
+  isLead?: boolean | null;
+  /**
+   * დიდი ციფრი მთავარი ექიმის ბლოკზე. მაგ.: 20+
+   */
+  experienceYears?: string | null;
+  /**
+   * რაც უფრო მცირე რიცხვია, მით ზემოთ დგას.
+   */
+  order: number;
+  /**
+   * ავტომატურად ივსება სახელიდან. ღუზა „ჩვენს შესახებ“ გვერდზე: /ka/about#archil-apkhadze
+   */
+  slug: string;
+  /**
+   * თითოეულ ენაზე ისე, როგორც იწერება: ქართულად — არჩილ აფხაძე, რუსულად — Арчил Апхадзе.
+   */
+  name: string;
+  /**
+   * მაგ.: ორთოპედი, კლინიკის მთავარი ექიმი.
+   */
+  role: string;
+  photo: number | Media;
+  /**
+   * რამდენიმე სიტყვა — რას აკეთებს. ჩანს სახელის ქვემოთ.
+   */
+  focus?: string | null;
+  /**
+   * ორ-სამ სიტყვიანი მოკლე ფრაზები — ფოტოს გვერდით პატარა ბარათებად ჩნდება, არა წინადადებებად.
+   */
+  tags?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * ორ-სამი აბზაცი. ეს არის ის, რასაც პაციენტი ექიმის შესახებ წაიკითხავს.
+   */
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * ახლიდან ძველისკენ ან პირიქით — როგორც უკეთ იკითხება.
+   */
+  education?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * ახლიდან ძველისკენ.
+   */
+  experience?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * ყველაზე ძლიერი ათი-თორმეტი აჯობებს სრულ ჩამონათვალს. სამოცი ჩანაწერი ხმაურად იკითხება და პაციენტი გვერდს უვლის.
+   */
+  training?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * მხოლოდ ის ენები, რომლებიც ექიმმა დაადასტურა.
+   */
+  languages?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * კლინიკის აპარატები და სისტემები. მოდელის სახელი არ ითარგმნება — „Vatech EzRay Air“ ზუსტად ისე იწერება, როგორც მწარმოებელთან და როგორც პაციენტი ეძებს.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "equipment".
+ */
+export interface Equipment {
+  id: number;
+  group: 'diagnostics' | 'hygiene' | 'aesthetics' | 'orthodontics';
+  /**
+   * რიგითობა ჯგუფის შიგნით. რაც უფრო მცირე რიცხვია, მით ზემოთ.
+   */
+  order: number;
+  /**
+   * ჩართული = ბარათზე წარწერა „ფოტო მზადდება“. თავდაპირველი სურათები დროებითია — გამორთე მაშინ, როცა რეალურ ფოტოს ატვირთავ.
+   */
+  photoPending?: boolean | null;
+  /**
+   * ავტომატურად ივსება დასახელებიდან. ტექნოლოგიების გვერდზე ღუზაა: /ka/technology#vatech-cbct
+   */
+  slug: string;
+  /**
+   * ისე, როგორც მწარმოებელი წერს. სამივე ენაზე ერთნაირად.
+   */
+  name: string;
+  manufacturerName: string;
+  /**
+   * ოფიციალური მისამართი. ეს ბმული Google-საც მიეწოდება, ამიტომ ზუსტი უნდა იყოს.
+   */
+  manufacturerUrl: string;
+  photo?: (number | null) | Media;
+  /**
+   * ბარათიდან ბმულები ამ სერვისებზე გაიყვანება.
+   */
+  services?: (number | Service)[] | null;
+  /**
+   * რას აკეთებს ეს აპარატი.
+   */
+  summary: string;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * ორ-სამი მოკლე ფაქტი. სწორედ ესენი ხვდება Google-ის პასუხებში.
+   */
+  highlights?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * აქ დაწერილი პასუხები Google-ს სტრუქტურირებული სახით მიეწოდება — ანუ ისინი პირდაპირ, სიტყვასიტყვით შეიძლება გამოჩნდეს ძებნის შედეგებში და AI-ასისტენტების პასუხებში. დაწერე ისე, თითქოს ციტატაა.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq".
+ */
+export interface Faq {
+  id: number;
+  question: string;
+  /**
+   * მარტივი ტექსტი, ფორმატირების გარეშე. პირველი წინადადება თვითკმარი უნდა იყოს — სწორედ ის ხვდება ციტატაში.
+   */
+  answer: string;
+  /**
+   * რაც უფრო მცირე რიცხვია, მით ზემოთ.
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * სარეკლამო კამპანიის გვერდები. მისამართი: /ka/slug. სავალდებულოა მხოლოდ სახელი და სათაური — დანარჩენი ველები ცარიელი რომ დატოვოთ, ტექსტი ავტომატურად ჩაისმება.
@@ -430,258 +699,28 @@ export interface LandingPage {
   createdAt: string;
 }
 /**
- * The clinical team. Leave 'Published profile' off while a doctor's credentials are still being confirmed — the page then shows a short honest note instead of empty headings.
+ * ანონიმური დღიური ჯამები. აქ არ ინახება ვიზიტორის იდენტიფიკატორი, სესია, cookie, ანაბეჭდი ან IP.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "doctors".
+ * via the `definition` "analytics-aggregates".
  */
-export interface Doctor {
+export interface AnalyticsAggregate {
   id: number;
   /**
-   * Transliterated per language.
+   * კალენდარული დღე UTC-ით (წწწწ-თთ-დდ).
    */
-  name: string;
-  role: string;
+  bucket: string;
+  event: 'page_view' | 'booking_open' | 'booking_complete';
   /**
-   * Used as the anchor on the about page, e.g. /ka/about#nino-osadze
+   * ივსება მხოლოდ გვერდის ნახვისთვის.
    */
-  slug: string;
-  order: number;
-  /**
-   * The chief doctor gets the larger section at the top.
-   */
-  isLead?: boolean | null;
-  /**
-   * Off = the profile renders as 'in preparation'.
-   */
-  published?: boolean | null;
-  photo: number | Media;
-  /**
-   * Specialisation in a few words.
-   */
-  focus?: string | null;
-  bio?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Shown as a large number on the lead doctor's block, e.g. '20+'.
-   */
-  experienceYears?: string | null;
-  /**
-   * Two or three words each. Rendered as chips beside the portrait, not as sentences.
-   */
-  tags?:
-    | {
-        text: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Newest or oldest first — whichever reads better.
-   */
-  education?:
-    | {
-        text: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Reverse chronological.
-   */
-  experience?:
-    | {
-        text: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Publish the strongest dozen rather than everything. A wall of sixty entries is read as noise and skipped.
-   */
-  training?:
-    | {
-        text: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Only languages the doctor has confirmed.
-   */
-  languages?:
-    | {
-        text: string;
-        id?: string | null;
-      }[]
-    | null;
+  route: string;
+  count: number;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * The 16 services, grouped into five clinical directions. Individual services do not get their own URL — they render as anchors on their category page.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "services".
- */
-export interface Service {
-  id: number;
-  title: string;
-  /**
-   * Must match an entry in components/ui/ServiceIcons.tsx — the icon is picked by slug.
-   */
-  slug: string;
-  category: 'diagnostics-planning' | 'therapy-prevention' | 'surgery-implantation' | 'orthodontics' | 'aesthetic';
-  /**
-   * Lower first, within the category.
-   */
-  order: number;
-  /**
-   * One sentence. Shown on cards and in the mega menu.
-   */
-  blurb: string;
-  /**
-   * Longer opening paragraph on the category page.
-   */
-  lead?: string | null;
-  whatsIncluded?:
-    | {
-        text: string;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Devices and systems in the clinic. Model names are NOT translated — 'Vatech EzRay Air' is what the manufacturer and the search index both use.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "equipment".
- */
-export interface Equipment {
-  id: number;
-  /**
-   * Model name as the manufacturer writes it. Same in all languages.
-   */
-  name: string;
-  slug: string;
-  group: 'diagnostics' | 'hygiene' | 'aesthetics' | 'orthodontics';
-  /**
-   * Lower first, within the group.
-   */
-  order: number;
-  manufacturerName: string;
-  /**
-   * Official site. Published as sameAs in structured data, so it must be right.
-   */
-  manufacturerUrl: string;
-  photo?: (number | null) | Media;
-  /**
-   * On = the card shows a 'photo coming' badge. The images seeded initially are labelled stand-ins; untick this once a real photograph replaces one.
-   */
-  photoPending?: boolean | null;
-  /**
-   * Where this device is actually used. Drives the cross-links from the device card into the service catalogue.
-   */
-  services?: (number | Service)[] | null;
-  /**
-   * One sentence: what it does.
-   */
-  summary: string;
-  body: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  /**
-   * Two or three short facts. These are what answer engines quote.
-   */
-  highlights?:
-    | {
-        text: string;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Answers published here are emitted as FAQPage structured data, so they can be quoted verbatim in search results and by AI assistants. Write them to be quoted.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "faq".
- */
-export interface Faq {
-  id: number;
-  question: string;
-  /**
-   * Plain text, not rich text — structured data takes a string, and a self-contained first sentence is what gets quoted.
-   */
-  answer: string;
-  order: number;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Patient booking requests, newest first. Update the workflow status as each lead is contacted; notification failures remain visible for follow-up.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "booking-requests".
- */
-export interface BookingRequest {
-  id: number;
-  name: string;
-  phone: string;
-  email?: string | null;
-  service?: string | null;
-  preferredTime?: string | null;
-  message?: string | null;
-  landingSlug?: string | null;
-  campaignName?: string | null;
-  utmSource?: string | null;
-  utmMedium?: string | null;
-  utmCampaign?: string | null;
-  utmContent?: string | null;
-  utmTerm?: string | null;
-  /**
-   * The workflow field administrators update during lead follow-up.
-   */
-  status: 'new' | 'contacted' | 'confirmed' | 'closed' | 'spam';
-  emailNotificationStatus: 'pending' | 'sent' | 'failed' | 'skipped';
-  /**
-   * Safe provider summary only. Secrets and authorization data are never stored.
-   */
-  emailNotificationError?: string | null;
-  telegramNotificationStatus: 'pending' | 'sent' | 'failed' | 'skipped';
-  /**
-   * Safe provider summary only. Secrets and authorization data are never stored.
-   */
-  telegramNotificationError?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Who can log in. Administrators manage accounts; editors can change content and their own password, nothing else.
+ * ვის შეუძლია პანელში შესვლა. ადმინისტრატორი ანგარიშებს მართავს; რედაქტორს შიგთავსის შეცვლა და საკუთარი პაროლის შეცვლა შეუძლია — მეტი არაფერი.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
@@ -690,7 +729,7 @@ export interface User {
   id: number;
   name: string;
   /**
-   * Administrators can add and remove accounts. Editors can change content only.
+   * ადმინისტრატორს ანგარიშების დამატება-წაშლა შეუძლია. რედაქტორს — მხოლოდ შიგთავსი.
    */
   role: 'admin' | 'editor';
   updatedAt: string;
@@ -713,28 +752,7 @@ export interface User {
   collection: 'users';
 }
 /**
- * Anonymous daily totals. These rows contain no visitor, session, cookie, fingerprint, or IP data.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "analytics-aggregates".
- */
-export interface AnalyticsAggregate {
-  id: number;
-  /**
-   * UTC calendar day (YYYY-MM-DD).
-   */
-  bucket: string;
-  event: 'page_view' | 'booking_open' | 'booking_complete';
-  /**
-   * Set only for page views.
-   */
-  route: string;
-  count: number;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Immutable history of CMS changes. Entries are created automatically and cannot be edited or deleted.
+ * ვინ, რა და როდის შეცვალა. ჩანაწერები ავტომატურად იქმნება და მათი შეცვლა ან წაშლა არავის შეუძლია — არც ადმინისტრატორს.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "audit-logs".
@@ -747,7 +765,7 @@ export interface AuditLog {
   target: string;
   documentId?: string | null;
   /**
-   * Only changed fields are included; sensitive field names are always removed.
+   * მხოლოდ შეცვლილი ველები. მგრძნობიარე ველების სახელები ყოველთვის ამოღებულია.
    */
   changes:
     | {
@@ -790,20 +808,16 @@ export interface PayloadLockedDocument {
         value: number | Post;
       } | null)
     | ({
-        relationTo: 'landing-pages';
-        value: number | LandingPage;
-      } | null)
-    | ({
         relationTo: 'services';
         value: number | Service;
       } | null)
     | ({
-        relationTo: 'equipment';
-        value: number | Equipment;
-      } | null)
-    | ({
         relationTo: 'doctors';
         value: number | Doctor;
+      } | null)
+    | ({
+        relationTo: 'equipment';
+        value: number | Equipment;
       } | null)
     | ({
         relationTo: 'faq';
@@ -812,6 +826,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'landing-pages';
+        value: number | LandingPage;
       } | null)
     | ({
         relationTo: 'users';
@@ -861,6 +879,32 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "booking-requests_select".
+ */
+export interface BookingRequestsSelect<T extends boolean = true> {
+  status?: T;
+  name?: T;
+  phone?: T;
+  email?: T;
+  service?: T;
+  preferredTime?: T;
+  message?: T;
+  landingSlug?: T;
+  campaignName?: T;
+  utmSource?: T;
+  utmMedium?: T;
+  utmCampaign?: T;
+  utmContent?: T;
+  utmTerm?: T;
+  emailNotificationStatus?: T;
+  emailNotificationError?: T;
+  telegramNotificationStatus?: T;
+  telegramNotificationError?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
@@ -876,6 +920,164 @@ export interface PostsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  category?: T;
+  order?: T;
+  blurb?: T;
+  lead?: T;
+  whatsIncluded?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "doctors_select".
+ */
+export interface DoctorsSelect<T extends boolean = true> {
+  published?: T;
+  isLead?: T;
+  experienceYears?: T;
+  order?: T;
+  slug?: T;
+  name?: T;
+  role?: T;
+  photo?: T;
+  focus?: T;
+  tags?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  bio?: T;
+  education?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  experience?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  training?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  languages?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "equipment_select".
+ */
+export interface EquipmentSelect<T extends boolean = true> {
+  group?: T;
+  order?: T;
+  photoPending?: T;
+  slug?: T;
+  name?: T;
+  manufacturerName?: T;
+  manufacturerUrl?: T;
+  photo?: T;
+  services?: T;
+  summary?: T;
+  body?: T;
+  highlights?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq_select".
+ */
+export interface FaqSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  internalName?: T;
+  alt?: T;
+  caption?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        wide?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1003,185 +1205,13 @@ export interface LandingPagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "services_select".
+ * via the `definition` "analytics-aggregates_select".
  */
-export interface ServicesSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  category?: T;
-  order?: T;
-  blurb?: T;
-  lead?: T;
-  whatsIncluded?:
-    | T
-    | {
-        text?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "equipment_select".
- */
-export interface EquipmentSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  group?: T;
-  order?: T;
-  manufacturerName?: T;
-  manufacturerUrl?: T;
-  photo?: T;
-  photoPending?: T;
-  services?: T;
-  summary?: T;
-  body?: T;
-  highlights?:
-    | T
-    | {
-        text?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "doctors_select".
- */
-export interface DoctorsSelect<T extends boolean = true> {
-  name?: T;
-  role?: T;
-  slug?: T;
-  order?: T;
-  isLead?: T;
-  published?: T;
-  photo?: T;
-  focus?: T;
-  bio?: T;
-  experienceYears?: T;
-  tags?:
-    | T
-    | {
-        text?: T;
-        id?: T;
-      };
-  education?:
-    | T
-    | {
-        text?: T;
-        id?: T;
-      };
-  experience?:
-    | T
-    | {
-        text?: T;
-        id?: T;
-      };
-  training?:
-    | T
-    | {
-        text?: T;
-        id?: T;
-      };
-  languages?:
-    | T
-    | {
-        text?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "faq_select".
- */
-export interface FaqSelect<T extends boolean = true> {
-  question?: T;
-  answer?: T;
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
- */
-export interface MediaSelect<T extends boolean = true> {
-  internalName?: T;
-  alt?: T;
-  caption?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-  sizes?:
-    | T
-    | {
-        thumbnail?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        card?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        wide?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-      };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "booking-requests_select".
- */
-export interface BookingRequestsSelect<T extends boolean = true> {
-  name?: T;
-  phone?: T;
-  email?: T;
-  service?: T;
-  preferredTime?: T;
-  message?: T;
-  landingSlug?: T;
-  campaignName?: T;
-  utmSource?: T;
-  utmMedium?: T;
-  utmCampaign?: T;
-  utmContent?: T;
-  utmTerm?: T;
-  status?: T;
-  emailNotificationStatus?: T;
-  emailNotificationError?: T;
-  telegramNotificationStatus?: T;
-  telegramNotificationError?: T;
+export interface AnalyticsAggregatesSelect<T extends boolean = true> {
+  bucket?: T;
+  event?: T;
+  route?: T;
+  count?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1208,18 +1238,6 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "analytics-aggregates_select".
- */
-export interface AnalyticsAggregatesSelect<T extends boolean = true> {
-  bucket?: T;
-  event?: T;
-  route?: T;
-  count?: T;
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1276,7 +1294,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
- * Phone numbers, email and address. These appear across the site and in the structured data search engines read, so a typo here is visible everywhere.
+ * ტელეფონები, ფოსტა და მისამართი. ეს მონაცემები საიტის ყველა გვერდზეა და Google-საც მიეწოდება — ანუ აქ დაშვებული შეცდომა ყველგან ჩანს.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clinic-info".
@@ -1284,55 +1302,49 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface ClinicInfo {
   id: number;
   /**
-   * The mobile line — the one on WhatsApp, and the one the mobile bar dials. Write it as a person reads it: +995 511 21 16 16. The dialling format is derived automatically.
+   * ის ნომერი, რომელიც WhatsApp-ზეა და რომელსაც მობილურის ღილაკი კრეფს. ჩაწერე ისე, როგორც იკითხება: +995 511 21 16 16. დასარეკი ფორმატი ავტომატურად გამოითვლება.
    */
   phone: string;
   /**
-   * Landline, shown as a secondary number. Leave empty to hide it.
+   * ჩანს მეორე ნომრად. ცარიელი დატოვე და საერთოდ არ გამოჩნდება.
    */
   phoneAlt?: string | null;
   /**
-   * Untick only if WhatsApp is on a different number.
+   * მონიშვნა მოხსენი მხოლოდ მაშინ, თუ WhatsApp სხვა ნომერზეა.
    */
   whatsappSameAsPhone?: boolean | null;
-  /**
-   * The WhatsApp number, if it differs from the one above.
-   */
   whatsapp?: string | null;
   email: string;
   /**
-   * As shown on the contact page and in the footer.
+   * ისე, როგორც კონტაქტის გვერდსა და საიტის ბოლოში უნდა ეწეროს.
    */
   address: string;
   /**
-   * Google Maps share link for the 'directions' button.
+   * „როგორ მოვიდეთ“ ღილაკი ამ ბმულს ხსნის.
    */
   mapsUrl?: string | null;
   /**
-   * Opening hours as a sentence, e.g. 'ყოველდღე 9:00-დან 21:00-მდე'. The machine-readable version used by search engines is set in code — tell the developer if the actual hours change.
+   * წინადადებად, მაგ.: „ყოველდღე 9:00-დან 21:00-მდე“. Google-ისთვის განკუთვნილი ვერსია კოდშია — თუ რეალური საათები შეიცვალა, დეველოპერს აცნობე.
    */
   hoursText?: string | null;
   consultationFirst: number;
   consultationRepeat: number;
   /**
-   * Percentage of satisfied patients. On a medical site an unsourced figure is a liability — publish it only if there is a survey behind it.
+   * სამედიცინო საიტზე დაუსაბუთებელი ციფრი რისკია — გამოაქვეყნე მხოლოდ მაშინ, თუ უკან კვლევა დგას.
    */
   satisfiedPercent?: number | null;
-  /**
-   * Years the clinic has been operating.
-   */
   yearsOnMarket?: number | null;
   facebook?: string | null;
   instagram?: string | null;
   /**
-   * Google Business Profile URL. The single strongest trust link a local clinic can publish — it ties the site to the entity Google already ranks in Maps.
+   * ყველაზე ძლიერი ნდობის ბმული, რაც ადგილობრივ კლინიკას შეიძლება ჰქონდეს — ის საიტს იმ ჩანაწერს უკავშირებს, რომელსაც Google რუკებზე უკვე აჩვენებს.
    */
   google?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
- * What appears in the browser tab and in Google's results for each page. Leave a field empty and the built-in text is used.
+ * რა წერია ბრაუზერის ჩანართზე და Google-ის შედეგებში თითოეული გვერდისთვის. ცარიელი ველი ნიშნავს, რომ ჩაშენებული ტექსტი გამოიყენება — ეს ხშირად სწორია.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "seo".
@@ -1341,112 +1353,112 @@ export interface Seo {
   id: number;
   home?: {
     /**
-     * Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.
+     * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
      */
     title?: string | null;
     /**
-     * Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.
+     * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
   };
   about?: {
     /**
-     * Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.
+     * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
      */
     title?: string | null;
     /**
-     * Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.
+     * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
   };
   services?: {
     /**
-     * Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.
+     * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
      */
     title?: string | null;
     /**
-     * Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.
+     * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
   };
   technology?: {
     /**
-     * Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.
+     * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
      */
     title?: string | null;
     /**
-     * Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.
+     * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
   };
   news?: {
     /**
-     * Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.
+     * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
      */
     title?: string | null;
     /**
-     * Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.
+     * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
   };
   contact?: {
     /**
-     * Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.
+     * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
      */
     title?: string | null;
     /**
-     * Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.
+     * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
   };
   categories?: {
     diagnosticsPlanning?: {
       /**
-       * Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.
+       * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
        */
       title?: string | null;
       /**
-       * Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.
+       * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
        */
       description?: string | null;
     };
     therapyPrevention?: {
       /**
-       * Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.
+       * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
        */
       title?: string | null;
       /**
-       * Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.
+       * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
        */
       description?: string | null;
     };
     surgeryImplantation?: {
       /**
-       * Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.
+       * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
        */
       title?: string | null;
       /**
-       * Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.
+       * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
        */
       description?: string | null;
     };
     orthodontics?: {
       /**
-       * Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.
+       * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
        */
       title?: string | null;
       /**
-       * Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.
+       * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
        */
       description?: string | null;
     };
     aesthetic?: {
       /**
-       * Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.
+       * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
        */
       title?: string | null;
       /**
-       * Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.
+       * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
        */
       description?: string | null;
     };
@@ -1455,26 +1467,7 @@ export interface Seo {
   createdAt?: string | null;
 }
 /**
- * Public provider IDs. A provider stays disabled when its ID is empty, and the website loads it only after visitor consent.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "analytics-settings".
- */
-export interface AnalyticsSetting {
-  id: number;
-  /**
-   * Optional. GA4 is not loaded when this field is empty.
-   */
-  ga4MeasurementId?: string | null;
-  /**
-   * Optional. Meta Pixel is not loaded when this field is empty.
-   */
-  metaPixelId?: string | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * Operational booking delivery settings. This recipient is separate from the public email in Clinic Info.
+ * სად მოდის ახალი ჩაწერის შესახებ შეტყობინება. ეს მისამართი შიდაა და კლინიკის საჯარო ფოსტისგან განსხვავდება.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "booking-settings".
@@ -1482,9 +1475,28 @@ export interface AnalyticsSetting {
 export interface BookingSetting {
   id: number;
   /**
-   * Private recipient for new booking alerts. When empty, BOOKING_INBOX is used as a backwards-compatible fallback.
+   * ცარიელი დატოვე და სერვერზე მითითებული BOOKING_INBOX გამოიყენება.
    */
   notificationEmail?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * საჯარო საიდენტიფიკაციო კოდები. ცარიელი ველი = სერვისი გამორთულია. ჩართულიც კი, კოდი მხოლოდ ვიზიტორის თანხმობის შემდეგ ჩაიტვირთება.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "analytics-settings".
+ */
+export interface AnalyticsSetting {
+  id: number;
+  /**
+   * არასავალდებულო. ცარიელი ველი ნიშნავს, რომ GA4 საერთოდ არ იტვირთება.
+   */
+  ga4MeasurementId?: string | null;
+  /**
+   * არასავალდებულო. ცარიელი ველი ნიშნავს, რომ Meta Pixel საერთოდ არ იტვირთება.
+   */
+  metaPixelId?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1593,21 +1605,21 @@ export interface SeoSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "analytics-settings_select".
+ * via the `definition` "booking-settings_select".
  */
-export interface AnalyticsSettingsSelect<T extends boolean = true> {
-  ga4MeasurementId?: T;
-  metaPixelId?: T;
+export interface BookingSettingsSelect<T extends boolean = true> {
+  notificationEmail?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "booking-settings_select".
+ * via the `definition` "analytics-settings_select".
  */
-export interface BookingSettingsSelect<T extends boolean = true> {
-  notificationEmail?: T;
+export interface AnalyticsSettingsSelect<T extends boolean = true> {
+  ga4MeasurementId?: T;
+  metaPixelId?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

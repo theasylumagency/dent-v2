@@ -1,5 +1,6 @@
 import type { CollectionConfig } from "payload";
 
+import { groups, users as t } from "@/admin/labels";
 import { isAdmin } from "../access/roles";
 
 /**
@@ -15,6 +16,10 @@ import { isAdmin } from "../access/roles";
  * open to editors, because that is their job; only account management is
  * restricted, because that is the one thing whose failure is unrecoverable
  * from inside the admin panel.
+ *
+ * It now sits in the settings group rather than among the content
+ * collections: an editor scanning the sidebar for something to maintain
+ * should not find "accounts" between "doctors" and "photos".
  */
 
 /** Someone editing their own account. Compared as strings — the id is a
@@ -24,6 +29,8 @@ const isSelf = (user: { id?: unknown } | null | undefined, id?: number | string)
 
 export const Users: CollectionConfig = {
     slug: "users",
+
+    labels: { singular: t.singular, plural: t.plural },
 
     auth: true,
 
@@ -63,9 +70,10 @@ export const Users: CollectionConfig = {
     },
 
     admin: {
+        group: groups.settings,
         useAsTitle: "email",
-        description:
-            "Who can log in. Administrators manage accounts; editors can change content and their own password, nothing else.",
+        defaultColumns: ["name", "email", "role"],
+        description: t.description,
     },
 
     hooks: {
@@ -111,9 +119,7 @@ export const Users: CollectionConfig = {
                 });
 
                 if (totalDocs <= 1) {
-                    throw new Error(
-                        "This is the only administrator account. Promote another user to administrator before deleting this one.",
-                    );
+                    throw new Error(t.lastAdminError);
                 }
             },
         ],
@@ -123,11 +129,13 @@ export const Users: CollectionConfig = {
         {
             name: "name",
             type: "text",
+            label: t.name,
             required: true,
         },
         {
             name: "role",
             type: "select",
+            label: t.role,
             required: true,
             defaultValue: "editor",
             /* The escalation guard. Without this an editor allowed to update
@@ -138,16 +146,15 @@ export const Users: CollectionConfig = {
                 update: ({ req }) => isAdmin(req.user),
             },
             admin: {
-                description:
-                    "Administrators can add and remove accounts. Editors can change content only.",
+                description: t.roleHelp,
             },
             options: [
                 {
-                    label: "Administrator",
+                    label: t.roleAdmin,
                     value: "admin",
                 },
                 {
-                    label: "Editor",
+                    label: t.roleEditor,
                     value: "editor",
                 },
             ],

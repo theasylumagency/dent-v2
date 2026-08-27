@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import type { GlobalConfig, TextFieldValidation } from "payload";
 
+import { analyticsSettings as t, groups } from "@/admin/labels";
 import { isAdmin } from "../access/roles";
 import { auditGlobal } from "../lib/audit/logger";
 import { locales } from "../i18n/config";
@@ -17,17 +18,29 @@ const trim = (value: unknown) => (typeof value === "string" ? value.trim() : val
 
 export const AnalyticsSettings: GlobalConfig = {
   slug: "analytics-settings",
-  label: "Analytics",
+
+  label: t.label,
 
   access: {
+    /* Public on purpose: the site reads these IDs while rendering, to decide
+       whether an analytics script exists at all. Only saving is restricted. */
     read: () => true,
     update: ({ req }) => isAdmin(req.user),
   },
 
   admin: {
-    group: "Settings",
-    description:
-      "Public provider IDs. A provider stays disabled when its ID is empty, and the website loads it only after visitor consent.",
+    group: groups.settings,
+    description: t.description,
+    /**
+     * Hidden from editors, like its two neighbours in this group.
+     *
+     * This was the one settings screen without the rule: `read` is public and
+     * `update` is admin-only, so an editor saw it in the nav, opened it,
+     * changed the GA4 field and met an error on Save — with nothing on the
+     * screen having warned them. Read access is unchanged; only the nav entry
+     * goes, which is what made it a dead end.
+     */
+    hidden: ({ user }) => !isAdmin(user as { role?: string | null }),
   },
 
   hooks: {
@@ -42,29 +55,23 @@ export const AnalyticsSettings: GlobalConfig = {
   fields: [
     {
       name: "ga4MeasurementId",
-      label: "GA4 Measurement ID",
+      label: t.ga4,
       type: "text",
-      validate: optionalPattern(
-        /^G-[A-Z0-9]{6,20}$/i,
-        "Use a GA4 Measurement ID such as G-XXXXXXXXXX, or leave the field empty.",
-      ),
+      validate: optionalPattern(/^G-[A-Z0-9]{6,20}$/i, t.ga4Error),
       hooks: { beforeValidate: [trimUpper] },
       admin: {
-        description: "Optional. GA4 is not loaded when this field is empty.",
+        description: t.ga4Help,
         placeholder: "G-XXXXXXXXXX",
       },
     },
     {
       name: "metaPixelId",
-      label: "Meta Pixel ID",
+      label: t.pixel,
       type: "text",
-      validate: optionalPattern(
-        /^\d{5,20}$/,
-        "Use a numeric Meta Pixel ID (5–20 digits), or leave the field empty.",
-      ),
+      validate: optionalPattern(/^\d{5,20}$/, t.pixelError),
       hooks: { beforeValidate: [trim] },
       admin: {
-        description: "Optional. Meta Pixel is not loaded when this field is empty.",
+        description: t.pixelHelp,
         placeholder: "123456789012345",
       },
     },

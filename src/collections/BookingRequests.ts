@@ -1,12 +1,13 @@
 import type { CollectionConfig } from "payload";
 
+import { bookingRequests as t, groups } from "@/admin/labels";
 import { isAdmin } from "../access/roles";
 
 const notificationOptions = [
-  { label: "Pending", value: "pending" },
-  { label: "Sent", value: "sent" },
-  { label: "Failed", value: "failed" },
-  { label: "Skipped", value: "skipped" },
+  { label: t.notifyPending, value: "pending" },
+  { label: t.notifySent, value: "sent" },
+  { label: t.notifyFailed, value: "failed" },
+  { label: t.notifySkipped, value: "skipped" },
 ];
 
 const immutable = {
@@ -14,81 +15,97 @@ const immutable = {
   admin: { readOnly: true },
 } as const;
 
-/** Patient booking requests are created only by the dedicated server route. */
+/**
+ * Patient booking requests, created only by the dedicated server route.
+ *
+ * This is the one screen the clinic opens every day, which is why it sits
+ * alone at the top of the nav rather than eleventh among the content
+ * collections. Everything the patient sent is read-only; the single field
+ * staff change is the status, and the form is arranged so that is the only
+ * thing they can reach without opening a block.
+ */
 export const BookingRequests: CollectionConfig = {
   slug: "booking-requests",
-  labels: {
-    singular: "Booking Request",
-    plural: "Booking Requests",
-  },
+
+  labels: { singular: t.singular, plural: t.plural },
+
   access: {
     read: ({ req }) => Boolean(req.user),
     create: () => false,
     update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => isAdmin(req.user),
   },
+
   admin: {
-    group: "Operations",
+    group: groups.daily,
     useAsTitle: "name",
     defaultColumns: ["createdAt", "name", "phone", "service", "status"],
     listSearchableFields: ["name", "phone", "email", "service"],
-    description:
-      "Patient booking requests, newest first. Update the workflow status as each lead is contacted; notification failures remain visible for follow-up.",
+    description: t.description,
     hideAPIURL: true,
   },
+
   defaultSort: "-createdAt",
   disableDuplicate: true,
   lockDocuments: false,
+
   fields: [
-    { name: "name", type: "text", required: true, ...immutable },
-    { name: "phone", type: "text", required: true, ...immutable },
-    { name: "email", type: "email", ...immutable },
-    { name: "service", type: "text", ...immutable },
-    { name: "preferredTime", type: "text", label: "Preferred time", ...immutable },
-    { name: "message", type: "textarea", ...immutable },
-    {
-      type: "collapsible",
-      label: "Attribution",
-      admin: { initCollapsed: true },
-      fields: [
-        { name: "landingSlug", type: "text", label: "Landing slug", ...immutable },
-        { name: "campaignName", type: "text", label: "Campaign name", ...immutable },
-        { name: "utmSource", type: "text", label: "UTM source", ...immutable },
-        { name: "utmMedium", type: "text", label: "UTM medium", ...immutable },
-        { name: "utmCampaign", type: "text", label: "UTM campaign", ...immutable },
-        { name: "utmContent", type: "text", label: "UTM content", ...immutable },
-        { name: "utmTerm", type: "text", label: "UTM term", ...immutable },
-      ],
-    },
+    /* The workflow field first, and in the sidebar: it is the only thing
+       anyone changes here, and burying it under seven read-only values meant
+       scrolling past the whole request to reach it. */
     {
       name: "status",
       type: "select",
+      label: t.status,
       required: true,
       defaultValue: "new",
       index: true,
       options: [
-        { label: "New", value: "new" },
-        { label: "Contacted", value: "contacted" },
-        { label: "Confirmed", value: "confirmed" },
-        { label: "Closed", value: "closed" },
-        { label: "Spam", value: "spam" },
+        { label: t.statusNew, value: "new" },
+        { label: t.statusContacted, value: "contacted" },
+        { label: t.statusConfirmed, value: "confirmed" },
+        { label: t.statusClosed, value: "closed" },
+        { label: t.statusSpam, value: "spam" },
       ],
       admin: {
-        description: "The workflow field clinic staff update during lead follow-up.",
+        position: "sidebar",
+        description: t.statusHelp,
       },
+    },
+
+    { name: "name", type: "text", label: t.name, required: true, ...immutable },
+    { name: "phone", type: "text", label: t.phone, required: true, ...immutable },
+    { name: "email", type: "email", label: t.email, ...immutable },
+    { name: "service", type: "text", label: t.service, ...immutable },
+    { name: "preferredTime", type: "text", label: t.preferredTime, ...immutable },
+    { name: "message", type: "textarea", label: t.message, ...immutable },
+
+    {
+      type: "collapsible",
+      label: t.attribution,
+      admin: { initCollapsed: true, description: t.attributionHelp },
+      fields: [
+        { name: "landingSlug", type: "text", label: t.landingSlug, ...immutable },
+        { name: "campaignName", type: "text", label: t.campaignName, ...immutable },
+        { name: "utmSource", type: "text", label: t.utmSource, ...immutable },
+        { name: "utmMedium", type: "text", label: t.utmMedium, ...immutable },
+        { name: "utmCampaign", type: "text", label: t.utmCampaign, ...immutable },
+        { name: "utmContent", type: "text", label: t.utmContent, ...immutable },
+        { name: "utmTerm", type: "text", label: t.utmTerm, ...immutable },
+      ],
     },
     {
       type: "collapsible",
-      label: "Notifications",
+      label: t.notifications,
       admin: {
-        description:
-          "A failed channel never rejects or removes the booking. Pending means the status update itself may need investigation.",
+        initCollapsed: true,
+        description: t.notificationsHelp,
       },
       fields: [
         {
           name: "emailNotificationStatus",
           type: "select",
-          label: "Email status",
+          label: t.emailStatus,
           required: true,
           defaultValue: "pending",
           options: notificationOptions,
@@ -97,17 +114,17 @@ export const BookingRequests: CollectionConfig = {
         {
           name: "emailNotificationError",
           type: "textarea",
-          label: "Email error",
+          label: t.emailError,
           access: { update: () => false },
           admin: {
             readOnly: true,
-            description: "Safe provider summary only. Secrets and authorization data are never stored.",
+            description: t.errorHelp,
           },
         },
         {
           name: "telegramNotificationStatus",
           type: "select",
-          label: "Telegram status",
+          label: t.telegramStatus,
           required: true,
           defaultValue: "pending",
           options: notificationOptions,
@@ -116,11 +133,11 @@ export const BookingRequests: CollectionConfig = {
         {
           name: "telegramNotificationError",
           type: "textarea",
-          label: "Telegram error",
+          label: t.telegramError,
           access: { update: () => false },
           admin: {
             readOnly: true,
-            description: "Safe provider summary only. Secrets and authorization data are never stored.",
+            description: t.errorHelp,
           },
         },
       ],

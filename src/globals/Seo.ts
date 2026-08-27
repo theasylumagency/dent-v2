@@ -1,6 +1,7 @@
-import type { GlobalConfig } from "payload";
+import type { Field, GlobalConfig } from "payload";
 import { revalidatePath } from "next/cache";
 
+import { groups, seo as t } from "@/admin/labels";
 import { locales } from "@/i18n/config";
 
 /**
@@ -15,60 +16,69 @@ import { locales } from "@/i18n/config";
  * own, so there is nowhere for a title of theirs to go. A field that cannot
  * affect anything is worse than a missing one — an editor fills it in and
  * reasonably expects a result.
+ *
+ * **One heading per page, not two.** Each route used to be a named `group`
+ * (rendering its own heading) wrapping a `collapsible` (rendering a second
+ * one), so the screen read "Home" above "Home page", eleven times over. The
+ * group is what the database needs — `home_title`, `home_description` — so
+ * it stays; the collapsible was pure decoration and is gone. The two tabs
+ * below replace the scrolling it used to take to reach the category pages.
  */
 
-const metaFields = (label: string, note?: string) => ({
-    type: "collapsible" as const,
+/** The two fields every route has. No wrapper — the group above is the label. */
+const metaFields = (): Field[] => [
+    {
+        type: "row",
+        fields: [
+            /* The caps are hard limits, not the recommendation. Google
+               truncates a long title or description for display; it does
+               not reject one, and the shipped Georgian copy already runs
+               past the advisory length in a couple of places. Encoding
+               the advice as a validation error would have meant either
+               rewriting the client's copy to satisfy a field or failing
+               the seed. The advice belongs in the description below,
+               where an editor reads it; `npm run check:i18n` reports
+               which strings are over. */
+            {
+                name: "title",
+                type: "text",
+                label: t.title,
+                localized: true,
+                maxLength: 90,
+                admin: { description: t.titleHelp },
+            },
+            {
+                name: "description",
+                type: "textarea",
+                label: t.description_,
+                localized: true,
+                maxLength: 320,
+                admin: { description: t.descriptionHelp },
+            },
+        ],
+    },
+];
+
+/** One route: the named group the database needs, labelled for a human. */
+const page = (name: string, label: string): Field => ({
+    name,
+    type: "group",
     label,
-    admin: note ? { description: note } : undefined,
-    fields: [
-        {
-            type: "row" as const,
-            fields: [
-                /* The caps are hard limits, not the recommendation. Google
-                   truncates a long title or description for display; it does
-                   not reject one, and the shipped Georgian copy already runs
-                   past the advisory length in a couple of places. Encoding
-                   the advice as a validation error would have meant either
-                   rewriting the client's copy to satisfy a field or failing
-                   the seed. The advice belongs in the description below,
-                   where an editor reads it; `npm run check:i18n` reports
-                   which strings are over. */
-                {
-                    name: "title",
-                    type: "text" as const,
-                    localized: true,
-                    maxLength: 90,
-                    admin: {
-                        description:
-                            "Aim for about 60 characters — longer and Google truncates it. Say what the page is, not what the clinic is called; the site name is appended automatically.",
-                    },
-                },
-                {
-                    name: "description",
-                    type: "textarea" as const,
-                    localized: true,
-                    maxLength: 320,
-                    admin: {
-                        description:
-                            "Aim for about 155 characters. This is the sentence under the link in search results — write it to be read by a patient, not to contain keywords.",
-                    },
-                },
-            ],
-        },
-    ],
+    fields: metaFields(),
 });
 
 export const Seo: GlobalConfig = {
     slug: "seo",
+
+    label: t.label,
 
     access: {
         read: () => true,
     },
 
     admin: {
-        description:
-            "What appears in the browser tab and in Google's results for each page. Leave a field empty and the built-in text is used.",
+        group: groups.marketing,
+        description: t.description,
     },
 
     hooks: {
@@ -81,45 +91,38 @@ export const Seo: GlobalConfig = {
 
     fields: [
         {
-            name: "home",
-            type: "group",
-            fields: [metaFields("Home page")],
-        },
-        {
-            name: "about",
-            type: "group",
-            fields: [metaFields("About us")],
-        },
-        {
-            name: "services",
-            type: "group",
-            fields: [metaFields("Services index")],
-        },
-        {
-            name: "technology",
-            type: "group",
-            fields: [metaFields("Technology")],
-        },
-        {
-            name: "news",
-            type: "group",
-            fields: [metaFields("News index")],
-        },
-        {
-            name: "contact",
-            type: "group",
-            fields: [metaFields("Contact")],
-        },
-        {
-            name: "categories",
-            type: "group",
-            label: "Service category pages",
-            fields: [
-                { name: "diagnosticsPlanning", type: "group", fields: [metaFields("Diagnostics and planning")] },
-                { name: "therapyPrevention", type: "group", fields: [metaFields("Therapy and prevention")] },
-                { name: "surgeryImplantation", type: "group", fields: [metaFields("Surgery and implantation")] },
-                { name: "orthodontics", type: "group", fields: [metaFields("Orthodontics")] },
-                { name: "aesthetic", type: "group", fields: [metaFields("Aesthetic dentistry")] },
+            type: "tabs",
+            tabs: [
+                {
+                    label: "გვერდები",
+                    description: "საიტის ძირითადი გვერდები.",
+                    fields: [
+                        page("home", t.home),
+                        page("about", t.about),
+                        page("services", t.services),
+                        page("technology", t.technology),
+                        page("news", t.news),
+                        page("contact", t.contact),
+                    ],
+                },
+                {
+                    label: "მიმართულებები",
+                    description: "სერვისების ხუთი მიმართულების გვერდი.",
+                    fields: [
+                        {
+                            name: "categories",
+                            type: "group",
+                            label: t.categories,
+                            fields: [
+                                page("diagnosticsPlanning", t.catDiagnostics),
+                                page("therapyPrevention", t.catTherapy),
+                                page("surgeryImplantation", t.catSurgery),
+                                page("orthodontics", t.catOrthodontics),
+                                page("aesthetic", t.catAesthetic),
+                            ],
+                        },
+                    ],
+                },
             ],
         },
     ],
