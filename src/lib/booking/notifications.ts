@@ -34,20 +34,41 @@ function failed(provider: "Email" | "Telegram", error: unknown): NotificationOut
   };
 }
 
+export function buildBookingEmailRecipients(
+  ...values: Array<string | null | undefined>
+): string[] {
+  const seen = new Set<string>();
+  const recipients: string[] = [];
+
+  for (const value of values) {
+    const recipient = value?.trim();
+    if (!recipient) continue;
+
+    const key = recipient.toLowerCase();
+    if (seen.has(key)) continue;
+
+    seen.add(key);
+    recipients.push(recipient);
+  }
+
+  return recipients;
+}
+
 export async function sendBookingEmail({
   booking,
-  recipient,
+  recipients,
   apiKey,
   from,
   fetcher = fetch,
 }: {
   booking: StoredBookingRequest;
-  recipient?: string;
+  recipients?: string[];
   apiKey?: string;
   from?: string;
   fetcher?: Fetcher;
 }): Promise<NotificationOutcome> {
-  if (!recipient?.trim() || !apiKey || !from) return { status: "skipped" };
+  const normalizedRecipients = buildBookingEmailRecipients(...(recipients ?? []));
+  if (!normalizedRecipients.length || !apiKey || !from) return { status: "skipped" };
 
   const rows: [string, string][] = [
     ["Booking ID", String(booking.id)],
@@ -96,7 +117,7 @@ export async function sendBookingEmail({
       },
       body: JSON.stringify({
         from,
-        to: [recipient.trim()],
+        to: normalizedRecipients,
         subject: `Booking request #${booking.id} — ${booking.name}`,
         html,
         ...(booking.email ? { reply_to: booking.email } : {}),

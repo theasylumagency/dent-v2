@@ -1,6 +1,7 @@
 import { incrementAggregate } from "@/lib/analytics/aggregate-server";
 import { createBookingPost } from "@/lib/booking/handler";
 import {
+  buildBookingEmailRecipients,
   sendBookingEmail,
   sendBookingTelegram,
   type NotificationOutcome,
@@ -13,7 +14,7 @@ export const dynamic = "force-dynamic";
 async function emailNotification(
   booking: Parameters<typeof sendBookingEmail>[0]["booking"],
 ): Promise<NotificationOutcome> {
-  let recipient: string | undefined;
+  let additionalRecipient: string | undefined;
 
   try {
     const payload = await cms();
@@ -21,17 +22,24 @@ async function emailNotification(
       slug: "booking-settings",
       overrideAccess: true,
     });
-    recipient = settings.notificationEmail || process.env.BOOKING_INBOX;
+    additionalRecipient = settings.notificationEmail || undefined;
   } catch {
-    return {
-      status: "failed",
-      error: "Booking Settings could not be loaded.",
-    };
+    if (!process.env.BOOKING_INBOX?.trim()) {
+      return {
+        status: "failed",
+        error: "Booking Settings could not be loaded.",
+      };
+    }
   }
+
+  const recipients = buildBookingEmailRecipients(
+    process.env.BOOKING_INBOX,
+    additionalRecipient,
+  );
 
   return sendBookingEmail({
     booking,
-    recipient,
+    recipients,
     apiKey: process.env.RESEND_API_KEY,
     from: process.env.BOOKING_FROM,
   });
