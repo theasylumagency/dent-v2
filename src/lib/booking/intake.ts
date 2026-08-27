@@ -33,7 +33,7 @@ export function parseBookingSubmission(value: unknown): ParsedBookingSubmission 
   if (!value || typeof value !== "object" || Array.isArray(value)) return { kind: "invalid" };
   const body = value as UnknownRecord;
 
-  if (clean(body.company)) return { kind: "honeypot" };
+  if (clean(body.website)) return { kind: "honeypot" };
 
   const name = clean(body.name, 120);
   const phone = clean(body.phone, 40);

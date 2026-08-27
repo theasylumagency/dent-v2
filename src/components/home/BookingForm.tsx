@@ -226,8 +226,17 @@ export default function BookingForm({
       </div> : null}
 
       <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
-        <label htmlFor={fieldId("company")}>Company</label>
-        <input id={fieldId("company")} name="company" tabIndex={-1} autoComplete="off" />
+        <label htmlFor={fieldId("website")}>Website</label>
+        <input
+          id={fieldId("website")}
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          data-1p-ignore=""
+          data-lpignore="true"
+          data-form-type="other"
+        />
       </div>
 
       <button type="submit" disabled={status === "sending"} className="btn-primary w-full disabled:opacity-60">

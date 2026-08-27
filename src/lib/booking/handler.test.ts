@@ -139,13 +139,32 @@ test("database persistence failure does not accept or notify", async () => {
   assert.equal(calls.updates.length, 0);
 });
 
-test("honeypot submission creates no booking request", async () => {
+test("populated website honeypot creates no booking request", async () => {
   const { calls, post } = setup();
-  const response = await post(request({ ...validBody, company: "spam" }));
+  const response = await post(request({ ...validBody, website: "https://spam.example" }));
 
   assert.equal(response.status, 200);
   assert.deepEqual(await responseJson(response), { ok: true, accepted: false });
   assert.equal(calls.persisted.length, 0);
+});
+
+test("legitimate submission without website is accepted", async () => {
+  const { calls, post } = setup();
+  const response = await post(request(validBody));
+
+  assert.equal(response.status, 200);
+  assert.equal((await responseJson(response)).accepted, true);
+  assert.equal(calls.persisted.length, 1);
+});
+
+test("company profile autofill is ignored and cannot trigger the honeypot", async () => {
+  const { calls, post } = setup();
+  const response = await post(request({ ...validBody, company: "The Asylum Agency" }));
+
+  assert.equal(response.status, 200);
+  assert.equal((await responseJson(response)).accepted, true);
+  assert.equal(calls.persisted.length, 1);
+  assert.equal("company" in (calls.persisted[0] as Record<string, unknown>), false);
 });
 
 test("invalid input creates no booking request", async () => {
