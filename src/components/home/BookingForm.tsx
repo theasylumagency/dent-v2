@@ -66,27 +66,27 @@ export default function BookingForm({
     }
 
     setStatus("sending");
-    try {
-      const payload: Record<string, FormDataEntryValue | string> = Object.fromEntries(data);
-      if (defaultService && !payload.service) payload.service = defaultService;
+    const payload: Record<string, FormDataEntryValue | string> = Object.fromEntries(data);
+    if (defaultService && !payload.service) payload.service = defaultService;
 
-      if (landingContext) {
-        payload.landingSlug = landingContext.landingSlug;
-        if (landingContext.campaignName) payload.campaignName = landingContext.campaignName;
+    if (landingContext) {
+      payload.landingSlug = landingContext.landingSlug;
+      if (landingContext.campaignName) payload.campaignName = landingContext.campaignName;
 
-        const search = new URLSearchParams(window.location.search);
-        for (const key of [
-          "utm_source",
-          "utm_medium",
-          "utm_campaign",
-          "utm_content",
-          "utm_term",
-        ] as const) {
-          const value = search.get(key)?.trim().slice(0, 200);
-          if (value) payload[key] = value;
-        }
+      const search = new URLSearchParams(window.location.search);
+      for (const key of [
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_content",
+        "utm_term",
+      ] as const) {
+        const value = search.get(key)?.trim().slice(0, 200);
+        if (value) payload[key] = value;
       }
+    }
 
+    try {
       const response = await fetch("/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -94,13 +94,19 @@ export default function BookingForm({
       });
       const result = (await response.json()) as { accepted?: boolean };
       if (!response.ok || result.accepted !== true) throw new Error(`Request failed: ${response.status}`);
-
-      form.reset();
-      setErrors({});
-      setStatus("sent");
-      trackBookingComplete(landingContext);
     } catch {
       setStatus("error");
+      return;
+    }
+
+    form.reset();
+    setErrors({});
+    setStatus("sent");
+
+    try {
+      trackBookingComplete(landingContext);
+    } catch {
+      // Analytics is non-critical once the booking has been accepted.
     }
   }
 
