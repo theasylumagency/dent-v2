@@ -43,9 +43,15 @@ Admin: 11 collections + 4 globals = 15 screens, grouped as
 
 ## Documentation
 
+The manual is linked from the admin sidebar as **სახელმძღვანელო** and opens
+`public/manual.html` in a new tab. That page is generated — regenerate it when the
+manual changes, and keep `public/manual-images/` in step. It sets `noindex` and
+`robots.ts` disallows it: it is staff documentation, not a page for patients.
+
 | File | For |
 | --- | --- |
-| `docs/admin-manual-ka.md` | clinic staff — 15 chapters + 3 appendices, in Georgian |
+| `public/manual.html` | the copy staff actually open, from the admin sidebar |
+| `docs/admin-manual-ka.md` | source of that page — 15 chapters + 3 appendices, in Georgian |
 | `docs/Total-Charm-Dent-sakhelmdzghvanelo.pdf` | the same manual, printable (43 pp) |
 | `docs/TCD-swrafi-barati.pdf` | one-page quick card for the front desk |
 | `docs/TCD-ra-ashenda.pdf` | handover sheet — what was built, for the client |

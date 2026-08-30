@@ -1,0 +1,2357 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>საიტის მართვის სახელმძღვანელო · Total Charm Dent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&family=Noto+Serif+Georgian:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* ── tokens ─────────────────────────────────────────────────────────────
+   Palette: clinical, not corporate. A cool paper ground, deep blue-black
+   ink, one petrol-teal accent, amber reserved for the warnings that carry
+   real operational consequence. Neutrals biased toward the accent hue. */
+:root {
+  --ground:      #f4f6f6;
+  --surface:     #ffffff;
+  --surface-2:   #eef1f1;
+  --ink:         #16242a;
+  --ink-soft:    #3d5158;
+  --muted:       #6b7f86;
+  --line:        #dce2e3;
+  --line-soft:   #e8ecec;
+  --accent:      #0d6b68;
+  --accent-ink:  #0a5350;
+  --accent-wash: #e4f0ef;
+  --warn:        #8a5510;
+  --warn-wash:   #fbf1e2;
+  --warn-line:   #e6c68f;
+  --shadow:      0 1px 2px rgba(22,36,42,.05), 0 8px 24px -12px rgba(22,36,42,.14);
+
+  --sans: "Noto Sans Georgian", "BPG Nino Mtavruli", "Segoe UI", system-ui, sans-serif;
+  --serif:"Noto Serif Georgian", "Noto Sans Georgian", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --measure: 68ch;
+  --rail: 292px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:     #0e1417;
+    --surface:    #141c20;
+    --surface-2:  #1a2429;
+    --ink:        #dce5e7;
+    --ink-soft:   #b0c1c5;
+    --muted:      #8298a0;
+    --line:       #243137;
+    --line-soft:  #1c272c;
+    --accent:     #5cbab2;
+    --accent-ink: #7fd0c8;
+    --accent-wash:#12292a;
+    --warn:       #d8a259;
+    --warn-wash:  #241c11;
+    --warn-line:  #4b3a1e;
+    --shadow:     0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"] {
+  --ground:     #0e1417;
+  --surface:    #141c20;
+  --surface-2:  #1a2429;
+  --ink:        #dce5e7;
+  --ink-soft:   #b0c1c5;
+  --muted:      #8298a0;
+  --line:       #243137;
+  --line-soft:  #1c272c;
+  --accent:     #5cbab2;
+  --accent-ink: #7fd0c8;
+  --accent-wash:#12292a;
+  --warn:       #d8a259;
+  --warn-wash:  #241c11;
+  --warn-line:  #4b3a1e;
+  --shadow:     0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+
+/* ── base ───────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16.5px;
+  line-height: 1.72;
+  -webkit-font-smoothing: antialiased;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+a { color: var(--accent-ink); text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+/* ── sidebar ────────────────────────────────────────────────────────── */
+.sidebar {
+  position: fixed; inset: 0 auto 0 0; width: var(--rail);
+  display: flex; flex-direction: column;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  z-index: 40;
+}
+.brand {
+  display: flex; gap: .7rem; align-items: center;
+  padding: 1.35rem 1.4rem 1.1rem;
+  text-decoration: none; color: inherit;
+  border-bottom: 1px solid var(--line-soft);
+}
+.brand__mark {
+  flex: none; width: 38px; height: 38px; border-radius: 9px;
+  display: grid; place-items: center;
+  background: var(--accent); color: #fff;
+  font-family: var(--mono); font-size: .72rem; font-weight: 500; letter-spacing: .02em;
+}
+.brand__txt { display: flex; flex-direction: column; line-height: 1.3; min-width: 0; }
+.brand__txt b { font-family: var(--serif); font-size: .95rem; font-weight: 700; }
+.brand__txt small { color: var(--muted); font-size: .74rem; }
+
+.search { padding: .9rem 1rem .55rem; position: relative; }
+#q {
+  width: 100%; padding: .55rem .75rem;
+  font: inherit; font-size: .86rem; color: var(--ink);
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: 8px;
+}
+#q::placeholder { color: var(--muted); }
+#q:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+.results {
+  list-style: none; margin: .4rem 0 0; padding: .3rem;
+  max-height: 46vh; overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 9px; box-shadow: var(--shadow);
+  position: absolute; left: 1rem; right: 1rem; z-index: 5;
+}
+.results li a {
+  display: block; padding: .42rem .55rem; border-radius: 6px;
+  font-size: .84rem; line-height: 1.4; text-decoration: none; color: var(--ink);
+}
+.results li a:hover, .results li a:focus { background: var(--accent-wash); }
+.results small { display: block; color: var(--muted); font-size: .72rem; }
+.results .none { padding: .5rem .55rem; color: var(--muted); font-size: .84rem; }
+
+.nav { flex: 1; overflow-y: auto; padding: .4rem .75rem 1rem; }
+.nav__group + .nav__group { margin-top: 1.1rem; }
+.nav__glabel {
+  margin: 0 0 .35rem; padding: 0 .5rem;
+  font-size: .68rem; font-weight: 700; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--muted);
+}
+.nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+.nav a {
+  display: flex; align-items: baseline; gap: .5rem;
+  padding: .34rem .5rem; border-radius: 7px;
+  font-size: .875rem; line-height: 1.45;
+  color: var(--ink-soft); text-decoration: none;
+}
+.nav a:hover { background: var(--surface-2); color: var(--ink); }
+.nav a.is-active { background: var(--accent-wash); color: var(--accent-ink); font-weight: 600; }
+.nav__num {
+  flex: none; min-width: 1.55em;
+  font-family: var(--mono); font-size: .74rem; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.nav a.is-active .nav__num { color: var(--accent); }
+.nav__t { flex: 1; }
+.chip {
+  flex: none; font-size: .62rem; letter-spacing: .05em;
+  padding: .08rem .35rem; border-radius: 4px;
+  border: 1px solid var(--line); color: var(--muted); background: var(--surface-2);
+}
+.sidebar__foot {
+  margin: 0; padding: .7rem 1.4rem .9rem;
+  border-top: 1px solid var(--line-soft);
+  font-size: .72rem; color: var(--muted);
+  font-family: var(--mono);
+}
+
+/* ── main ───────────────────────────────────────────────────────────── */
+.main { margin-left: var(--rail); padding: 0 clamp(1.1rem, 4vw, 4rem) 7rem; }
+.doc { max-width: var(--measure); margin: 0 auto; }
+
+.cover { padding: clamp(2.5rem, 7vw, 5rem) 0 2.4rem; border-bottom: 1px solid var(--line); }
+.cover__eyebrow {
+  margin: 0 0 1.1rem; font-family: var(--mono);
+  font-size: .74rem; letter-spacing: .04em; color: var(--accent);
+}
+.cover__title {
+  margin: 0 0 1.3rem; font-family: var(--serif);
+  font-size: clamp(2.1rem, 5.4vw, 3.4rem); font-weight: 700;
+  line-height: 1.14; letter-spacing: -.015em; text-wrap: balance;
+}
+.cover__meta {
+  display: flex; flex-wrap: wrap; gap: .5rem .75rem; margin-bottom: 2rem;
+}
+.cover__meta span {
+  font-family: var(--mono); font-size: .74rem; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 20px; padding: .12rem .6rem;
+}
+.cover h1:not(.cover__title), .cover h2 { display: none; }
+.cover > p { color: var(--ink-soft); }
+.cover > p:first-of-type { font-size: 1.06rem; }
+
+/* ── chapters ───────────────────────────────────────────────────────── */
+.chapter { padding-top: 3.6rem; scroll-margin-top: 1.5rem; }
+.chapter + .chapter { border-top: 1px solid var(--line-soft); }
+.chapter__head { margin-bottom: 1.6rem; }
+.chapter__num {
+  display: inline-block; margin-bottom: .5rem;
+  font-family: var(--mono); font-size: .78rem; font-weight: 500;
+  color: var(--accent); letter-spacing: .04em;
+}
+.chapter__head h1 {
+  margin: 0; font-family: var(--serif);
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem); font-weight: 700;
+  line-height: 1.2; letter-spacing: -.01em; text-wrap: balance;
+}
+.chapter h2 {
+  margin: 2.6rem 0 .8rem; font-family: var(--serif);
+  font-size: 1.28rem; font-weight: 600; line-height: 1.32; text-wrap: balance;
+}
+.chapter h3 {
+  margin: 1.9rem 0 .55rem;
+  font-size: .96rem; font-weight: 700; color: var(--ink);
+  letter-spacing: .005em;
+}
+.chapter p { margin: 0 0 1rem; }
+.chapter ul, .chapter ol { margin: 0 0 1.1rem; padding-left: 1.3rem; }
+.chapter li { margin-bottom: .3rem; }
+.chapter li::marker { color: var(--muted); }
+.chapter hr { border: 0; border-top: 1px solid var(--line-soft); margin: 2.4rem 0; }
+strong { font-weight: 700; color: var(--ink); }
+em { color: var(--ink-soft); }
+
+code {
+  font-family: var(--mono); font-size: .84em;
+  background: var(--surface-2); border: 1px solid var(--line-soft);
+  padding: .08em .36em; border-radius: 5px;
+}
+pre {
+  margin: 0 0 1.2rem; padding: .85rem 1rem;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 9px; overflow-x: auto;
+}
+pre code { background: none; border: 0; padding: 0; font-size: .86rem; }
+
+/* ── tables ─────────────────────────────────────────────────────────── */
+.tw { overflow-x: auto; margin: 0 0 1.4rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+th, td { padding: .55rem .8rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line-soft); }
+thead th {
+  background: var(--surface-2); color: var(--ink-soft);
+  font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: 0; }
+td:first-child { color: var(--ink); }
+table code { font-size: .8em; }
+
+/* ── callouts ───────────────────────────────────────────────────────── */
+.callout {
+  margin: 0 0 1.4rem; padding: .95rem 1.1rem;
+  background: var(--accent-wash);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 9px 9px 0;
+  font-size: .93rem;
+}
+.callout--warn { background: var(--warn-wash); border-left-color: var(--warn); }
+.callout--warn strong { color: var(--warn); }
+.callout > :first-child { margin-top: 0; }
+.callout > :last-child { margin-bottom: 0; }
+.callout p { margin-bottom: .6rem; }
+.callout h2 {
+  margin: 0 0 .6rem; font-family: var(--serif);
+  font-size: 1.05rem; font-weight: 700; color: var(--warn);
+}
+.callout ul { margin-bottom: .6rem; }
+
+/* ── mobile ─────────────────────────────────────────────────────────── */
+.navtoggle, .scrim { display: none; }
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform .22s ease;
+    width: min(86vw, var(--rail));
+    box-shadow: var(--shadow);
+  }
+  body.nav-open .sidebar { transform: none; }
+  .main { margin-left: 0; padding-top: 3.6rem; }
+  .navtoggle {
+    display: flex; flex-direction: column; justify-content: center; gap: 4px;
+    position: fixed; top: .8rem; left: .8rem; z-index: 50;
+    width: 40px; height: 40px; padding: 0 9px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 9px; cursor: pointer; box-shadow: var(--shadow);
+  }
+  .navtoggle span { display: block; height: 1.5px; background: var(--ink); border-radius: 2px; }
+  body.nav-open .scrim {
+    display: block; position: fixed; inset: 0; z-index: 30;
+    background: rgba(10,20,24,.45);
+  }
+  /* keep the drawer's brand clear of the fixed toggle */
+  .brand { padding-left: 3.9rem; }
+  .cover { padding-top: 2rem; }
+}
+
+/* ── figures ────────────────────────────────────────────────────────── */
+figure {
+  margin: 0 0 1.6rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface);
+}
+figure img { display: block; width: 100%; height: auto; }
+figcaption {
+  padding: .6rem .9rem;
+  border-top: 1px solid var(--line-soft);
+  background: var(--surface-2);
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+</style>
+</head>
+<body>
+
+<button class="navtoggle" id="navtoggle" aria-label="მენიუ" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button>
+<div class="scrim" id="scrim"></div>
+
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="#top">
+    <span class="brand__mark">TCD</span>
+    <span class="brand__txt"><b>Total Charm Dent</b><small>საიტის მართვის სახელმძღვანელო</small></span>
+  </a>
+  <div class="search">
+    <input id="q" type="search" placeholder="მოძებნე — მაგ. „ტელეფონი“" autocomplete="off" aria-label="ძებნა">
+    <ul id="results" class="results" hidden></ul>
+  </div>
+  <nav class="nav" id="nav"><div class="nav__group"><p class="nav__glabel">საწყისი</p><ul>
+<li><a href="#s0" data-nav="s0"><span class="nav__num">1.</span><span class="nav__t">სისტემის შესახებ</span></a></li>
+<li><a href="#s1" data-nav="s1"><span class="nav__num">2.</span><span class="nav__t">სისტემაში შესვლა და ნავიგაცია</span></a></li>
+<li><a href="#s2" data-nav="s2"><span class="nav__num">3.</span><span class="nav__t">ჩაწერის მოთხოვნები</span></a></li>
+</ul></div>
+<div class="nav__group"><p class="nav__glabel">საიტის შიგთავსი</p><ul>
+<li><a href="#s3" data-nav="s3"><span class="nav__num">4.</span><span class="nav__t">კლინიკის მონაცემები</span></a></li>
+<li><a href="#s4" data-nav="s4"><span class="nav__num">5.</span><span class="nav__t">სიახლეები</span></a></li>
+<li><a href="#s5" data-nav="s5"><span class="nav__num">6.</span><span class="nav__t">სერვისები</span></a></li>
+<li><a href="#s6" data-nav="s6"><span class="nav__num">7.</span><span class="nav__t">ექიმები</span></a></li>
+<li><a href="#s7" data-nav="s7"><span class="nav__num">8.</span><span class="nav__t">აპარატურა</span></a></li>
+<li><a href="#s8" data-nav="s8"><span class="nav__num">9.</span><span class="nav__t">კითხვა-პასუხი</span></a></li>
+<li><a href="#s9" data-nav="s9"><span class="nav__num">10.</span><span class="nav__t">ფოტოები</span></a></li>
+</ul></div>
+<div class="nav__group"><p class="nav__glabel">მარკეტინგი</p><ul>
+<li><a href="#s10" data-nav="s10"><span class="nav__num">11.</span><span class="nav__t">ლენდინგ გვერდები</span></a></li>
+<li><a href="#s11" data-nav="s11"><span class="nav__num">12.</span><span class="nav__t">Google-ის ტექსტები</span></a></li>
+<li><a href="#s12" data-nav="s12"><span class="nav__num">13.</span><span class="nav__t">სტატისტიკა</span><span class="chip">ადმინი</span></a></li>
+</ul></div>
+<div class="nav__group"><p class="nav__glabel">ადმინისტრირება</p><ul>
+<li><a href="#s13" data-nav="s13"><span class="nav__num">14.</span><span class="nav__t">პარამეტრები</span><span class="chip">ადმინი</span></a></li>
+<li><a href="#s14" data-nav="s14"><span class="nav__num">15.</span><span class="nav__t">პრობლემების სწრაფი მოგვარება</span></a></li>
+</ul></div>
+<div class="nav__group"><p class="nav__glabel">დანართები</p><ul>
+<li><a href="#s15" data-nav="s15"><span class="nav__num">ა</span><span class="nav__t">ვინ რას ხედავს</span></a></li>
+<li><a href="#s16" data-nav="s16"><span class="nav__num">ბ</span><span class="nav__t">სად რა იცვლება</span></a></li>
+<li><a href="#s17" data-nav="s17"><span class="nav__num">გ</span><span class="nav__t">რა იცვლება ენების მიხედვით</span></a></li>
+</ul></div></nav>
+  <p class="sidebar__foot">ვერსია 1.0</p>
+</aside>
+
+<main class="main" id="top">
+  <article class="doc">
+    <header class="cover">
+      <p class="cover__eyebrow">ადმინისტრაციული პანელი · totalcharmdent.ge</p>
+      <h1 class="cover__title">საიტის მართვის<br>სახელმძღვანელო</h1>
+      <div class="cover__meta"><span>ვერსია 1.0</span><span>15 თავი</span><span>3 დანართი</span></div>
+      <h1>Total Charm Dent</h1>
+<h2>საიტის მართვის სახელმძღვანელო</h2>
+<p>ეს სახელმძღვანელო განკუთვნილია Total Charm Dent-ის თანამშრომლებისთვის, რომლებიც მართავენ კლინიკის ვებგვერდის ინფორმაციას, კონტენტს, ჩაწერის მოთხოვნებსა და სარეკლამო გვერდებს.</p>
+<p>ადმინისტრაციული პანელის გამოყენებისთვის პროგრამირების ცოდნა საჭირო არ არის.</p>
+<p><strong>როგორ იკითხება ეს დოკუმენტი.</strong> თავები 1–3 ყველამ უნდა წაიკითხოს — ეს არის მინიმუმი, რომლის გარეშეც პანელში მუშაობა არ გამოვა. დანარჩენი თავები საცნობაროა: გახსენი ის, რომელიც შენს ამოცანას ეხება. თუ არ იცი რომელი, იხილე <strong>დანართი ბ — სად რა იცვლება</strong>.</p>
+
+    </header>
+    <section id="s0" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 1</span><h1>სისტემის შესახებ</h1></header>
+<p>Total Charm Dent-ის ვებგვერდს აქვს საკუთარი ადმინისტრაციული პანელი, საიდანაც ხდება საიტის ყოველდღიური მართვა პროგრამისტის ჩარევის გარეშე.</p>
+<p>ადმინისტრაციული პანელიდან შეგიძლია:</p>
+<ul>
+<li>ნახო და დაამუშაო პაციენტების ჩაწერის მოთხოვნები;</li>
+<li>შეცვალო კლინიკის ტელეფონი, ელ. ფოსტა, მისამართი და სამუშაო საათები;</li>
+<li>დაამატო ან შეცვალო ექიმების პროფილები;</li>
+<li>მართო სერვისები და აპარატურა;</li>
+<li>გამოაქვეყნო სიახლეები და სტატიები;</li>
+<li>შეცვალო კითხვა-პასუხი;</li>
+<li>ატვირთო ფოტოები;</li>
+<li>შექმნა სარეკლამო კამპანიის გვერდები;</li>
+<li>შეცვალო ის სათაურები და აღწერები, რომლებიც Google-ის შედეგებში ჩანს.</li>
+</ul>
+<p>შენახვის შემდეგ ცვლილება საიტზე ავტომატურად აისახება — გვერდი თავად განახლდება, სერვერის გადატვირთვა საჭირო არ არის.</p>
+<h2 id="s0-13161">მენიუს ოთხი ჯგუფი</h2>
+<p>მარცხენა მენიუ ოთხ ჯგუფად იყოფა. ჯგუფები დალაგებულია იმის მიხედვით, თუ რამდენად ხშირად მუშაობს მათთან თანამშრომელი — ზემოთ ის, რასაც ყოველდღე ხსნი.</p>
+<figure>
+<img loading="lazy" src="/manual-images/01-mtavari-ekrani.jpg" alt="ადმინისტრაციული პანელის მთავარი ეკრანი">
+<figcaption>მთავარი ეკრანი. მარცხნივ — ოთხივე ჯგუფი; ცენტრში იგივე ეკრანები ბარათებად.</figcaption>
+</figure>
+
+<h3 id="s0-58710">ყოველდღიური</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ეკრანი</th>
+<th>რა არის</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ჩაწერის მოთხოვნები</strong></td>
+<td>ვებგვერდიდან შემოსული პაციენტების მოთხოვნები</td>
+</tr>
+</tbody>
+</table></div>
+<p>ერთადერთი ეკრანი ამ ჯგუფში — და ერთადერთი, რომელსაც რეგისტრატორი დღეში რამდენჯერმე ხსნის. სწორედ ამიტომ დგას ის ცალკე, მენიუს თავში, და არა შიგთავსის კოლექციებს შორის.</p>
+<h3 id="s0-23397">საიტის შიგთავსი</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ეკრანი</th>
+<th>რა არის</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>სიახლეები</strong></td>
+<td>სიახლეები და სტატიები — ერთადერთი ადგილი, სადაც მონახაზი არსებობს</td>
+</tr>
+<tr>
+<td><strong>სერვისები</strong></td>
+<td>16 სერვისი, ხუთ მიმართულებად დაჯგუფებული</td>
+</tr>
+<tr>
+<td><strong>ექიმები</strong></td>
+<td>კლინიკის გუნდი</td>
+</tr>
+<tr>
+<td><strong>აპარატურა</strong></td>
+<td>აპარატები და სისტემები</td>
+</tr>
+<tr>
+<td><strong>კითხვა-პასუხი</strong></td>
+<td>ხშირად დასმული კითხვები, მთავარ გვერდზე</td>
+</tr>
+<tr>
+<td><strong>ფოტოები</strong></td>
+<td>საიტის ყველა სურათი — ერთი ბიბლიოთეკა</td>
+</tr>
+<tr>
+<td><strong>კლინიკის მონაცემები</strong></td>
+<td>ტელეფონი, ფოსტა, მისამართი, საათები, ფასები</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="s0-902">მარკეტინგი</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ეკრანი</th>
+<th>რა არის</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ლენდინგ გვერდები</strong></td>
+<td>სარეკლამო კამპანიის ცალკეული გვერდები</td>
+</tr>
+<tr>
+<td><strong>სტატისტიკა</strong></td>
+<td>ანონიმური დღიური ჯამები <em>(მხოლოდ ადმინისტრატორი)</em></td>
+</tr>
+<tr>
+<td><strong>Google-ის ტექსტები</strong></td>
+<td>სათაურები და აღწერები ძებნის შედეგებისთვის</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="s0-92879">პარამეტრები</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ეკრანი</th>
+<th>რა არის</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>მომხმარებლები</strong></td>
+<td>ვის შეუძლია პანელში შესვლა</td>
+</tr>
+<tr>
+<td><strong>ცვლილებების ისტორია</strong></td>
+<td>ვინ, რა და როდის შეცვალა <em>(მხოლოდ ადმინისტრატორი)</em></td>
+</tr>
+<tr>
+<td><strong>ჩაწერის შეტყობინებები</strong></td>
+<td>სად მოდის შეტყობინება ახალ ჩაწერაზე <em>(მხოლოდ ადმინისტრატორი)</em></td>
+</tr>
+<tr>
+<td><strong>ანალიტიკის კოდები</strong></td>
+<td>GA4 და Meta Pixel <em>(მხოლოდ ადმინისტრატორი)</em></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="s0-19293">მომხმარებლის ორი როლი</h2>
+<h3 id="s0-83298">რედაქტორი</h3>
+<p>მართავს ვებგვერდის ყოველდღიურ შიგთავსსა და ჩაწერის მოთხოვნებს. შეუძლია საკუთარი სახელისა და პაროლის შეცვლა — მეტი არაფერი ანგარიშებთან დაკავშირებით.</p>
+<h3 id="s0-21840">ადმინისტრატორი</h3>
+<p>იგივე, პლუს: ანგარიშების დამატება-წაშლა, როლების მინიჭება, ტექნიკური პარამეტრები, ცვლილებების ისტორია და სტატისტიკა.</p>
+<p><strong>თუ რომელიმე ეკრანს მენიუში ვერ ხედავ</strong>, ეს არ არის ხარვეზი — ის შენი როლისთვის დამალულია. სრული ცხრილი: <strong>დანართი ა</strong>.</p>
+<hr />
+</section>
+<section id="s1" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 2</span><h1>სისტემაში შესვლა და ნავიგაცია</h1></header>
+<h2 id="s1-13614">შესვლა</h2>
+<p>გახსენი:</p>
+<p><code>totalcharmdent.ge/admin</code></p>
+<p>შესვლის გვერდზე შეიყვანე ელ. ფოსტა და პაროლი, შემდეგ დააჭირე <strong>შესვლას</strong>.</p>
+<p>თუ პაროლი დაგავიწყდა — გვერდზეა ბმული <strong>„პაროლი დაგავიწყდა?“</strong>. აღდგენის წერილი შენს ელ. ფოსტაზე მოვა.</p>
+<aside class="callout">
+<p><strong>შენიშვნა.</strong> ტექსტი „ელ. ფოსტა ან პაროლი არასწორია“ განზრახ არ ამბობს რომელი — ეს უსაფრთხოების ჩვეულებრივი პრაქტიკაა.</p>
+</aside>
+<h2 id="s1-54628">მარცხენა მენიუ</h2>
+<p>ეკრანის მარცხენა მხარეს მდებარეობს მთავარი ნავიგაცია — იგივე ოთხი ჯგუფი, რაც პირველ თავშია აღწერილი.</p>
+<p>თუ ზუსტად არ იცი სად უნდა შეცვალო ინფორმაცია, უმეტეს შემთხვევაში პასუხი არის <strong>საიტის შიგთავსი</strong>.</p>
+<h2 id="s1-3098">სამი ენა</h2>
+<p>ვებგვერდი მუშაობს სამ ენაზე: <strong>ქართული</strong>, <strong>English</strong>, <strong>Русский</strong>.</p>
+<p>ქართული არის წყარო ენა: <strong>უთარგმნელი ჩანაწერი საიტიდან არ ქრება</strong> — ის ქართულად გამოჩნდება. ანუ სტატია შეგიძლია მხოლოდ ქართულად გამოაქვეყნო და თარგმანი მოგვიანებით დაამატო.</p>
+<aside class="callout callout--warn">
+<p><strong>მაგრამ ყურადღება: სავალდებულო ველი სავალდებულოა იმ ენაზე, რომელზეც ინახავ.</strong></p>
+<p>თუ ინგლისურ ენაზე გადართული ხარ და სტატიის სათაური ინგლისურად ცარიელია, შენახვა <strong>არ გამოვა</strong> — მაშინაც კი, თუ ქართული სრულად შევსებულია.</p>
+<p>ორი გამოსავალია: ან ინგლისურადაც შეავსე სავალდებულო ველები, ან ქართულზე გადართული დაასრულე მუშაობა.</p>
+<p><strong>გამონაკლისი — ლენდინგ გვერდები.</strong> იქ სავალდებულოობა მხოლოდ ქართულს ეხება, სპეციალურად. იხილე თავი 11.</p>
+</aside>
+<p>ველების ნაწილი სამივე ენაზე ცალ-ცალკე ივსება, ნაწილი კი ერთია ყველა ენისთვის. ეს არჩევანი შემთხვევითი არ არის.</p>
+<p><strong>ითარგმნება</strong> — სახელები, აღწერები, ტექსტები, სათაურები, მისამართი, სამუშაო საათები.</p>
+<p><strong>არ ითარგმნება</strong> — ტელეფონი, ელ. ფოსტა, აპარატის მოდელის დასახელება, სოციალური ქსელების ბმულები, ფასები, ფოტოები, მისამართები (slug), რიგითობა.</p>
+<p><strong>აპარატის მოდელი განზრახ არ ითარგმნება.</strong> „Vatech EzRay Air“ ზუსტად ისე იწერება, როგორც მწარმოებელთან — რადგან პაციენტი სწორედ ამ სახელს ეძებს Google-ში. „КТ Vatech“ შეცდომად იკითხება.</p>
+<p>სრული ცხრილი: <strong>დანართი გ</strong>.</p>
+<aside class="callout callout--warn">
+<p><strong>მნიშვნელოვანია.</strong> ტექსტის შეცვლამდე ყოველთვის გადაამოწმე, რომ სწორი ენა გაქვს არჩეული. ენის გადამრთველი ფორმის თავშია.</p>
+</aside>
+<h2 id="s1-40125">შენახვა</h2>
+<p>ინფორმაციის შეცვლის შემდეგ დააჭირე <strong>შენახვას</strong>. საიტის შესაბამისი გვერდი ავტომატურად განახლდება.</p>
+<p>თუ ცვლილება რამდენიმე გვერდს ეხება, ისინი ერთდროულად განახლდება. მაგალითად, ექიმის შეცვლა ერთდროულად ანახლებს მთავარ გვერდსა და „ჩვენს შესახებ“-ს.</p>
+<h2 id="s1-6495">მონახაზი და გამოქვეყნება</h2>
+<p><strong>მონახაზი მთელ სისტემაში მხოლოდ ერთ ადგილას არსებობს — სიახლეებში.</strong></p>
+<p>იქ ორი ღილაკია: <strong>მონახაზის შენახვა</strong> და <strong>გამოქვეყნება</strong>. ნახევრად დაწერილი სტატია საიტზე არ ჩანს, სანამ არ გამოაქვეყნებ.</p>
+<p>დანარჩენ ეკრანებზე <strong>შენახვა ნიშნავს გამოქვეყნებას</strong>. თუ გინდა, რომ ჩანაწერი მოამზადო და ჯერ არ აჩვენო, თითოეულ ადგილას თავისი მექანიზმია:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>სად</th>
+<th>როგორ დამალო</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>სიახლეები</td>
+<td><strong>მონახაზის შენახვა</strong> — არ დააჭირო „გამოქვეყნებას“</td>
+</tr>
+<tr>
+<td>ექიმები</td>
+<td>ჩექბოქსი <strong>„საიტზე გამოჩნდეს“</strong> გამორთული დატოვე</td>
+</tr>
+<tr>
+<td>აპარატურა</td>
+<td>ჩექბოქსი <strong>„ფოტო ჯერ არ არის“</strong> ჩართული — ბარათი ჩანს, ფოტოს ნაცვლად წარწერა</td>
+</tr>
+<tr>
+<td>ლენდინგ გვერდები</td>
+<td>სტატუსი <strong>„მუშავდება (არავინ ხედავს)“</strong></td>
+</tr>
+<tr>
+<td>სერვისები, კითხვა-პასუხი</td>
+<td>დამალვის საშუალება არ არის — შენახვა = გამოქვეყნება</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="s1-49875">გასვლა</h2>
+<p>სამუშაოს დასრულების შემდეგ დააჭირე <strong>გასვლას</strong> — განსაკუთრებით იმ კომპიუტერზე, რომელსაც რამდენიმე თანამშრომელი იყენებს.</p>
+<hr />
+</section>
+<section id="s2" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 3</span><h1>ჩაწერის მოთხოვნები</h1></header>
+<p><strong>მენიუ:</strong> ყოველდღიური → ჩაწერის მოთხოვნები</p>
+<p>ეს არის ის ერთი ეკრანი, რომელსაც კლინიკა ყოველდღე ხსნის.</p>
+<h2 id="s2-76886">სია</h2>
+<p>უახლესი მოთხოვნები ყოველთვის ზემოთაა. სიაში ჩანს:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>სვეტი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>თარიღი</td>
+<td>როდის შემოვიდა</td>
+</tr>
+<tr>
+<td>სახელი</td>
+<td>პაციენტის სახელი — ამაზე უნდა დააჭირო</td>
+</tr>
+<tr>
+<td>ტელეფონი</td>
+<td></td>
+</tr>
+<tr>
+<td>მიმართულება</td>
+<td>რა აირჩია პაციენტმა</td>
+</tr>
+<tr>
+<td>სტატუსი</td>
+<td>სად არის დამუშავების პროცესი</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>ძებნა</strong> მუშაობს სახელზე, ტელეფონზე, ელ. ფოსტასა და მიმართულებაზე.</p>
+<figure>
+<img loading="lazy" src="/manual-images/02-chatseris-motkhovnebi-sia.jpg" alt="ჩაწერის მოთხოვნების სია">
+<figcaption>სია. უახლესი ზემოთ; სტატუსი ბოლო სვეტშია. სახელები და ნომრები ილუსტრაციისთვისაა შეცვლილი.</figcaption>
+</figure>
+
+<h2 id="s2-84654">მოთხოვნის გახსნა</h2>
+<p>დააჭირე პაციენტის სახელს.</p>
+<p><strong>ყველა მონაცემი, რომელიც პაციენტმა გამოგზავნა, მხოლოდ წასაკითხია.</strong> სახელი, ტელეფონი, ფოსტა, მიმართულება, სასურველი დრო, შეტყობინება — ვერცერთს ვერ შეცვლი. ეს განზრახაა: მოთხოვნა იმის ჩანაწერია, რაც პაციენტმა რეალურად დაწერა.</p>
+<p><strong>სტატუსი ერთადერთი ველია, რომელიც აქ იცვლება.</strong> ის მარჯვენა გვერდით სვეტშია, არა ტექსტებს შორის — რომ დაუყოვნებლივ მისწვდე, მთელი მოთხოვნის გადაქაჩვის გარეშე.</p>
+<figure>
+<img loading="lazy" src="/manual-images/03-chatseris-motkhovna.jpg" alt="გახსნილი ჩაწერის მოთხოვნა">
+<figcaption>გახსნილი მოთხოვნა. მარცხნივ ნაცრისფერი — მხოლოდ წასაკითხი; მარჯვნივ სტატუსი — ერთადერთი ცვალებადი ველი.</figcaption>
+</figure>
+
+<h2 id="s2-84180">სტატუსები</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>სტატუსი</th>
+<th>რას ნიშნავს</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ახალი — არ დაგვირეკავს</strong></td>
+<td>ჯერ არავინ დაუკავშირდა. პირველ რიგში ესენი.</td>
+</tr>
+<tr>
+<td><strong>დავურეკეთ</strong></td>
+<td>თანამშრომელი უკვე დაუკავშირდა პაციენტს.</td>
+</tr>
+<tr>
+<td><strong>ჩაწერილია</strong></td>
+<td>ვიზიტის დრო შეთანხმებულია.</td>
+</tr>
+<tr>
+<td><strong>დახურული</strong></td>
+<td>დამატებითი მოქმედება არ არის საჭირო — პაციენტმა გადაიფიქრა ან საკითხი სხვაგვარად გადაწყდა.</td>
+</tr>
+<tr>
+<td><strong>სპამი</strong></td>
+<td>არ არის რეალური პაციენტის მოთხოვნა.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="s2-1126">რეკომენდებული პროცესი</h2>
+<p>ტიპური გზა:</p>
+<p><strong>ახალი → დავურეკეთ → ჩაწერილია</strong></p>
+<p>თუ ვიზიტი არ დაიგეგმა:</p>
+<p><strong>ახალი → დავურეკეთ → დახურული</strong></p>
+<p>სტატუსი შეცვალე <strong>ყოველი დარეკვის შემდეგ, მაშინვე</strong>. ეს არ არის ბიუროკრატია — ეს ის ერთადერთი მექანიზმია, რომელიც აჩერებს ორ თანამშრომელს ერთსა და იმავე ადამიანთან განმეორებით დარეკვისგან.</p>
+<h2 id="s2-27632">საიდან მოვიდა</h2>
+<p>მოთხოვნის გვერდზე არის დაკეცილი ბლოკი <strong>„საიდან მოვიდა“</strong>.</p>
+<p>ის ავტომატურად ივსება და მასში ჩანს, რომელმა რეკლამამ მოიყვანა პაციენტი: ლენდინგის მისამართი, კამპანიის სახელი, წყარო, არხი და კამპანიის ტექნიკური ნიშნები (utm).</p>
+<p><strong>ამ მონაცემების შეცვლა არ არის საჭირო და შეუძლებელიცაა</strong> — ისინი წასაკითხია. სასარგებლოა მაშინ, როცა რეკლამის შედეგს აფასებ.</p>
+<h2 id="s2-53190">შეტყობინებების სტატუსი</h2>
+<p>ახალი მოთხოვნის შემოსვლისას სისტემა კლინიკას აგზავნის შეტყობინებას — ელ. ფოსტით და Telegram-ით. მათი შედეგი ცალკე დაკეცილ ბლოკშია.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>სტატუსი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>გაგზავნილია</strong></td>
+<td>წარმატებით გაიგზავნა</td>
+</tr>
+<tr>
+<td><strong>მოლოდინში</strong></td>
+<td>გაგზავნის პროცესი ჯერ არ დასრულებულა</td>
+</tr>
+<tr>
+<td><strong>ვერ გაიგზავნა</strong></td>
+<td>გაგზავნისას მოხდა შეცდომა — ტექსტი ქვემოთ წერია</td>
+</tr>
+<tr>
+<td><strong>გამოტოვებულია</strong></td>
+<td>ეს არხი არ იყო ჩართული</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout callout--warn">
+<p><strong>მნიშვნელოვანია.</strong> შეტყობინების გაგზავნის შეცდომა <strong>არ ნიშნავს, რომ პაციენტის მოთხოვნა დაიკარგა.</strong> მოთხოვნა ბაზაშია, ამ ეკრანზე ჩანს, და მისი დამუშავება ჩვეულებრივ შეგიძლია. ერთადერთი, რაც მოხდა — შენ ვერ მიიღე შეტყობინება; ამიტომ ეს ეკრანი დღეში რამდენჯერმე გახსენი, მხოლოდ შეტყობინებას ნუ დაეყრდნობი.</p>
+</aside>
+<h2 id="s2-46358">წაშლა</h2>
+<p>მოთხოვნის წაშლა შეუძლია მხოლოდ ადმინისტრატორს. სპამისთვის წაშლა საჭირო არ არის — მიანიჭე სტატუსი <strong>„სპამი“</strong> და ის სიაში დარჩება.</p>
+<hr />
+</section>
+<section id="s3" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 4</span><h1>კლინიკის მონაცემები</h1></header>
+<p><strong>მენიუ:</strong> საიტის შიგთავსი → კლინიკის მონაცემები</p>
+<p>აქ ინახება ის ინფორმაცია, რომელიც საიტის ყველა გვერდზეა და Google-საც მიეწოდება. <strong>აქ დაშვებული შეცდომა ყველგან ჩანს.</strong></p>
+<p>ეკრანი ხუთ დაკეცილ ბლოკად იყოფა.</p>
+<figure>
+<img loading="lazy" src="/manual-images/04-klinikis-monatsemebi.jpg" alt="კლინიკის მონაცემები">
+<figcaption>„ტელეფონი“ ბლოკი გახსნილი. თითოეული ველის ქვემოთ ახსნაა — რა მოხდება, თუ შეცვლი.</figcaption>
+</figure>
+
+<hr />
+<h2 id="s3-94753">ტელეფონი</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>მობილური</strong></td>
+<td>სავალდებულო. ის ნომერი, რომელიც WhatsApp-ზეა და რომელსაც მობილურის ღილაკი კრეფს.</td>
+</tr>
+<tr>
+<td><strong>ქალაქის ნომერი</strong></td>
+<td>არასავალდებულო. ჩანს მეორე ნომრად. ცარიელი დატოვე და საერთოდ არ გამოჩნდება.</td>
+</tr>
+<tr>
+<td><strong>WhatsApp იგივე ნომერზეა</strong></td>
+<td>ჩართულია ნაგულისხმევად.</td>
+</tr>
+<tr>
+<td><strong>WhatsApp-ის ნომერი</strong></td>
+<td>ჩნდება მხოლოდ მაშინ, თუ ზემოთ მონიშვნა მოხსენი.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>ნომერი ჩაწერე ისე, როგორც იკითხება:</strong></p>
+<p><code>+995 511 21 16 16</code></p>
+<p>დასარეკი ფორმატი (<code>995511211616</code>) ავტომატურად გამოითვლება — მისი ცალკე შეყვანა საჭირო არ არის. ეს განზრახაა: ორი ველი, რომელსაც ხელით უნდა ეთანხმებოდე, ადრე თუ გვიან განსხვავდება, და შეცდომა ჩუმია — ეკრანზე სწორი ნომერი წერია, ღილაკი კი სხვას რეკავს.</p>
+<h3 id="s3-43563">სად აისახება</h3>
+<p>ერთი ნომრის შეცვლა ცვლის:</p>
+<ul>
+<li>საიტის ზედა ზოლს;</li>
+<li>ფუტერს;</li>
+<li>მობილურის სწრაფი ზარის ღილაკს;</li>
+<li>WhatsApp-ის ღილაკს;</li>
+<li>საკონტაქტო გვერდს;</li>
+<li>Google-ისთვის განკუთვნილ სტრუქტურირებულ მონაცემებს.</li>
+</ul>
+<p>ამიტომ ნომრის შეცვლის შემდეგ სისწორის შემოწმება განსაკუთრებით მნიშვნელოვანია.</p>
+<hr />
+<h2 id="s3-40726">მისამართი და ფოსტა</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th>ითარგმნება?</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ელ. ფოსტა</strong></td>
+<td>არა</td>
+<td>სავალდებულო. კლინიკის საჯარო საკონტაქტო ფოსტა.</td>
+</tr>
+<tr>
+<td><strong>მისამართი</strong></td>
+<td><strong>დიახ</strong></td>
+<td>სავალდებულო. ისე, როგორც კონტაქტის გვერდსა და საიტის ბოლოში უნდა ეწეროს.</td>
+</tr>
+<tr>
+<td><strong>Google Maps-ის ბმული</strong></td>
+<td>არა</td>
+<td>ღილაკი „როგორ მოვიდეთ“ ამ ბმულს ხსნის.</td>
+</tr>
+<tr>
+<td><strong>სამუშაო საათები</strong></td>
+<td><strong>დიახ</strong></td>
+<td>წინადადებად: „ყოველდღე 9:00-დან 21:00-მდე“.</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout callout--warn">
+<p><strong>ეს არ არის ის ფოსტა, სადაც ჩაწერის შეტყობინებები მოდის.</strong> ეს საჯარო მისამართია, რომელსაც პაციენტი ხედავს. შეტყობინებების მისამართი ცალკე პარამეტრია — იხილე თავი 14.</p>
+<p><strong>სამუშაო საათებზე მნიშვნელოვანი გაფრთხილება.</strong> ეს ველი ცვლის მხოლოდ იმ ტექსტს, რომელსაც ადამიანი კითხულობს. <strong>Google-ისთვის განკუთვნილი სტრუქტურირებული ვერსია კოდშია ჩაწერილი და ავტომატურად არ იცვლება.</strong> თუ კლინიკის რეალური სამუშაო საათები შეიცვალა — არა უბრალოდ ფორმულირება, არამედ თავად საათები — ამის შესახებ დეველოპერს უნდა აცნობო. წინააღმდეგ შემთხვევაში საიტი ერთს დაწერს, Google კი სხვას აჩვენებს.</p>
+</aside>
+<hr />
+<h2 id="s3-84160">კონსულტაციის ფასი</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>პირველადი კონსულტაცია (₾)</strong></td>
+<td>სავალდებულო</td>
+</tr>
+<tr>
+<td><strong>განმეორებითი კონსულტაცია (₾)</strong></td>
+<td>სავალდებულო</td>
+</tr>
+</tbody>
+</table></div>
+<p>ფასი ჩანს სერვისებისა და სიახლეების გვერდებზე და Google-საც მიეწოდება.</p>
+<aside class="callout">
+<p><strong>ფასის შეცვლის შემდეგ გადახედე კითხვა-პასუხს.</strong> ერთ პასუხში თანხა ჩვეულებრივი წინადადების ნაწილად წერია და ავტომატურად არ იცვლება. იგივე ეხება სტატიებსა და სერვისების აღწერებს.</p>
+</aside>
+<hr />
+<h2 id="s3-44640">გამოქვეყნებული ციფრები</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>კმაყოფილი პაციენტების %</strong></td>
+<td>არასავალდებულო, 0–100</td>
+</tr>
+<tr>
+<td><strong>წლები ბაზარზე</strong></td>
+<td>არასავალდებულო</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>ორივე არასავალდებულოა და ორივე მტკიცებაა.</strong> ცარიელი ველი ნიშნავს, რომ ის მრიცხველი საიტზე უბრალოდ არ გამოჩნდება — და ეს სწორი გადაწყვეტილებაა, თუ ციფრს დასაყრდენი არ აქვს.</p>
+<p>სამედიცინო საიტზე დაუსაბუთებელი პროცენტი რისკია. გამოაქვეყნე მხოლოდ ის, რისი დადასტურებაც შეგიძლია.</p>
+<p>დანარჩენი ორი ციფრი, რომელსაც საიტი აჩვენებს — რამდენი სპეციალისტი და რამდენი სერვისი — <strong>ავტომატურად ითვლება</strong>. მათი ხელით შეყვანა არსად არის საჭირო.</p>
+<hr />
+<h2 id="s3-97357">სოციალური ქსელები</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Facebook</strong></td>
+<td>სრული ბმული</td>
+</tr>
+<tr>
+<td><strong>Instagram</strong></td>
+<td>სრული ბმული</td>
+</tr>
+<tr>
+<td><strong>Google Business Profile</strong></td>
+<td>სრული ბმული</td>
+</tr>
+</tbody>
+</table></div>
+<p>ყოველთვის სრული მისამართი, არა მომხმარებლის სახელი.</p>
+<p><strong>Google Business Profile ყველაზე ძლიერი ნდობის ბმულია, რაც ადგილობრივ კლინიკას შეიძლება ჰქონდეს</strong> — ის საიტს იმ ჩანაწერს უკავშირებს, რომელსაც Google რუკებზე უკვე აჩვენებს, შეფასებებითა და ფოტოებით.</p>
+<hr />
+<h2 id="s3-68470">როგორ შევამოწმო ცვლილება</h2>
+<ol>
+<li>დააჭირე <strong>შენახვას</strong>;</li>
+<li>გახსენი ვებგვერდი;</li>
+<li>გადადი იმ ადგილას, სადაც შეცვლილი ინფორმაცია ჩანს;</li>
+<li>გადაამოწმე ახალი მნიშვნელობა;</li>
+<li>თუ ველი ითარგმნება — შეამოწმე English და Русский ვერსიებიც.</li>
+</ol>
+<p>ტელეფონის შეცვლისას შესამოწმებელი მინიმუმი: ზედა ზოლი, ფუტერი, მობილურის ზარის ღილაკი, კონტაქტის გვერდი.</p>
+<hr />
+</section>
+<section id="s4" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 5</span><h1>სიახლეები</h1></header>
+<p><strong>მენიუ:</strong> საიტის შიგთავსი → სიახლეები</p>
+<p>სიახლეები და სტატიები. <strong>ეს ერთადერთი ეკრანია, სადაც მონახაზი არსებობს</strong> — ანუ ერთადერთი, სადაც ტექსტი შეგიძლია შეინახო ისე, რომ საიტზე არ გამოჩნდეს.</p>
+<figure>
+<img loading="lazy" src="/manual-images/05-siakhleebi.jpg" alt="სიახლეების სია">
+<figcaption>სიახლეების სია. ბოლო სვეტი აჩვენებს, გამოქვეყნებულია თუ მონახაზად დარჩა.</figcaption>
+</figure>
+
+<h2 id="s4-81356">ორი კატეგორია</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>კატეგორია</th>
+<th>რისთვის</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>კლინიკის სიახლე</strong></td>
+<td>რა ხდება კლინიკაში — ახალი აპარატი, ახალი ექიმი, ღონისძიება</td>
+</tr>
+<tr>
+<td><strong>სტატია</strong></td>
+<td>სასარგებლო ტექსტი პაციენტისთვის</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="s4-67685">ველები</h2>
+<h3 id="s4-36268">მთავარ სვეტში</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th>სავალდებულო</th>
+<th>ითარგმნება</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>სათაური</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>მთავარი სურათი</strong></td>
+<td>✓</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>მოკლე აღწერა</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>ტექსტი</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>მოკლე აღწერა</strong> ერთი-ორი წინადადებაა. ის ჩანს ბარათზე სიაში <strong>და Google-ის შედეგებში</strong> — ანუ ხშირად სწორედ ის იკითხება სტატიაზე ადრე. დაწერე ისე, თითქოს ეს ერთადერთია, რასაც წაიკითხავენ.</p>
+<h3 id="s4-99156">გვერდით სვეტში</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>მისამართი (slug)</strong></td>
+<td>ავტომატურად ივსება სათაურიდან</td>
+</tr>
+<tr>
+<td><strong>კატეგორია</strong></td>
+<td>სავალდებულო</td>
+</tr>
+<tr>
+<td><strong>გამოქვეყნების თარიღი</strong></td>
+<td>სავალდებულო</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>მისამართი (slug)</strong> არის URL-ის ბოლო ნაწილი: <code>/ka/news/მისამართი</code>. ის ლათინური ასოებით იწერება და <strong>სამივე ენას ერთი და იგივე აქვს</strong> — ეს განზრახაა, რომ ერთი სტატია საკუთარ თავს ძებნის შედეგებში არ ეჯიბროს.</p>
+<aside class="callout">
+<p><strong>არსებული მისამართი ავტომატურად არასდროს გადაიწერება.</strong> თუ სათაურში შეცდომას ასწორებ, ბმული, რომელიც ვიღაცამ უკვე გააზიარა, მუშაობას აგრძელებს.</p>
+</aside>
+<h3 id="s4-62412">Google-ის ჩანაწერი (დაკეცილი ბლოკი)</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>სათაური Google-ისთვის</strong></td>
+<td>სასურველია ~60 სიმბოლო · ველი იტევს მაქსიმუმ 65-ს</td>
+</tr>
+<tr>
+<td><strong>აღწერა Google-ისთვის</strong></td>
+<td>სასურველია ~155 სიმბოლო · ველი იტევს მაქსიმუმ 175-ს</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>ორივე ცარიელი დატოვე და Google აიღებს ზემოთ დაწერილ სათაურსა და მოკლე აღწერას — უმეტეს შემთხვევაში სწორედ ესაა საჭირო.</strong> შეავსე მხოლოდ მაშინ, თუ სათაური გვერდზე კარგად იკითხება, ძებნის სიაში კი — არა.</p>
+<h2 id="s4-6495">მონახაზი და გამოქვეყნება</h2>
+<p>ორი ღილაკია:</p>
+<ul>
+<li><strong>მონახაზის შენახვა</strong> — ტექსტი ინახება, საიტზე არ ჩანს;</li>
+<li><strong>გამოქვეყნება</strong> — ტექსტი საიტზე გამოდის.</li>
+</ul>
+<p>გამოქვეყნებულ სტატიაში ცვლილება რომ შეიტანო და ჯერ არ აჩვენო — შეინახე მონახაზად. საიტზე ძველი, გამოქვეყნებული ვერსია დარჩება, სანამ <strong>„ცვლილებების გამოქვეყნებას“</strong> არ დააჭერ.</p>
+<hr />
+</section>
+<section id="s5" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 6</span><h1>სერვისები</h1></header>
+<p><strong>მენიუ:</strong> საიტის შიგთავსი → სერვისები</p>
+<p>16 სერვისი, ხუთ მიმართულებად დაჯგუფებული.</p>
+<aside class="callout">
+<p><strong>ცალკე სერვისს საკუთარი გვერდი არ აქვს.</strong> ის თავისი მიმართულების გვერდზე ჩნდება, ბლოკის სახით. ამიტომ სერვისს Google-ის ცალკე სათაური არ სჭირდება — და არც აქვს.</p>
+</aside>
+<h2 id="s5-58889">ხუთი მიმართულება</h2>
+<ul>
+<li>დიაგნოსტიკა და დაგეგმვა</li>
+<li>თერაპია და პროფილაქტიკა</li>
+<li>ქირურგია და იმპლანტაცია</li>
+<li>ორთოდონტია</li>
+<li>ესთეტიკური სტომატოლოგია</li>
+</ul>
+<h2 id="s5-67685">ველები</h2>
+<h3 id="s5-36268">მთავარ სვეტში</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th>სავალდებულო</th>
+<th>ითარგმნება</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>დასახელება</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>ერთი წინადადება</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>შესავალი</strong></td>
+<td>—</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>რას მოიცავს</strong></td>
+<td>—</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>ერთი წინადადება</strong> ჩანს ბარათზე და ზედა მენიუში. მოკლედ — რას აკეთებს.</p>
+<p><strong>შესავალი</strong> გრძელი აბზაცია მიმართულების გვერდის დასაწყისში.</p>
+<p><strong>რას მოიცავს</strong> — სია. თითო პუნქტი ცალკე სტრიქონად ემატება.</p>
+<h3 id="s5-99156">გვერდით სვეტში</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>მისამართი (slug)</strong></td>
+<td>სავალდებულო</td>
+</tr>
+<tr>
+<td><strong>მიმართულება</strong></td>
+<td>სავალდებულო</td>
+</tr>
+<tr>
+<td><strong>რიგითობა</strong></td>
+<td>სავალდებულო. რაც უფრო მცირე რიცხვია, მით ზემოთ.</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout callout--warn">
+<h2 id="s5-99691">⚠ სერვისის მისამართს ხელი არ ახლო</h2>
+<p>ეს ერთადერთი მისამართია მთელ სისტემაში, რომელიც <strong>ავტომატურად არ ივსება</strong> — და ერთადერთი, რომლის შეცვლაც რაღაცას ტეხს.</p>
+<p><strong>ხატულა სწორედ ამ მისამართით არჩევა.</strong> თუ მისამართს შეცვლი, სერვისი ხატულის გარეშე დარჩება — და შეცდომა ჩუმია: არაფერი გაფრთხილებს, უბრალოდ ბარათი ცარიელი ხდება.</p>
+<p>ახალი სერვისის დამატებამდე ან მისამართის შეცვლამდე <strong>დაუკავშირდი დეველოპერს.</strong></p>
+</aside>
+<hr />
+</section>
+<section id="s6" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 7</span><h1>ექიმები</h1></header>
+<p><strong>მენიუ:</strong> საიტის შიგთავსი → ექიმები</p>
+<p>კლინიკის გუნდი. ექიმები ჩანს მთავარ გვერდზე და „ჩვენს შესახებ“ გვერდზე.</p>
+<figure>
+<img loading="lazy" src="/manual-images/06-eqimebi-sia.jpg" alt="ექიმების სია">
+<figcaption>ორი ჩექბოქსი სიაშივე ჩანს: ✓ ნიშნავს ჩართულს, — გამორთულს.</figcaption>
+</figure>
+
+<p>ფორმა იმის მიხედვითაა აწყობილი, თუ როგორ ივსება პროფილი რეალურად: ის, რასაც რეგისტრატორი კითხვის გარეშე უპასუხებს, ყოველთვის ჩანს; ის, რაც ექიმისგან ქაღალდზე მოგვიანებით მოდის — დაკეცილ ბლოკებშია.</p>
+<h2 id="s6-84968">გვერდითი სვეტი — ორი ჩექბოქსი</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>საიტზე გამოჩნდეს</strong></td>
+<td>გამორთულია ნაგულისხმევად</td>
+</tr>
+<tr>
+<td><strong>მთავარი ექიმი</strong></td>
+<td>ერთი უნდა იყოს მონიშნული</td>
+</tr>
+<tr>
+<td><strong>გამოცდილების წლები</strong></td>
+<td>ჩნდება მხოლოდ მაშინ, თუ „მთავარი ექიმი“ მონიშნულია</td>
+</tr>
+<tr>
+<td><strong>რიგითობა</strong></td>
+<td>სავალდებულო</td>
+</tr>
+<tr>
+<td><strong>მისამართი (slug)</strong></td>
+<td>ავტომატურად ივსება სახელიდან</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>„საიტზე გამოჩნდეს“ გამორთული</strong> ნიშნავს, რომ გვერდი წერს „პროფილი მზადდება“ — ცარიელი სათაურების ნაცვლად. სანამ ექიმის მონაცემები დაზუსტებულია, ეს გამორთული დატოვე.</p>
+<p><strong>„მთავარი ექიმი“</strong> — მთავარ ექიმს გვერდის თავში დიდი ბლოკი ეთმობა. <strong>„გამოცდილების წლები“</strong> სწორედ იმ ბლოკზე გამოსახული დიდი ციფრია (მაგ.: <code>20+</code>) და სხვაგან არსად ჩანს. ამიტომაც ჩნდება ველი მხოლოდ მაშინ, როცა ჩექბოქსი მონიშნულია — ველი, რომელსაც შედეგი არ აქვს, უარესია, ვიდრე ველი, რომელიც არ არსებობს.</p>
+<p><strong>მისამართი</strong> არის ღუზა „ჩვენს შესახებ“ გვერდზე: <code>/ka/about#archil-apkhadze</code>. არსებული მისამართი არასდროს გადაიწერება.</p>
+<figure>
+<img loading="lazy" src="/manual-images/07-eqimis-forma.jpg" alt="ექიმის ფორმა">
+<figcaption>მთავარი ექიმის პროფილი. „გამოცდილების წლები“ სწორედ იმიტომ ჩანს, რომ „მთავარი ექიმი“ მონიშნულია.</figcaption>
+</figure>
+
+<h2 id="s6-38784">მთავარი სვეტი</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th>სავალდებულო</th>
+<th>ითარგმნება</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>სახელი და გვარი</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>პოზიცია</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>ფოტო</strong></td>
+<td>✓</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>სპეციალიზაცია</strong></td>
+<td>—</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>სპეციალიზაციის თეგები</strong></td>
+<td>—</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>ბიოგრაფია</strong></td>
+<td>—</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>სახელი ითარგმნება</strong> — თითოეულ ენაზე ისე, როგორც იწერება: ქართულად „არჩილ აფხაძე“, რუსულად „Арчил Апхадзе“. ეს განსხვავდება აპარატის მოდელისგან, რომელიც არ ითარგმნება: პიროვნების სახელი რეალურად გადადის სხვა დამწერლობაში, მოდელის ნომერი — არა.</p>
+<p><strong>სპეციალიზაცია</strong> რამდენიმე სიტყვაა და სახელის ქვემოთ ჩანს.</p>
+<p><strong>სპეციალიზაციის თეგები</strong> — ორ-სამსიტყვიანი მოკლე ფრაზები. ისინი ფოტოს გვერდით პატარა ბარათებად ჩნდება, არა წინადადებებად. გრძელი ტექსტი აქ დიზაინს ტეხს.</p>
+<p><strong>ბიოგრაფია</strong> — ორ-სამი აბზაცი. ეს არის ის, რასაც პაციენტი ექიმის შესახებ წაიკითხავს.</p>
+<h2 id="s6-6455">ოთხი დაკეცილი ბლოკი</h2>
+<ul>
+<li><strong>განათლება</strong></li>
+<li><strong>გამოცდილება</strong></li>
+<li><strong>ტრენინგები და კონგრესები</strong></li>
+<li><strong>ენები</strong></li>
+</ul>
+<p>თითოეული სიაა — თითო ჩანაწერი ცალკე სტრიქონად. ოთხივე ითარგმნება.</p>
+<aside class="callout">
+<p><strong>ტრენინგებზე.</strong> ყველაზე ძლიერი ათი-თორმეტი ჩანაწერი აჯობებს სრულ ჩამონათვალს. სამოცი ჩანაწერი ხმაურად იკითხება და პაციენტი გვერდს უვლის.</p>
+<p><strong>ენებში</strong> მიუთითე მხოლოდ ის, რაც ექიმმა დაადასტურა.</p>
+</aside>
+<hr />
+</section>
+<section id="s7" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 8</span><h1>აპარატურა</h1></header>
+<p><strong>მენიუ:</strong> საიტის შიგთავსი → აპარატურა</p>
+<p>კლინიკის აპარატები და სისტემები. ჩანს მთავარ გვერდზე და „ტექნოლოგიების“ გვერდზე.</p>
+<figure>
+<img loading="lazy" src="/manual-images/08-aparatura.jpg" alt="აპარატურის სია">
+<figcaption>აპარატურის სია. მოდელის დასახელება სამივე ენაზე ერთნაირად იწერება.</figcaption>
+</figure>
+
+<h2 id="s7-1595">ოთხი ჯგუფი</h2>
+<ul>
+<li>დიაგნოსტიკა და დაგეგმვა</li>
+<li>ჰიგიენა და პროფილაქტიკა</li>
+<li>ღიმილის ესთეტიკა</li>
+<li>ორთოდონტიული სისტემები</li>
+</ul>
+<h2 id="s7-33386">გვერდითი სვეტი</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ჯგუფი</strong></td>
+<td>სავალდებულო</td>
+</tr>
+<tr>
+<td><strong>რიგითობა</strong></td>
+<td>სავალდებულო, ჯგუფის შიგნით</td>
+</tr>
+<tr>
+<td><strong>ფოტო ჯერ არ არის</strong></td>
+<td><strong>ჩართულია ნაგულისხმევად</strong></td>
+</tr>
+<tr>
+<td><strong>მისამართი (slug)</strong></td>
+<td>ავტომატურად ივსება დასახელებიდან</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>„ფოტო ჯერ არ არის“ ჩართული</strong> ნიშნავს, რომ ბარათზე წარწერა „ფოტო მზადდება“ გამოჩნდება. თავდაპირველი სურათები დროებითია — <strong>გამორთე მაშინ, როცა რეალურ ფოტოს ატვირთავ.</strong></p>
+<h2 id="s7-38784">მთავარი სვეტი</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th>სავალდებულო</th>
+<th>ითარგმნება</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>მოდელის დასახელება</strong></td>
+<td>✓</td>
+<td><strong>არა</strong></td>
+</tr>
+<tr>
+<td><strong>მწარმოებელი</strong></td>
+<td>✓</td>
+<td>არა</td>
+</tr>
+<tr>
+<td><strong>მწარმოებლის საიტი</strong></td>
+<td>✓</td>
+<td>არა</td>
+</tr>
+<tr>
+<td><strong>ფოტო</strong></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>სად გამოიყენება</strong></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>ერთი წინადადება</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>ტექსტი</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>მთავარი ფაქტები</strong></td>
+<td>—</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout">
+<p><strong>მოდელის დასახელება არ ითარგმნება.</strong> „Vatech EzRay Air“ სამივე ენაზე ერთნაირად იწერება — ზუსტად ისე, როგორც მწარმოებელთან და როგორც პაციენტი ეძებს. ტრანსლიტერაცია („КТ Vatech“) ტეხს იმ დამთხვევას, რომელსაც ძებნა ეყრდნობა, და შეცდომად იკითხება.</p>
+</aside>
+<p><strong>მწარმოებლის საიტი</strong> სავალდებულოა და <strong>Google-საც მიეწოდება</strong> — ამიტომ ოფიციალური მისამართი უნდა იყოს, ზუსტი.</p>
+<p><strong>სად გამოიყენება</strong> — სერვისების არჩევა. ბარათიდან ბმულები სწორედ ამ სერვისებზე გაიყვანება.</p>
+<p><strong>მთავარი ფაქტები</strong> — ორ-სამი მოკლე ფაქტი. <strong>სწორედ ესენი ხვდება Google-ის პასუხებში</strong>, ამიტომ თითოეული თვითკმარი უნდა იყოს.</p>
+<hr />
+</section>
+<section id="s8" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 9</span><h1>კითხვა-პასუხი</h1></header>
+<p><strong>მენიუ:</strong> საიტის შიგთავსი → კითხვა-პასუხი</p>
+<p>ჩანს მთავარ გვერდზე, ჩაწერის ფორმის უშუალოდ წინ.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th>სავალდებულო</th>
+<th>ითარგმნება</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>კითხვა</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>პასუხი</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>რიგითობა</strong></td>
+<td>✓</td>
+<td>არა</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout">
+<h2 id="s8-71357">ეს თავი ყველაზე ყურადღებით წაიკითხე</h2>
+<p><strong>აქ დაწერილი პასუხები Google-ს სტრუქტურირებული სახით მიეწოდება.</strong> ეს ნიშნავს, რომ ისინი შეიძლება პირდაპირ, სიტყვასიტყვით გამოჩნდეს ძებნის შედეგებში და AI-ასისტენტების პასუხებში — შენი გვერდის გახსნის გარეშე.</p>
+<p>დაწერე ისე, თითქოს ციტატაა. <strong>პირველი წინადადება თვითკმარი უნდა იყოს</strong> — სწორედ ის ხვდება ციტატაში.</p>
+<p>პასუხი მარტივი ტექსტია, ფორმატირების გარეშე — გამუქება, სიები და ბმულები აქ არ მუშაობს.</p>
+</aside>
+<p><strong>რიგითობა</strong> — რაც უფრო მცირე რიცხვია, მით ზემოთ.</p>
+<aside class="callout">
+<p><strong>გაითვალისწინე:</strong> თუ კონსულტაციის ფასი შეიცვალა, აქ ერთ პასუხში თანხა ტექსტში წერია და ავტომატურად არ განახლდება. იხილე თავი 4.</p>
+</aside>
+<hr />
+</section>
+<section id="s9" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 10</span><h1>ფოტოები</h1></header>
+<p><strong>მენიუ:</strong> საიტის შიგთავსი → ფოტოები</p>
+<p>საიტის ყველა ფოტო და სურათი — ერთი საერთო ბიბლიოთეკა.</p>
+<aside class="callout">
+<p><strong>აქ არ არის</strong> ლოგო, ხატულები და მთავარი ვიდეო. ისინი დიზაინის ნაწილია და კოდში ცხოვრობს.</p>
+</aside>
+<h2 id="s9-10678">ატვირთვა</h2>
+<p>ატვირთე სურათი. სისტემა ავტომატურად:</p>
+<ul>
+<li>გადაიყვანს <strong>WebP</strong> ფორმატში;</li>
+<li>დაამზადებს სამ ზომას — 480px, 900px და 1600px — რომ ბარათმა 1600px-იანი ორიგინალი არ ჩამოტვირთოს 400px-ზე გამოსაჩენად.</li>
+</ul>
+<p>დაშვებულია მხოლოდ სურათები.</p>
+<figure>
+<img loading="lazy" src="/manual-images/09-photoebi.jpg" alt="ფოტოების ბიბლიოთეკა">
+<figcaption>ბიბლიოთეკა. პირველი სვეტი თავად სურათია — ამიტომ ფოტოს პოვნა თვალით შეიძლება.</figcaption>
+</figure>
+
+<h2 id="s9-67685">ველები</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th>სავალდებულო</th>
+<th>ითარგმნება</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>სახელი</strong></td>
+<td>—</td>
+<td>არა</td>
+</tr>
+<tr>
+<td><strong>აღწერა (alt)</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>ხელმოწერა</strong></td>
+<td>—</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>სახელი</strong> მხოლოდ იმისთვისაა, რომ ბიბლიოთეკაში იპოვო — საიტზე არ ჩანს. ცარიელი დატოვე და ფაილის სახელი ავტომატურად ჩაიწერება.</p>
+<p><strong>აღწერა (alt)</strong> სავალდებულოა. ეს არის ის, რასაც ხედავს ეკრანის მკითხველი და სურათების ძებნა.</p>
+<aside class="callout">
+<p><strong>ეს ხელმოწერა არ არის.</strong> დაწერე რა ჩანს სურათზე:
+- ✓ „ნინო ოსაძე, ორთოპედი“
+- ✗ „ექიმის ფოტო“</p>
+</aside>
+<p><strong>ხელმოწერა</strong> არასავალდებულოა და სურათის ქვემოთ ჩანს იქ, სადაც დიზაინი ითვალისწინებს.</p>
+<h2 id="s9-26477">ფოკუსის წერტილი</h2>
+<p>პორტრეტები 4:5-ზე იჭრება, აპარატები — 4:3-ზე. <strong>ფოკუსის წერტილი</strong> საშუალებას გაძლევს თავად გადაწყვიტო, რა გადარჩება ჩამოჭრისას — კადრის ცენტრს ნუ მიანდობ.</p>
+<h2 id="s9-46358">წაშლა</h2>
+<p>სურათის წაშლამდე გადაამოწმე, სად გამოიყენება. წაშლილი სურათი იმ ჩანაწერებში, სადაც მიბმულია, ცარიელ ადგილს ტოვებს.</p>
+<hr />
+</section>
+<section id="s10" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 11</span><h1>ლენდინგ გვერდები</h1></header>
+<p><strong>მენიუ:</strong> მარკეტინგი → ლენდინგ გვერდები</p>
+<p>სარეკლამო კამპანიის ცალკეული გვერდები. მისამართი: <code>/ka/slug</code>.</p>
+<p>ეს ყველაზე დიდი ეკრანია პანელში — და ამავე დროს ის, სადაც ყველაზე ცოტა რამის შევსებაა საჭირო.</p>
+<figure>
+<img loading="lazy" src="/manual-images/11-lending-gverdi.jpg" alt="ლენდინგ გვერდის ფორმა">
+<figcaption>ახალი კამპანია. ოთხი თაბი ზემოთ, სტატუსი და მისამართი — მარჯვნივ.</figcaption>
+</figure>
+
+<aside class="callout">
+<h2 id="s10-21166">სავალდებულოა მხოლოდ ორი რამ</h2>
+<p><strong>კამპანიის სახელი</strong> და <strong>მთავარი სათაური</strong>. სულ ეს.</p>
+<p>ყველა დანარჩენი ველი არასავალდებულოა და <strong>ცარიელი ველი ავტომატურად ივსება</strong> — გვერდი მზა ტექსტს ჩასვამს, ხვრელს არ დატოვებს. ანუ სამ წუთში შეგიძლია გამართული კამპანიის გვერდი გამოაქვეყნო და დანარჩენი მოგვიანებით დახვეწო.</p>
+<p>სავალდებულოობა მხოლოდ <strong>ქართულს</strong> ეხება. ინგლისური და რუსული ვერსია არასდროს გიშლის შენახვაში ხელს.</p>
+</aside>
+<h2 id="s10-33386">გვერდითი სვეტი</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>სტატუსი</strong></td>
+<td>მუშავდება (არავინ ხედავს) · აქტიური · დასრულებული</td>
+</tr>
+<tr>
+<td><strong>მისამართი (slug)</strong></td>
+<td>ავტომატურად ივსება სახელიდან. გვერდი გაიხსნება: <code>/ka/slug</code></td>
+</tr>
+<tr>
+<td><strong>Google-ში ჩანდეს</strong></td>
+<td>ფასიანი რეკლამის გვერდისთვის ჩვეულებრივ <strong>გამორთულია</strong></td>
+</tr>
+<tr>
+<td><strong>დაწყება</strong></td>
+<td>მხოლოდ შენიშვნა შენთვის</td>
+</tr>
+<tr>
+<td><strong>დასრულება</strong></td>
+<td>მხოლოდ შენიშვნა — <strong>გვერდს ავტომატურად არ ხურავს</strong></td>
+</tr>
+<tr>
+<td><strong>დასრულების შემდეგ</strong></td>
+<td>რა მოხდეს, როცა სტატუსს „დასრულებულზე“ გადაიყვან</td>
+</tr>
+<tr>
+<td><strong>გადამისამართება</strong></td>
+<td>რომელ კამპანიაზე — ჩნდება მხოლოდ საჭიროებისას</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>სამი სტატუსი, სამი ქცევა:</strong></p>
+<ul>
+<li><strong>მუშავდება</strong> — გვერდი ვიზიტორისთვის საერთოდ არ არსებობს;</li>
+<li><strong>აქტიური</strong> — გვერდი ჩვეულებრივ იხსნება;</li>
+<li><strong>დასრულებული</strong> — გვერდი კვლავ იხსნება, მაგრამ ის, რასაც აჩვენებს, დამოკიდებულია ველზე <strong>„დასრულების შემდეგ“</strong>.</li>
+</ul>
+<aside class="callout">
+<p><strong>„დაწყება“ და „დასრულება“ ტაიმერი არ არის.</strong> ეს ორი თარიღი შენიშვნაა თქვენთვის — გვერდი თავად არ იხურება. კამპანიის დასრულებისას სტატუსი ხელით უნდა შეცვალო.</p>
+</aside>
+<p><strong>„დასრულების შემდეგ“</strong> სამი ვარიანტია:</p>
+<ul>
+<li><strong>„კამპანია დასრულდა“ ეკრანი</strong> — ვიზიტორი ხედავს თავაზიან შეტყობინებას;</li>
+<li><strong>სხვა კამპანიაზე გადამისამართება</strong> — ავირჩევ სად;</li>
+<li><strong>გვერდი ისევ ღიად დარჩეს</strong>.</li>
+</ul>
+<h2 id="s10-7951">თაბი „მთავარი“</h2>
+<h3 id="s10-73480">კამპანიის სახელი</h3>
+<p>სავალდებულო. ეს არის ის, რითაც კამპანიას სიაში იპოვი — და საიდანაც მისამართი ავტომატურად გამოითვლება.</p>
+<h3 id="s10-9939">პირველი ეკრანი</h3>
+<p>ის, რასაც ვიზიტორი დაუყოვნებლივ ხედავს.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>მთავარი სათაური</strong></td>
+<td><strong>ერთადერთი სავალდებულო ტექსტი</strong></td>
+</tr>
+<tr>
+<td><strong>აღწერა</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>პატარა წარწერა სათაურის ზემოთ</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>ღილაკის ტექსტი</strong></td>
+<td>ცარიელი დატოვე და ავტომატური ტექსტი ჩაისმება</td>
+</tr>
+<tr>
+<td><strong>განლაგება</strong></td>
+<td>ხუთი ვარიანტი</td>
+</tr>
+<tr>
+<td><strong>სურათი (კომპიუტერი)</strong></td>
+<td>სასურველი ზომა <strong>1920 × 1200 px</strong></td>
+</tr>
+<tr>
+<td><strong>სურათი (მობილური)</strong></td>
+<td>არასავალდებულო, <strong>1080 × 1350 px</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>განლაგების ხუთი ვარიანტი:</strong></p>
+<ul>
+<li>სურათი მარჯვნივ</li>
+<li>სურათი მარცხნივ</li>
+<li>სურათი მთელ ეკრანზე <em>(ყველაზე ეფექტური)</em></li>
+<li>ცენტრში, სურათი ქვემოთ</li>
+<li>მხოლოდ ტექსტი</li>
+</ul>
+<aside class="callout">
+<p><strong>სურათის გარეშე ყველა ვარიანტი ერთნაირად, ტექსტად გამოჩნდება.</strong> განლაგების არჩევას აზრი აქვს მხოლოდ მაშინ, როცა სურათი ატვირთული გაქვს.</p>
+</aside>
+<p>მთავარ სურათზე <strong>მნიშვნელოვანი ობიექტი ცენტრთან ახლოს დატოვე</strong> — კიდეები სხვადასხვა ეკრანზე სხვადასხვაგვარად იჭრება.</p>
+<p>მობილურის სურათი არასავალდებულოა: თუ ცარიელია, კომპიუტერის სურათი გამოიყენება.</p>
+<h3 id="s10-6076">რატომ დაგვიტოვოთ ნომერი</h3>
+<p>მოკლე ბლოკი სათაურითა და ტექსტით — რას იღებს პაციენტი სანაცვლოდ.</p>
+<h2 id="s10-59498">თაბი „სექციები“</h2>
+<p><strong>ჩართე მხოლოდ ის, რაც ამ კამპანიას სჭირდება.</strong> თითოეულ სექციას აქვს საკუთარი ჩექბოქსი <strong>„სექციის ჩვენება“</strong>, რომელიც ნაგულისხმევად გამორთულია. სანამ არ ჩართავ, სექციის ველები არც კი გამოჩნდება.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>სექცია</th>
+<th>რა არის</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>პრობლემა → გადაწყვეტა</strong></td>
+<td>პატარა წარწერა, სათაური, ტექსტი</td>
+</tr>
+<tr>
+<td><strong>ექიმი</strong></td>
+<td>აირჩევ ექიმს სიიდან, დაწერ სათაურსა და ტექსტს</td>
+</tr>
+<tr>
+<td><strong>რა ხდება შემდეგ</strong></td>
+<td>სათაური და ტექსტი — მაგ. „დაგირეკავთ“</td>
+</tr>
+<tr>
+<td><strong>პაციენტების შეფასებები</strong></td>
+<td>სათაური + <strong>მაქსიმუმ 3 შეფასება</strong></td>
+</tr>
+<tr>
+<td><strong>კლინიკა</strong></td>
+<td>ფოტო, სათაური, ტექსტი</td>
+</tr>
+<tr>
+<td><strong>დამამთავრებელი მოწოდება</strong></td>
+<td>მუქი ბლოკი გვერდის ბოლოს</td>
+</tr>
+<tr>
+<td><strong>„კამპანია დასრულდა“ ეკრანი</strong></td>
+<td>ჩანს მხოლოდ დასრულებულ კამპანიაზე</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="s10-56086">შეფასებებზე — მნიშვნელოვანი</h3>
+<p>თითო შეფასება სამი ველია: <strong>ციტატა</strong>, <strong>სახელი</strong>, <strong>წყარო</strong> (მაგ.: Google Reviews).</p>
+<aside class="callout">
+<p><strong>გამოაქვეყნე მხოლოდ ის შეფასებები, რომელთა დადასტურებაც კლინიკას შეუძლია.</strong> გამოგონილი შეფასება სამედიცინო საიტზე იურიდიული რისკია, არა მარკეტინგული ხრიკი.</p>
+</aside>
+<h3 id="s10-27693">„რა ხდება შემდეგ“ — რატომ არსებობს</h3>
+<p>ეს ბლოკი პაციენტს უხსნის, რომ <strong>ფორმის გაგზავნა ჯერ არ ნიშნავს დაჯავშნილ ვიზიტს</strong>. ის ამცირებს იმ ზარების რაოდენობას, სადაც პაციენტი ფიქრობს, რომ უკვე ჩაწერილია.</p>
+<h2 id="s10-6885">თაბი „ფორმა და ჰედერი“</h2>
+<h3 id="s10-68816">ფორმა</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>სათაური</strong></td>
+<td>მაგ.: „დატოვეთ ნომერი“</td>
+</tr>
+<tr>
+<td><strong>ტექსტი</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>ღილაკი</strong></td>
+<td>მაგ.: „გამოგზავნა“</td>
+</tr>
+<tr>
+<td><strong>მადლობის სათაური</strong></td>
+<td>მაგ.: „მოთხოვნა მიღებულია“</td>
+</tr>
+<tr>
+<td><strong>მადლობის ტექსტი</strong></td>
+<td>რას ხედავს პაციენტი გაგზავნის შემდეგ</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>რომელი ველები იყოს ფორმაში</strong> — ოთხი ჩექბოქსი:</p>
+<ul>
+<li><strong>მიმართულების არჩევა</strong></li>
+<li><strong>სასურველი დრო</strong></li>
+<li><strong>ელ. ფოსტა</strong></li>
+<li><strong>შეტყობინება</strong></li>
+</ul>
+<aside class="callout">
+<p><strong>რაც უფრო მოკლეა ფორმა, მით მეტი ივსება.</strong> სარეკლამო გვერდზე სახელი და ტელეფონი ჩვეულებრივ საკმარისია — დანარჩენი დარეკვისას ირკვევა. სამივე დამატებითი ველი ნაგულისხმევად გამორთულია და ეს განზრახაა.</p>
+</aside>
+<p><strong>კამპანიის მიმართულება</strong> — თუ კამპანია კონკრეტულ სერვისზეა (მაგ. ვინირები), აირჩიე აქ და ის ავტომატურად ჩაიწერება ჩაწერის მოთხოვნაში.</p>
+<h3 id="s10-85392">ზედა ზოლი</h3>
+<p><strong>სამი ვარიანტი:</strong></p>
+<ul>
+<li>ლოგო, ტელეფონი, ღილაკი</li>
+<li>ლოგო, ნდობის ტექსტი, ტელეფონი, ღილაკი</li>
+<li>მხოლოდ ლოგო და ღილაკი</li>
+</ul>
+<p><strong>ნდობის ტექსტი</strong> ჩანს მხოლოდ მეორე ვარიანტში.</p>
+<p>დამატებით: <strong>ტელეფონის ჩვენება</strong> (ჩართულია ნაგულისხმევად) და <strong>ღილაკის ტექსტი</strong>.</p>
+<h2 id="s10-58227">თაბი „SEO“</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th>თუ ცარიელია</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>სათაური</strong></td>
+<td>გამოიყენება მთავარი სათაური</td>
+</tr>
+<tr>
+<td><strong>აღწერა</strong></td>
+<td>გამოიყენება პირველი ეკრანის აღწერა</td>
+</tr>
+<tr>
+<td><strong>გაზიარების სურათი</strong></td>
+<td>გამოიყენება პირველი ეკრანის სურათი</td>
+</tr>
+</tbody>
+</table></div>
+<p>ეს ის ტექსტია, რომელიც Google-სა და სოციალურ ქსელებში გაზიარებისას ჩანს.</p>
+<h2 id="s10-46632">კამპანიის შედეგის ნახვა</h2>
+<p>ყოველი ჩაწერის მოთხოვნა, რომელიც ლენდინგიდან მოვა, ავტომატურად ინახავს კამპანიის სახელს, მისამართსა და რეკლამის წყაროს. იხილე თავი 3 → <strong>„საიდან მოვიდა“</strong>.</p>
+<hr />
+</section>
+<section id="s11" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 12</span><h1>Google-ის ტექსტები</h1></header>
+<p><strong>მენიუ:</strong> მარკეტინგი → Google-ის ტექსტები</p>
+<p>რა წერია ბრაუზერის ჩანართზე და Google-ის შედეგებში თითოეული გვერდისთვის.</p>
+<p>ეკრანი ორ თაბად იყოფა:</p>
+<figure>
+<img loading="lazy" src="/manual-images/10-google-teqstebi.jpg" alt="Google-ის ტექსტები">
+<figcaption>თითოეულ გვერდს ორი ველი აქვს — სათაური და აღწერა, სამივე ენაზე ცალ-ცალკე.</figcaption>
+</figure>
+
+<h3 id="s11-87556">თაბი „გვერდები“</h3>
+<ul>
+<li>მთავარი გვერდი</li>
+<li>ჩვენს შესახებ</li>
+<li>სერვისები</li>
+<li>ტექნოლოგიები</li>
+<li>სიახლეები</li>
+<li>კონტაქტი</li>
+</ul>
+<h3 id="s11-69038">თაბი „მიმართულებები“</h3>
+<p>სერვისების ხუთი მიმართულების გვერდი.</p>
+<h2 id="s11-10547">თითოეულ გვერდზე ორი ველი</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th>სასურველი სიგრძე</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>სათაური</strong></td>
+<td>~60 სიმბოლო</td>
+<td>უფრო გრძელს Google ჭრის. ველი იტევს 90-მდე.</td>
+</tr>
+<tr>
+<td><strong>აღწერა</strong></td>
+<td>~155 სიმბოლო</td>
+<td>ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს. ველი იტევს 320-მდე.</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout">
+<p><strong>სიმბოლოების ლიმიტი რეკომენდაცია არ არის, ტექნიკური ზღვარია.</strong> Google გრძელ ტექსტს <strong>ჭრის, არ უარყოფს</strong> — ამიტომ ველი უფრო მეტს იტევს, ვიდრე სასურველია. თუ 60-ს გადააჭარბე, შეცდომას არ მიიღებ; უბრალოდ დაბოლოება ძებნის შედეგებში არ გამოჩნდება.</p>
+</aside>
+<p>ორივე ითარგმნება — სამივე ენაზე ცალ-ცალკე.</p>
+<aside class="callout">
+<p><strong>ცარიელი ველი ნიშნავს, რომ ჩაშენებული ტექსტი გამოიყენება — და ეს ხშირად სწორია.</strong> შეავსე მაშინ, როცა კონკრეტული მიზეზი გაქვს.</p>
+</aside>
+<p><strong>სათაურში დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას</strong> — სახელი ავტომატურად ემატება. „იმპლანტაცია“ სჯობს „Total Charm Dent — იმპლანტაცია“-ს.</p>
+<p><strong>აღწერა დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.</strong> სიტყვების დაგროვება დღეს არ მუშაობს; ერთი გასაგები წინადადება — მუშაობს.</p>
+<h2 id="s11-79414">რატომ არ არის აქ სერვისები და აპარატურა</h2>
+<p>ცალკე სერვისი და ცალკე აპარატი <strong>გვერდი არ არის</strong> — ისინი მიმართულების ან ტექნოლოგიების გვერდზე ღუზად ჩნდება. ამიტომ მათი ცალკე სათაურისთვის ადგილი უბრალოდ არ არსებობს.</p>
+<p>სიახლეებს კი <strong>საკუთარი</strong> Google-ის ველები აქვთ — თითოეულ სტატიაში, თავად სტატიის შიგნით. იხილე თავი 5.</p>
+<hr />
+</section>
+<section id="s12" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 13</span><h1>სტატისტიკა</h1></header>
+<p><strong>მენიუ:</strong> მარკეტინგი → სტატისტიკა · <em>მხოლოდ ადმინისტრატორი</em></p>
+<p>ანონიმური დღიური ჯამები. ჩანაწერები ავტომატურად იქმნება და <strong>არავის შეუძლია მათი შეცვლა ან წაშლა.</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>სვეტი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>თარიღი</strong></td>
+<td>კალენდარული დღე UTC-ით (წწწწ-თთ-დდ)</td>
+</tr>
+<tr>
+<td><strong>მოვლენა</strong></td>
+<td>გვერდის ნახვა · ჩაწერის ფორმა გაიხსნა · ჩაწერა დასრულდა</td>
+</tr>
+<tr>
+<td><strong>გვერდი</strong></td>
+<td>ივსება მხოლოდ გვერდის ნახვისთვის</td>
+</tr>
+<tr>
+<td><strong>რაოდენობა</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout">
+<p><strong>აქ არ ინახება ვიზიტორის იდენტიფიკატორი, სესია, cookie, ციფრული ანაბეჭდი ან IP მისამართი.</strong> მხოლოდ ჯამები. ეს არჩევანი განზრახაა — ის ამცირებს პერსონალურ მონაცემებთან დაკავშირებულ ვალდებულებებს და ამავე დროს იმ კითხვებზე პასუხობს, რომლებიც კლინიკას რეალურად აინტერესებს: რამდენმა ნახა, რამდენმა გახსნა ფორმა, რამდენმა დაასრულა.</p>
+</aside>
+<p><strong>ჩაწერის კონვერსია</strong> ამ სამი რიცხვის ურთიერთობაა: ნახვა → ფორმის გახსნა → დასრულება.</p>
+<hr />
+</section>
+<section id="s13" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 14</span><h1>პარამეტრები</h1></header>
+<h2 id="s13-86138">მომხმარებლები</h2>
+<p><strong>მენიუ:</strong> პარამეტრები → მომხმარებლები</p>
+<p>ვის შეუძლია პანელში შესვლა.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>სახელი</strong></td>
+<td>სავალდებულო</td>
+</tr>
+<tr>
+<td><strong>ელ. ფოსტა</strong></td>
+<td>შესვლისთვის</td>
+</tr>
+<tr>
+<td><strong>როლი</strong></td>
+<td>ადმინისტრატორი ან რედაქტორი</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="s13-55752">ვის რა შეუძლია</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>მოქმედება</th>
+<th>რედაქტორი</th>
+<th>ადმინისტრატორი</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>კოლეგების სიის ნახვა</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>საკუთარი სახელისა და პაროლის შეცვლა</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>საკუთარი როლის შეცვლა</strong></td>
+<td>✗</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ახალი ანგარიშის შექმნა</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>ანგარიშის წაშლა</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>როლის მინიჭება</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout">
+<p><strong>რედაქტორს საკუთარი როლის შეცვლა არ შეუძლია.</strong> ეს ტექნიკურად დაცულია, არა მხოლოდ ინტერფეისში დამალული — წინააღმდეგ შემთხვევაში ყველა დანარჩენი წესი დეკორაცია იქნებოდა.</p>
+</aside>
+<h3 id="s13-42730">ბოლო ადმინისტრატორის დაცვა</h3>
+<p><strong>სისტემა არ დაუშვებს ბოლო ადმინისტრატორის ანგარიშის წაშლას.</strong> ცდისას მიიღებ შეტყობინებას:</p>
+<aside class="callout">
+<p>„ეს ერთადერთი ადმინისტრატორის ანგარიშია. სანამ წაშლი, სხვა მომხმარებელი ადმინისტრატორად აქციე.“</p>
+</aside>
+<p>ეს არ არის ზედმეტი სიფრთხილე: ბოლო ადმინისტრატორის წაშლა პანელს <strong>სამუდამოდ</strong> კეტავს — აღდგენა მხოლოდ ბაზაში პირდაპირი ჩარევით შეიძლება.</p>
+<hr />
+<h2 id="s13-33466">ჩაწერის შეტყობინებები</h2>
+<p><strong>მენიუ:</strong> პარამეტრები → ჩაწერის შეტყობინებები · <em>მხოლოდ ადმინისტრატორი</em></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>შეტყობინების მისამართი</strong></td>
+<td>სად მოდის წერილი ახალ ჩაწერაზე</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout">
+<p><strong>ეს არ არის კლინიკის საჯარო ფოსტა.</strong> ეს შიდა მისამართია, რომელსაც პაციენტი ვერ ხედავს. საჯარო ფოსტა „კლინიკის მონაცემებში“ იცვლება — თავი 4.</p>
+</aside>
+<p>ცარიელი ველი ნიშნავს, რომ სერვერზე მითითებული ნაგულისხმევი მისამართი გამოიყენება.</p>
+<hr />
+<h2 id="s13-15643">ანალიტიკის კოდები</h2>
+<p><strong>მენიუ:</strong> პარამეტრები → ანალიტიკის კოდები · <em>მხოლოდ ადმინისტრატორი</em></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ველი</th>
+<th>ფორმატი</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GA4 Measurement ID</strong></td>
+<td><code>G-XXXXXXXXXX</code></td>
+</tr>
+<tr>
+<td><strong>Meta Pixel ID</strong></td>
+<td>5–20 ციფრი</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>ცარიელი ველი = სერვისი გამორთულია.</strong> არასწორი ფორმატი შენახვისას შეცდომას აჩვენებს.</p>
+<aside class="callout">
+<p><strong>ჩართულიც კი, კოდი მხოლოდ ვიზიტორის თანხმობის შემდეგ ჩაიტვირთება.</strong> სანამ ვიზიტორი cookie-ს ბანერზე თანხმობას არ დააფიქსირებს, არცერთი ანალიტიკის სკრიპტი არ ეშვება.</p>
+</aside>
+<hr />
+<h2 id="s13-89433">ცვლილებების ისტორია</h2>
+<p><strong>მენიუ:</strong> პარამეტრები → ცვლილებების ისტორია · <em>მხოლოდ ადმინისტრატორი</em></p>
+<p>ვინ, რა და როდის შეცვალა.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>სვეტი</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>თარიღი</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>ვინ</strong></td>
+<td>რომელი მომხმარებელი</td>
+</tr>
+<tr>
+<td><strong>მოქმედება</strong></td>
+<td>დამატება · შეცვლა · წაშლა</td>
+</tr>
+<tr>
+<td><strong>რომელი ჩანაწერი</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>სად</strong></td>
+<td>რომელ ეკრანზე</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout">
+<p><strong>ჩანაწერები ავტომატურად იქმნება და მათი შეცვლა ან წაშლა არავის შეუძლია — არც ადმინისტრატორს.</strong> ეს ტექნიკური შეზღუდვაა, არა პოლიტიკა: ჟურნალი, რომლის რედაქტირებაც შესაძლებელია, ჟურნალი არ არის.</p>
+</aside>
+<p><strong>„რა შეიცვალა“</strong> აჩვენებს მხოლოდ შეცვლილ ველებს — ძველი და ახალი მნიშვნელობით. გრძელი ტექსტი მოკლდება, სტატიის შიგთავსი მხოლოდ აღინიშნება („ტექსტი შეიცვალა“).</p>
+<p><strong>პაროლები და მსგავსი მგრძნობიარე ველები ჟურნალში არასდროს ხვდება</strong> — ისინი ამოღებულია მანამ, სანამ ჩანაწერი შეიქმნება.</p>
+<h3 id="s13-68305">რა არ იწერება</h3>
+<p>ვებგვერდიდან შემოსული <strong>ახალი ჩაწერის მოთხოვნა ჟურნალში არ ჩნდება</strong> — ის პაციენტმა შექმნა, არა თანამშრომელმა. სამაგიეროდ, როცა თანამშრომელი სტატუსს ცვლის, ეს <strong>იწერება</strong>.</p>
+<hr />
+</section>
+<section id="s14" class="chapter">
+<header class="chapter__head"><span class="chapter__num">თავი 15</span><h1>პრობლემების სწრაფი მოგვარება</h1></header>
+<h2 id="s14-49452">შევინახე, მაგრამ საიტზე არაფერი შეიცვალა</h2>
+<p><strong>1. სწორი ენა გქონდა არჩეული?</strong>
+ყველაზე ხშირი მიზეზი. English-ზე შეცვლილი ტექსტი ქართულ გვერდზე არ გამოჩნდება.</p>
+<p><strong>2. ბრაუზერის ქეში.</strong>
+გახსენი გვერდი <code>Ctrl+Shift+R</code>-ით (Mac-ზე <code>Cmd+Shift+R</code>).</p>
+<p><strong>3. სიახლე ხომ არ არის მონახაზად?</strong>
+სიახლეებში „მონახაზის შენახვა“ არ ნიშნავს გამოქვეყნებას.</p>
+<p><strong>4. ექიმს ხომ არ აქვს „საიტზე გამოჩნდეს“ გამორთული?</strong></p>
+<p><strong>5. ლენდინგის სტატუსი ხომ არ არის „მუშავდება“?</strong></p>
+<p>თუ ხუთივე შემოწმდა და ცვლილება მაინც არ ჩანს — დაუკავშირდი დეველოპერს.</p>
+<h2 id="s14-4678">შენახვა არ გამოდის — წითელი შეცდომა ჩნდება</h2>
+<p>შეცდომა ზუსტად ასახელებს, რომელი ველია შესავსები. გადაახვიე ფორმის თავში — შეუვსებელი ველები მონიშნულია.</p>
+<p><strong>თუ შეცდომა ველზეა, რომელიც შენ არ შეგიხებია:</strong> სავარაუდოდ სავალდებულო ველია, რომელიც თავიდანვე ცარიელი იყო.</p>
+<p><strong>თუ ინგლისურ ან რუსულ ენაზე ხარ და შეცდომა ცარიელ სავალდებულო ველზეა:</strong> ეს ის ველია, რომელიც ამ ენაზე შეუვსებელია. ან შეავსე, ან გადართე ქართულზე და იქ შეინახე. <em>(ლენდინგ გვერდები გამონაკლისია — იქ მხოლოდ ქართული მოწმდება.)</em></p>
+<h2 id="s14-52795">პაციენტმა თქვა, რომ ფორმა გამოგზავნა, მაგრამ სიაში არ ვხედავ</h2>
+<p><strong>1. სია დაალაგე თარიღით</strong> — უახლესი ზემოთ უნდა იყოს.</p>
+<p><strong>2. ფილტრი ხომ არ გიდგას</strong> კონკრეტულ სტატუსზე?</p>
+<p><strong>3. მოძებნე ტელეფონით</strong> — სახელი შეიძლება სხვაგვარად ჩაწერა.</p>
+<p><strong>4. შეამოწმე „სპამი“ სტატუსის ჩანაწერები.</strong></p>
+<aside class="callout">
+<p><strong>შეტყობინება რომ არ მოსულა, ეს არ ნიშნავს, რომ მოთხოვნა არ არსებობს.</strong> ისინი ორი სხვადასხვა რამაა — იხილე თავი 3.</p>
+</aside>
+<h2 id="s14-16088">სერვისს ხატულა გაუქრა</h2>
+<p>მისამართი (slug) შეიცვალა. <strong>დაუკავშირდი დეველოპერს</strong> — ხატულა კოდში ამ მისამართით არჩევა.</p>
+<h2 id="s14-83134">სურათი აიტვირთა, მაგრამ ცუდად იჭრება</h2>
+<p>გამოიყენე <strong>ფოკუსის წერტილი</strong> — ჩაწერის შემდეგ სისტემა სწორედ იმ ადგილს შეინარჩუნებს.</p>
+<h2 id="s14-78596">Google ისევ ძველ ინფორმაციას აჩვენებს</h2>
+<p>Google-ის ინდექსი დაუყოვნებლივ არ ნახლდება — ამას რამდენიმე დღიდან რამდენიმე კვირამდე სჭირდება. საიტზე ცვლილება მაშინვე ჩანს; ძებნის შედეგებში — არა.</p>
+<p><strong>გამონაკლისი:</strong> სამუშაო საათები. Google-ისთვის განკუთვნილი ვერსია კოდშია და ხელით უნდა შეიცვალოს — იხილე თავი 4.</p>
+<h2 id="s14-61504">პანელში ვერ შევდივარ</h2>
+<p><strong>1. მისამართი სწორია?</strong> <code>totalcharmdent.ge/admin</code></p>
+<p><strong>2. გამოიყენე „პაროლი დაგავიწყდა?“</strong> — აღდგენის წერილი ფოსტაზე მოვა.</p>
+<p><strong>3. თუ წერილი არ მოდის</strong> — შეამოწმე სპამის საქაღალდე, შემდეგ დაუკავშირდი ადმინისტრატორს.</p>
+<h2 id="s14-25148">მენიუში ეკრანს ვერ ვხედავ</h2>
+<p>შენი როლისთვის დამალულია. იხილე <strong>დანართი ა</strong>.</p>
+<hr />
+</section>
+<section id="s15" class="chapter">
+<header class="chapter__head"><span class="chapter__num">დანართი ა</span><h1>ვინ რას ხედავს</h1></header>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ეკრანი</th>
+<th>რედაქტორი</th>
+<th>ადმინისტრატორი</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ჩაწერის მოთხოვნები</strong></td>
+<td>✓ ხედავს, სტატუსს ცვლის</td>
+<td>✓ + წაშლა</td>
+</tr>
+<tr>
+<td><strong>სიახლეები</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>სერვისები</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>ექიმები</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>აპარატურა</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>კითხვა-პასუხი</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>ფოტოები</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>კლინიკის მონაცემები</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>ლენდინგ გვერდები</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>Google-ის ტექსტები</strong></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>სტატისტიკა</strong></td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>მომხმარებლები</strong></td>
+<td>✓ ხედავს სიას, ცვლის მხოლოდ თავისს</td>
+<td>✓ სრულად</td>
+</tr>
+<tr>
+<td><strong>ცვლილებების ისტორია</strong></td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>ჩაწერის შეტყობინებები</strong></td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>ანალიტიკის კოდები</strong></td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>კლინიკის მონაცემები რედაქტორისთვისაც ღიაა განზრახ.</strong> ტელეფონის ნომრის გასწორება ჩვეულებრივი სარედაქციო სამუშაოა — ამისთვის ადმინისტრატორის დალოდება არ უნდა იყოს საჭირო.</p>
+<hr />
+</section>
+<section id="s16" class="chapter">
+<header class="chapter__head"><span class="chapter__num">დანართი ბ</span><h1>სად რა იცვლება</h1></header>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>მინდა შევცვალო</th>
+<th>სად</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>აპარატის აღწერა</td>
+<td>საიტის შიგთავსი → აპარატურა</td>
+</tr>
+<tr>
+<td>ბლოგის სტატია</td>
+<td>საიტის შიგთავსი → სიახლეები</td>
+</tr>
+<tr>
+<td>ბმული Facebook-ზე</td>
+<td>საიტის შიგთავსი → კლინიკის მონაცემები → სოციალური ქსელები</td>
+</tr>
+<tr>
+<td>გამოცდილების წლები (მთავარი ექიმი)</td>
+<td>საიტის შიგთავსი → ექიმები → გვერდითი სვეტი</td>
+</tr>
+<tr>
+<td>ექიმის ბიოგრაფია</td>
+<td>საიტის შიგთავსი → ექიმები</td>
+</tr>
+<tr>
+<td>ექიმის რიგითობა</td>
+<td>საიტის შიგთავსი → ექიმები → რიგითობა</td>
+</tr>
+<tr>
+<td>ვინ იღებს ჩაწერის შეტყობინებას</td>
+<td>პარამეტრები → ჩაწერის შეტყობინებები</td>
+</tr>
+<tr>
+<td>თანამშრომლის ანგარიში</td>
+<td>პარამეტრები → მომხმარებლები</td>
+</tr>
+<tr>
+<td>კითხვა-პასუხი</td>
+<td>საიტის შიგთავსი → კითხვა-პასუხი</td>
+</tr>
+<tr>
+<td>კლინიკის ელ. ფოსტა (საჯარო)</td>
+<td>საიტის შიგთავსი → კლინიკის მონაცემები</td>
+</tr>
+<tr>
+<td>კონსულტაციის ფასი</td>
+<td>საიტის შიგთავსი → კლინიკის მონაცემები</td>
+</tr>
+<tr>
+<td>მისამართი</td>
+<td>საიტის შიგთავსი → კლინიკის მონაცემები</td>
+</tr>
+<tr>
+<td>რეკლამის გვერდი</td>
+<td>მარკეტინგი → ლენდინგ გვერდები</td>
+</tr>
+<tr>
+<td>სამუშაო საათები</td>
+<td>საიტის შიგთავსი → კლინიკის მონაცემები</td>
+</tr>
+<tr>
+<td>სერვისის ტექსტი</td>
+<td>საიტის შიგთავსი → სერვისები</td>
+</tr>
+<tr>
+<td>სურათი</td>
+<td>საიტის შიგთავსი → ფოტოები</td>
+</tr>
+<tr>
+<td>ტელეფონი</td>
+<td>საიტის შიგთავსი → კლინიკის მონაცემები</td>
+</tr>
+<tr>
+<td>ფასი Google-ის შედეგებში</td>
+<td>საიტის შიგთავსი → კლინიკის მონაცემები</td>
+</tr>
+<tr>
+<td>ჩაწერის სტატუსი</td>
+<td>ყოველდღიური → ჩაწერის მოთხოვნები</td>
+</tr>
+<tr>
+<td>წლები ბაზარზე</td>
+<td>საიტის შიგთავსი → კლინიკის მონაცემები</td>
+</tr>
+<tr>
+<td>Google Maps-ის ბმული</td>
+<td>საიტის შიგთავსი → კლინიკის მონაცემები</td>
+</tr>
+<tr>
+<td>Google-ის სათაური (გვერდი)</td>
+<td>მარკეტინგი → Google-ის ტექსტები</td>
+</tr>
+<tr>
+<td>Google-ის სათაური (სტატია)</td>
+<td>საიტის შიგთავსი → სიახლეები → Google-ის ჩანაწერი</td>
+</tr>
+<tr>
+<td>GA4 / Meta Pixel</td>
+<td>პარამეტრები → ანალიტიკის კოდები</td>
+</tr>
+<tr>
+<td>WhatsApp-ის ნომერი</td>
+<td>საიტის შიგთავსი → კლინიკის მონაცემები</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+</section>
+<section id="s17" class="chapter">
+<header class="chapter__head"><span class="chapter__num">დანართი გ</span><h1>რა იცვლება ენების მიხედვით</h1></header>
+<p><strong>„ითარგმნება“ ნიშნავს, რომ ველი სამივე ენაზე ცალ-ცალკე ივსება.</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>ეკრანი</th>
+<th>ითარგმნება</th>
+<th>ერთია ყველა ენისთვის</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>სიახლეები</strong></td>
+<td>სათაური, მოკლე აღწერა, ტექსტი, Google-ის ორივე ველი</td>
+<td>მისამართი, კატეგორია, თარიღი, მთავარი სურათი</td>
+</tr>
+<tr>
+<td><strong>სერვისები</strong></td>
+<td>დასახელება, ერთი წინადადება, შესავალი, რას მოიცავს</td>
+<td>მისამართი, მიმართულება, რიგითობა</td>
+</tr>
+<tr>
+<td><strong>ექიმები</strong></td>
+<td>სახელი, პოზიცია, სპეციალიზაცია, თეგები, ბიოგრაფია, განათლება, გამოცდილება, ტრენინგები, ენები</td>
+<td>ფოტო, მისამართი, რიგითობა, ორივე ჩექბოქსი, გამოცდილების წლები</td>
+</tr>
+<tr>
+<td><strong>აპარატურა</strong></td>
+<td>ერთი წინადადება, ტექსტი, მთავარი ფაქტები</td>
+<td><strong>მოდელის დასახელება</strong>, მწარმოებელი, მწარმოებლის საიტი, ფოტო, ჯგუფი, რიგითობა, მისამართი</td>
+</tr>
+<tr>
+<td><strong>კითხვა-პასუხი</strong></td>
+<td>კითხვა, პასუხი</td>
+<td>რიგითობა</td>
+</tr>
+<tr>
+<td><strong>ფოტოები</strong></td>
+<td>აღწერა (alt), ხელმოწერა</td>
+<td>სახელი, თავად ფაილი</td>
+</tr>
+<tr>
+<td><strong>კლინიკის მონაცემები</strong></td>
+<td>მისამართი, სამუშაო საათები</td>
+<td>ტელეფონები, ელ. ფოსტა, Maps-ის ბმული, ფასები, ციფრები, სოციალური ქსელები</td>
+</tr>
+<tr>
+<td><strong>Google-ის ტექსტები</strong></td>
+<td>სათაური, აღწერა — ყველა გვერდზე</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>ლენდინგ გვერდები</strong></td>
+<td>თითქმის ყველა ტექსტი</td>
+<td>სტატუსი, მისამართი, თარიღები, ჩექბოქსები, სურათები</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<p><em>ვერსია 1.0 · შედგენილია ადმინისტრაციული პანელის კოდის მიხედვით</em>
+<em>The Asylum Agency · theasylum.agency</em></p>
+</section>
+  </article>
+</main>
+
+<script>
+(function () {
+  var INDEX = [{"t": "მენიუს ოთხი ჯგუფი", "s": "s0-13161", "c": "1. სისტემის შესახებ"}, {"t": "ყოველდღიური", "s": "s0-58710", "c": "1. სისტემის შესახებ"}, {"t": "საიტის შიგთავსი", "s": "s0-23397", "c": "1. სისტემის შესახებ"}, {"t": "მარკეტინგი", "s": "s0-902", "c": "1. სისტემის შესახებ"}, {"t": "პარამეტრები", "s": "s0-92879", "c": "1. სისტემის შესახებ"}, {"t": "მომხმარებლის ორი როლი", "s": "s0-19293", "c": "1. სისტემის შესახებ"}, {"t": "რედაქტორი", "s": "s0-83298", "c": "1. სისტემის შესახებ"}, {"t": "ადმინისტრატორი", "s": "s0-21840", "c": "1. სისტემის შესახებ"}, {"t": "1. სისტემის შესახებ", "s": "s0", "c": ""}, {"t": "ჩაწერის მოთხოვნები", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "სიახლეები", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "სერვისები", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "ექიმები", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "აპარატურა", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "კითხვა-პასუხი", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "ფოტოები", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "კლინიკის მონაცემები", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "ლენდინგ გვერდები", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "სტატისტიკა", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "Google-ის ტექსტები", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "მომხმარებლები", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "ცვლილებების ისტორია", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "ჩაწერის შეტყობინებები", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "ანალიტიკის კოდები", "s": "s0", "c": "1. სისტემის შესახებ"}, {"t": "შესვლა", "s": "s1-13614", "c": "2. სისტემაში შესვლა და ნავიგაცია"}, {"t": "მარცხენა მენიუ", "s": "s1-54628", "c": "2. სისტემაში შესვლა და ნავიგაცია"}, {"t": "სამი ენა", "s": "s1-3098", "c": "2. სისტემაში შესვლა და ნავიგაცია"}, {"t": "შენახვა", "s": "s1-40125", "c": "2. სისტემაში შესვლა და ნავიგაცია"}, {"t": "მონახაზი და გამოქვეყნება", "s": "s1-6495", "c": "2. სისტემაში შესვლა და ნავიგაცია"}, {"t": "გასვლა", "s": "s1-49875", "c": "2. სისტემაში შესვლა და ნავიგაცია"}, {"t": "2. სისტემაში შესვლა და ნავიგაცია", "s": "s1", "c": ""}, {"t": "სიახლეები", "s": "s1", "c": "2. სისტემაში შესვლა და ნავიგაცია"}, {"t": "ექიმები", "s": "s1", "c": "2. სისტემაში შესვლა და ნავიგაცია"}, {"t": "აპარატურა", "s": "s1", "c": "2. სისტემაში შესვლა და ნავიგაცია"}, {"t": "ლენდინგ გვერდები", "s": "s1", "c": "2. სისტემაში შესვლა და ნავიგაცია"}, {"t": "სერვისები, კითხვა-პასუხი", "s": "s1", "c": "2. სისტემაში შესვლა და ნავიგაცია"}, {"t": "სია", "s": "s2-76886", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "მოთხოვნის გახსნა", "s": "s2-84654", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "სტატუსები", "s": "s2-84180", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "რეკომენდებული პროცესი", "s": "s2-1126", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "საიდან მოვიდა", "s": "s2-27632", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "შეტყობინებების სტატუსი", "s": "s2-53190", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "წაშლა", "s": "s2-46358", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "3. ჩაწერის მოთხოვნები", "s": "s2", "c": ""}, {"t": "თარიღი", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "სახელი", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "ტელეფონი", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "მიმართულება", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "სტატუსი", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "ახალი — არ დაგვირეკავს", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "დავურეკეთ", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "ჩაწერილია", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "დახურული", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "სპამი", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "გაგზავნილია", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "მოლოდინში", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "ვერ გაიგზავნა", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "გამოტოვებულია", "s": "s2", "c": "3. ჩაწერის მოთხოვნები"}, {"t": "ტელეფონი", "s": "s3-94753", "c": "4. კლინიკის მონაცემები"}, {"t": "სად აისახება", "s": "s3-43563", "c": "4. კლინიკის მონაცემები"}, {"t": "მისამართი და ფოსტა", "s": "s3-40726", "c": "4. კლინიკის მონაცემები"}, {"t": "კონსულტაციის ფასი", "s": "s3-84160", "c": "4. კლინიკის მონაცემები"}, {"t": "გამოქვეყნებული ციფრები", "s": "s3-44640", "c": "4. კლინიკის მონაცემები"}, {"t": "სოციალური ქსელები", "s": "s3-97357", "c": "4. კლინიკის მონაცემები"}, {"t": "როგორ შევამოწმო ცვლილება", "s": "s3-68470", "c": "4. კლინიკის მონაცემები"}, {"t": "4. კლინიკის მონაცემები", "s": "s3", "c": ""}, {"t": "მობილური", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "ქალაქის ნომერი", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "WhatsApp იგივე ნომერზეა", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "WhatsApp-ის ნომერი", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "ელ. ფოსტა", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "მისამართი", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "Google Maps-ის ბმული", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "სამუშაო საათები", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "პირველადი კონსულტაცია (₾)", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "განმეორებითი კონსულტაცია (₾)", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "კმაყოფილი პაციენტების %", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "წლები ბაზარზე", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "Facebook", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "Instagram", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "Google Business Profile", "s": "s3", "c": "4. კლინიკის მონაცემები"}, {"t": "ორი კატეგორია", "s": "s4-81356", "c": "5. სიახლეები"}, {"t": "ველები", "s": "s4-67685", "c": "5. სიახლეები"}, {"t": "მთავარ სვეტში", "s": "s4-36268", "c": "5. სიახლეები"}, {"t": "გვერდით სვეტში", "s": "s4-99156", "c": "5. სიახლეები"}, {"t": "Google-ის ჩანაწერი (დაკეცილი ბლოკი)", "s": "s4-62412", "c": "5. სიახლეები"}, {"t": "მონახაზი და გამოქვეყნება", "s": "s4-6495", "c": "5. სიახლეები"}, {"t": "5. სიახლეები", "s": "s4", "c": ""}, {"t": "კლინიკის სიახლე", "s": "s4", "c": "5. სიახლეები"}, {"t": "სტატია", "s": "s4", "c": "5. სიახლეები"}, {"t": "სათაური", "s": "s4", "c": "5. სიახლეები"}, {"t": "მთავარი სურათი", "s": "s4", "c": "5. სიახლეები"}, {"t": "მოკლე აღწერა", "s": "s4", "c": "5. სიახლეები"}, {"t": "ტექსტი", "s": "s4", "c": "5. სიახლეები"}, {"t": "მისამართი (slug)", "s": "s4", "c": "5. სიახლეები"}, {"t": "კატეგორია", "s": "s4", "c": "5. სიახლეები"}, {"t": "გამოქვეყნების თარიღი", "s": "s4", "c": "5. სიახლეები"}, {"t": "სათაური Google-ისთვის", "s": "s4", "c": "5. სიახლეები"}, {"t": "აღწერა Google-ისთვის", "s": "s4", "c": "5. სიახლეები"}, {"t": "ხუთი მიმართულება", "s": "s5-58889", "c": "6. სერვისები"}, {"t": "ველები", "s": "s5-67685", "c": "6. სერვისები"}, {"t": "მთავარ სვეტში", "s": "s5-36268", "c": "6. სერვისები"}, {"t": "გვერდით სვეტში", "s": "s5-99156", "c": "6. სერვისები"}, {"t": "⚠ სერვისის მისამართს ხელი არ ახლო", "s": "s5-99691", "c": "6. სერვისები"}, {"t": "6. სერვისები", "s": "s5", "c": ""}, {"t": "დასახელება", "s": "s5", "c": "6. სერვისები"}, {"t": "ერთი წინადადება", "s": "s5", "c": "6. სერვისები"}, {"t": "შესავალი", "s": "s5", "c": "6. სერვისები"}, {"t": "რას მოიცავს", "s": "s5", "c": "6. სერვისები"}, {"t": "მისამართი (slug)", "s": "s5", "c": "6. სერვისები"}, {"t": "მიმართულება", "s": "s5", "c": "6. სერვისები"}, {"t": "რიგითობა", "s": "s5", "c": "6. სერვისები"}, {"t": "გვერდითი სვეტი — ორი ჩექბოქსი", "s": "s6-84968", "c": "7. ექიმები"}, {"t": "მთავარი სვეტი", "s": "s6-38784", "c": "7. ექიმები"}, {"t": "ოთხი დაკეცილი ბლოკი", "s": "s6-6455", "c": "7. ექიმები"}, {"t": "7. ექიმები", "s": "s6", "c": ""}, {"t": "საიტზე გამოჩნდეს", "s": "s6", "c": "7. ექიმები"}, {"t": "მთავარი ექიმი", "s": "s6", "c": "7. ექიმები"}, {"t": "გამოცდილების წლები", "s": "s6", "c": "7. ექიმები"}, {"t": "რიგითობა", "s": "s6", "c": "7. ექიმები"}, {"t": "მისამართი (slug)", "s": "s6", "c": "7. ექიმები"}, {"t": "სახელი და გვარი", "s": "s6", "c": "7. ექიმები"}, {"t": "პოზიცია", "s": "s6", "c": "7. ექიმები"}, {"t": "ფოტო", "s": "s6", "c": "7. ექიმები"}, {"t": "სპეციალიზაცია", "s": "s6", "c": "7. ექიმები"}, {"t": "სპეციალიზაციის თეგები", "s": "s6", "c": "7. ექიმები"}, {"t": "ბიოგრაფია", "s": "s6", "c": "7. ექიმები"}, {"t": "ოთხი ჯგუფი", "s": "s7-1595", "c": "8. აპარატურა"}, {"t": "გვერდითი სვეტი", "s": "s7-33386", "c": "8. აპარატურა"}, {"t": "მთავარი სვეტი", "s": "s7-38784", "c": "8. აპარატურა"}, {"t": "8. აპარატურა", "s": "s7", "c": ""}, {"t": "ჯგუფი", "s": "s7", "c": "8. აპარატურა"}, {"t": "რიგითობა", "s": "s7", "c": "8. აპარატურა"}, {"t": "ფოტო ჯერ არ არის", "s": "s7", "c": "8. აპარატურა"}, {"t": "მისამართი (slug)", "s": "s7", "c": "8. აპარატურა"}, {"t": "მოდელის დასახელება", "s": "s7", "c": "8. აპარატურა"}, {"t": "მწარმოებელი", "s": "s7", "c": "8. აპარატურა"}, {"t": "მწარმოებლის საიტი", "s": "s7", "c": "8. აპარატურა"}, {"t": "ფოტო", "s": "s7", "c": "8. აპარატურა"}, {"t": "სად გამოიყენება", "s": "s7", "c": "8. აპარატურა"}, {"t": "ერთი წინადადება", "s": "s7", "c": "8. აპარატურა"}, {"t": "ტექსტი", "s": "s7", "c": "8. აპარატურა"}, {"t": "მთავარი ფაქტები", "s": "s7", "c": "8. აპარატურა"}, {"t": "ეს თავი ყველაზე ყურადღებით წაიკითხე", "s": "s8-71357", "c": "9. კითხვა-პასუხი"}, {"t": "9. კითხვა-პასუხი", "s": "s8", "c": ""}, {"t": "კითხვა", "s": "s8", "c": "9. კითხვა-პასუხი"}, {"t": "პასუხი", "s": "s8", "c": "9. კითხვა-პასუხი"}, {"t": "რიგითობა", "s": "s8", "c": "9. კითხვა-პასუხი"}, {"t": "ატვირთვა", "s": "s9-10678", "c": "10. ფოტოები"}, {"t": "ველები", "s": "s9-67685", "c": "10. ფოტოები"}, {"t": "ფოკუსის წერტილი", "s": "s9-26477", "c": "10. ფოტოები"}, {"t": "წაშლა", "s": "s9-46358", "c": "10. ფოტოები"}, {"t": "10. ფოტოები", "s": "s9", "c": ""}, {"t": "სახელი", "s": "s9", "c": "10. ფოტოები"}, {"t": "აღწერა (alt)", "s": "s9", "c": "10. ფოტოები"}, {"t": "ხელმოწერა", "s": "s9", "c": "10. ფოტოები"}, {"t": "სავალდებულოა მხოლოდ ორი რამ", "s": "s10-21166", "c": "11. ლენდინგ გვერდები"}, {"t": "გვერდითი სვეტი", "s": "s10-33386", "c": "11. ლენდინგ გვერდები"}, {"t": "თაბი „მთავარი“", "s": "s10-7951", "c": "11. ლენდინგ გვერდები"}, {"t": "კამპანიის სახელი", "s": "s10-73480", "c": "11. ლენდინგ გვერდები"}, {"t": "პირველი ეკრანი", "s": "s10-9939", "c": "11. ლენდინგ გვერდები"}, {"t": "რატომ დაგვიტოვოთ ნომერი", "s": "s10-6076", "c": "11. ლენდინგ გვერდები"}, {"t": "თაბი „სექციები“", "s": "s10-59498", "c": "11. ლენდინგ გვერდები"}, {"t": "შეფასებებზე — მნიშვნელოვანი", "s": "s10-56086", "c": "11. ლენდინგ გვერდები"}, {"t": "„რა ხდება შემდეგ“ — რატომ არსებობს", "s": "s10-27693", "c": "11. ლენდინგ გვერდები"}, {"t": "თაბი „ფორმა და ჰედერი“", "s": "s10-6885", "c": "11. ლენდინგ გვერდები"}, {"t": "ფორმა", "s": "s10-68816", "c": "11. ლენდინგ გვერდები"}, {"t": "ზედა ზოლი", "s": "s10-85392", "c": "11. ლენდინგ გვერდები"}, {"t": "თაბი „SEO“", "s": "s10-58227", "c": "11. ლენდინგ გვერდები"}, {"t": "კამპანიის შედეგის ნახვა", "s": "s10-46632", "c": "11. ლენდინგ გვერდები"}, {"t": "11. ლენდინგ გვერდები", "s": "s10", "c": ""}, {"t": "სტატუსი", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "მისამართი (slug)", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "Google-ში ჩანდეს", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "დაწყება", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "დასრულება", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "დასრულების შემდეგ", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "გადამისამართება", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "მთავარი სათაური", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "აღწერა", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "პატარა წარწერა სათაურის ზემოთ", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "ღილაკის ტექსტი", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "განლაგება", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "სურათი (კომპიუტერი)", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "სურათი (მობილური)", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "პრობლემა → გადაწყვეტა", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "ექიმი", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "რა ხდება შემდეგ", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "პაციენტების შეფასებები", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "კლინიკა", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "დამამთავრებელი მოწოდება", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "„კამპანია დასრულდა“ ეკრანი", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "სათაური", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "ტექსტი", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "ღილაკი", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "მადლობის სათაური", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "მადლობის ტექსტი", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "სათაური", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "აღწერა", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "გაზიარების სურათი", "s": "s10", "c": "11. ლენდინგ გვერდები"}, {"t": "თაბი „გვერდები“", "s": "s11-87556", "c": "12. Google-ის ტექსტები"}, {"t": "თაბი „მიმართულებები“", "s": "s11-69038", "c": "12. Google-ის ტექსტები"}, {"t": "თითოეულ გვერდზე ორი ველი", "s": "s11-10547", "c": "12. Google-ის ტექსტები"}, {"t": "რატომ არ არის აქ სერვისები და აპარატურა", "s": "s11-79414", "c": "12. Google-ის ტექსტები"}, {"t": "12. Google-ის ტექსტები", "s": "s11", "c": ""}, {"t": "სათაური", "s": "s11", "c": "12. Google-ის ტექსტები"}, {"t": "აღწერა", "s": "s11", "c": "12. Google-ის ტექსტები"}, {"t": "13. სტატისტიკა", "s": "s12", "c": ""}, {"t": "თარიღი", "s": "s12", "c": "13. სტატისტიკა"}, {"t": "მოვლენა", "s": "s12", "c": "13. სტატისტიკა"}, {"t": "გვერდი", "s": "s12", "c": "13. სტატისტიკა"}, {"t": "რაოდენობა", "s": "s12", "c": "13. სტატისტიკა"}, {"t": "მომხმარებლები", "s": "s13-86138", "c": "14. პარამეტრები"}, {"t": "ვის რა შეუძლია", "s": "s13-55752", "c": "14. პარამეტრები"}, {"t": "ბოლო ადმინისტრატორის დაცვა", "s": "s13-42730", "c": "14. პარამეტრები"}, {"t": "ჩაწერის შეტყობინებები", "s": "s13-33466", "c": "14. პარამეტრები"}, {"t": "ანალიტიკის კოდები", "s": "s13-15643", "c": "14. პარამეტრები"}, {"t": "ცვლილებების ისტორია", "s": "s13-89433", "c": "14. პარამეტრები"}, {"t": "რა არ იწერება", "s": "s13-68305", "c": "14. პარამეტრები"}, {"t": "14. პარამეტრები", "s": "s13", "c": ""}, {"t": "სახელი", "s": "s13", "c": "14. პარამეტრები"}, {"t": "ელ. ფოსტა", "s": "s13", "c": "14. პარამეტრები"}, {"t": "როლი", "s": "s13", "c": "14. პარამეტრები"}, {"t": "კოლეგების სიის ნახვა", "s": "s13", "c": "14. პარამეტრები"}, {"t": "საკუთარი სახელისა და პაროლის შეცვლა", "s": "s13", "c": "14. პარამეტრები"}, {"t": "საკუთარი როლის შეცვლა", "s": "s13", "c": "14. პარამეტრები"}, {"t": "ახალი ანგარიშის შექმნა", "s": "s13", "c": "14. პარამეტრები"}, {"t": "ანგარიშის წაშლა", "s": "s13", "c": "14. პარამეტრები"}, {"t": "როლის მინიჭება", "s": "s13", "c": "14. პარამეტრები"}, {"t": "შეტყობინების მისამართი", "s": "s13", "c": "14. პარამეტრები"}, {"t": "GA4 Measurement ID", "s": "s13", "c": "14. პარამეტრები"}, {"t": "Meta Pixel ID", "s": "s13", "c": "14. პარამეტრები"}, {"t": "თარიღი", "s": "s13", "c": "14. პარამეტრები"}, {"t": "ვინ", "s": "s13", "c": "14. პარამეტრები"}, {"t": "მოქმედება", "s": "s13", "c": "14. პარამეტრები"}, {"t": "რომელი ჩანაწერი", "s": "s13", "c": "14. პარამეტრები"}, {"t": "სად", "s": "s13", "c": "14. პარამეტრები"}, {"t": "შევინახე, მაგრამ საიტზე არაფერი შეიცვალა", "s": "s14-49452", "c": "15. პრობლემების სწრაფი მოგვარება"}, {"t": "შენახვა არ გამოდის — წითელი შეცდომა ჩნდება", "s": "s14-4678", "c": "15. პრობლემების სწრაფი მოგვარება"}, {"t": "პაციენტმა თქვა, რომ ფორმა გამოგზავნა, მაგრამ სიაში არ ვხედავ", "s": "s14-52795", "c": "15. პრობლემების სწრაფი მოგვარება"}, {"t": "სერვისს ხატულა გაუქრა", "s": "s14-16088", "c": "15. პრობლემების სწრაფი მოგვარება"}, {"t": "სურათი აიტვირთა, მაგრამ ცუდად იჭრება", "s": "s14-83134", "c": "15. პრობლემების სწრაფი მოგვარება"}, {"t": "Google ისევ ძველ ინფორმაციას აჩვენებს", "s": "s14-78596", "c": "15. პრობლემების სწრაფი მოგვარება"}, {"t": "პანელში ვერ შევდივარ", "s": "s14-61504", "c": "15. პრობლემების სწრაფი მოგვარება"}, {"t": "მენიუში ეკრანს ვერ ვხედავ", "s": "s14-25148", "c": "15. პრობლემების სწრაფი მოგვარება"}, {"t": "15. პრობლემების სწრაფი მოგვარება", "s": "s14", "c": ""}, {"t": "დანართი ა — ვინ რას ხედავს", "s": "s15", "c": ""}, {"t": "ჩაწერის მოთხოვნები", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "სიახლეები", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "სერვისები", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "ექიმები", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "აპარატურა", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "კითხვა-პასუხი", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "ფოტოები", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "კლინიკის მონაცემები", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "ლენდინგ გვერდები", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "Google-ის ტექსტები", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "სტატისტიკა", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "მომხმარებლები", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "ცვლილებების ისტორია", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "ჩაწერის შეტყობინებები", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "ანალიტიკის კოდები", "s": "s15", "c": "დანართი ა — ვინ რას ხედავს"}, {"t": "დანართი ბ — სად რა იცვლება", "s": "s16", "c": ""}, {"t": "აპარატის აღწერა", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "ბლოგის სტატია", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "ბმული Facebook-ზე", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "გამოცდილების წლები (მთავარი ექიმი)", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "ექიმის ბიოგრაფია", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "ექიმის რიგითობა", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "ვინ იღებს ჩაწერის შეტყობინებას", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "თანამშრომლის ანგარიში", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "კითხვა-პასუხი", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "კლინიკის ელ. ფოსტა (საჯარო)", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "კონსულტაციის ფასი", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "მისამართი", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "რეკლამის გვერდი", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "სამუშაო საათები", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "სერვისის ტექსტი", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "სურათი", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "ტელეფონი", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "ფასი Google-ის შედეგებში", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "ჩაწერის სტატუსი", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "წლები ბაზარზე", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "Google Maps-ის ბმული", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "Google-ის სათაური (გვერდი)", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "Google-ის სათაური (სტატია)", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "GA4 / Meta Pixel", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "WhatsApp-ის ნომერი", "s": "s16", "c": "დანართი ბ — სად რა იცვლება"}, {"t": "დანართი გ — რა იცვლება ენების მიხედვით", "s": "s17", "c": ""}, {"t": "სიახლეები", "s": "s17", "c": "დანართი გ — რა იცვლება ენების მიხედვით"}, {"t": "სერვისები", "s": "s17", "c": "დანართი გ — რა იცვლება ენების მიხედვით"}, {"t": "ექიმები", "s": "s17", "c": "დანართი გ — რა იცვლება ენების მიხედვით"}, {"t": "აპარატურა", "s": "s17", "c": "დანართი გ — რა იცვლება ენების მიხედვით"}, {"t": "კითხვა-პასუხი", "s": "s17", "c": "დანართი გ — რა იცვლება ენების მიხედვით"}, {"t": "ფოტოები", "s": "s17", "c": "დანართი გ — რა იცვლება ენების მიხედვით"}, {"t": "კლინიკის მონაცემები", "s": "s17", "c": "დანართი გ — რა იცვლება ენების მიხედვით"}, {"t": "Google-ის ტექსტები", "s": "s17", "c": "დანართი გ — რა იცვლება ენების მიხედვით"}, {"t": "ლენდინგ გვერდები", "s": "s17", "c": "დანართი გ — რა იცვლება ენების მიხედვით"}];
+
+  /* ── mobile drawer ─────────────────────────────────────────────── */
+  var toggle = document.getElementById("navtoggle");
+  var scrim = document.getElementById("scrim");
+  function setNav(open) {
+    document.body.classList.toggle("nav-open", open);
+    if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  if (toggle) toggle.addEventListener("click", function () {
+    setNav(!document.body.classList.contains("nav-open"));
+  });
+  if (scrim) scrim.addEventListener("click", function () { setNav(false); });
+
+  /* ── search ────────────────────────────────────────────────────── */
+  var q = document.getElementById("q");
+  var results = document.getElementById("results");
+
+  function esc(s) {
+    return s.replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  function render(items) {
+    if (!items.length) {
+      results.innerHTML = '<li class="none">ვერაფერი მოიძებნა</li>';
+      results.hidden = false;
+      return;
+    }
+    results.innerHTML = items.slice(0, 12).map(function (r) {
+      return '<li><a href="#' + r.s + '">' + esc(r.t) +
+        (r.c ? "<small>" + esc(r.c) + "</small>" : "") + "</a></li>";
+    }).join("");
+    results.hidden = false;
+  }
+
+  if (q && results) {
+    q.addEventListener("input", function () {
+      var v = q.value.trim().toLowerCase();
+      if (v.length < 2) { results.hidden = true; return; }
+      var seen = {};
+      var hits = INDEX.filter(function (r) {
+        if (r.t.toLowerCase().indexOf(v) === -1) return false;
+        var k = r.t + r.s;
+        if (seen[k]) return false;
+        seen[k] = 1;
+        return true;
+      }).sort(function (a, b) {
+        return a.t.toLowerCase().indexOf(v) - b.t.toLowerCase().indexOf(v);
+      });
+      render(hits);
+    });
+
+    results.addEventListener("click", function (e) {
+      if (e.target.closest("a")) { results.hidden = true; q.value = ""; setNav(false); }
+    });
+
+    q.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { results.hidden = true; q.blur(); }
+      if (e.key === "Enter") {
+        var first = results.querySelector("a");
+        if (first) { first.click(); e.preventDefault(); }
+      }
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!e.target.closest(".search")) results.hidden = true;
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "/" && document.activeElement !== q) { e.preventDefault(); q.focus(); }
+    });
+  }
+
+  /* ── active chapter in nav ─────────────────────────────────────── */
+  var links = {};
+  Array.prototype.forEach.call(document.querySelectorAll("[data-nav]"), function (a) {
+    links[a.getAttribute("data-nav")] = a;
+  });
+  var chapters = document.querySelectorAll(".chapter");
+  var current = null;
+
+  function mark(id) {
+    if (id === current) return;
+    if (current && links[current]) links[current].classList.remove("is-active");
+    current = id;
+    if (links[id]) {
+      links[id].classList.add("is-active");
+      var r = links[id].getBoundingClientRect();
+      var n = document.getElementById("nav").getBoundingClientRect();
+      if (r.top < n.top || r.bottom > n.bottom) {
+        links[id].scrollIntoView({ block: "center" });
+      }
+    }
+  }
+
+  if ("IntersectionObserver" in window && chapters.length) {
+    var visible = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) visible[en.target.id] = en.boundingClientRect.top;
+        else delete visible[en.target.id];
+      });
+      var ids = Object.keys(visible);
+      if (ids.length) {
+        ids.sort(function (a, b) { return visible[a] - visible[b]; });
+        mark(ids[0]);
+      }
+    }, { rootMargin: "-10% 0px -70% 0px", threshold: 0 });
+    Array.prototype.forEach.call(chapters, function (c) { io.observe(c); });
+  }
+
+  document.getElementById("nav").addEventListener("click", function (e) {
+    if (e.target.closest("a")) setNav(false);
+  });
+})();
+
+</script>
+</body>
+</html>

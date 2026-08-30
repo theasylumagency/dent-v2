@@ -69,6 +69,12 @@ export default buildConfig({
                 Logo: "/components/admin/Logo#Logo",
                 Icon: "/components/admin/Icon#Icon",
             },
+
+            /* „სახელმძღვანელო“, under the four groups. The manual itself is
+               `public/manual.html` and opens in its own tab — it carries its
+               own contents and search, so it is a page, not a panel screen.
+               `robots.ts` disallows it and the page sets `noindex`. */
+            afterNavLinks: ["/components/admin/ManualNavLink#ManualNavLink"],
         },
     },
 
