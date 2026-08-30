@@ -25,8 +25,12 @@ export const AuditLogs: CollectionConfig = {
 
   admin: {
     group: groups.settings,
-    useAsTitle: "target",
-    defaultColumns: ["createdAt", "user", "action", "target"],
+    /* The title is what the list renders as the clickable first column and
+       what its search box searches. `target` is a machine slug — "doctors",
+       "landing-pages" — so the one screen the panel has for "who changed
+       what" opened in English and never named the document. */
+    useAsTitle: "documentLabel",
+    defaultColumns: ["createdAt", "user", "action", "documentLabel", "target"],
     description: t.description,
     hideAPIURL: true,
     hidden: ({ user }) => !isAdmin(user as { role?: string | null }),
@@ -73,6 +77,17 @@ export const AuditLogs: CollectionConfig = {
       type: "text",
       label: t.target,
       required: true,
+      index: true,
+      admin: { readOnly: true },
+    },
+    {
+      /* Denormalised on purpose. A relationship would follow the document and
+         go blank the moment it is deleted — exactly the entry whose whole
+         point is to say what disappeared. This is a copy of the title as it
+         read at the time of the change, which is what a history needs. */
+      name: "documentLabel",
+      type: "text",
+      label: t.documentLabel,
       index: true,
       admin: { readOnly: true },
     },

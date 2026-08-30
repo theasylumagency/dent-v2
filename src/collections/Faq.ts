@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 
 import { faq as t, groups } from "@/admin/labels";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
+import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
 /* The FAQ block sits on the home page, immediately before the booking form. */
 const faqPaths = [""];
@@ -25,8 +26,8 @@ export const Faq: CollectionConfig = {
     defaultSort: "order",
 
     hooks: {
-        afterChange: [afterChangeRevalidate(faqPaths)],
-        afterDelete: [afterDeleteRevalidate(faqPaths)],
+        afterChange: [auditCollection(), afterChangeRevalidate(faqPaths)],
+        afterDelete: [auditCollectionDelete(), afterDeleteRevalidate(faqPaths)],
     },
 
     fields: [

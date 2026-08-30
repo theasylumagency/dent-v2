@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 
 import { bookingRequests as t, groups } from "@/admin/labels";
 import { isAdmin } from "../access/roles";
+import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
 const notificationOptions = [
   { label: t.notifyPending, value: "pending" },
@@ -43,6 +44,15 @@ export const BookingRequests: CollectionConfig = {
     listSearchableFields: ["name", "phone", "email", "service"],
     description: t.description,
     hideAPIURL: true,
+  },
+
+  /* A request arriving from the site is created by the booking route with no
+     signed-in user, and `auditCollection` skips those on purpose — otherwise
+     the history would fill up with entries nobody performed. A receptionist
+     moving one to "contacted" is a person acting, and is recorded. */
+  hooks: {
+    afterChange: [auditCollection()],
+    afterDelete: [auditCollectionDelete()],
   },
 
   defaultSort: "-createdAt",

@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 
 import { groups, services as t } from "@/admin/labels";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
+import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
 /* A service is shown on the home page, the services index and its own
    category page, so all three flush together. */
@@ -30,8 +31,8 @@ export const Services: CollectionConfig = {
     defaultSort: "order",
 
     hooks: {
-        afterChange: [afterChangeRevalidate(servicePaths)],
-        afterDelete: [afterDeleteRevalidate(servicePaths)],
+        afterChange: [auditCollection(), afterChangeRevalidate(servicePaths)],
+        afterDelete: [auditCollectionDelete(), afterDeleteRevalidate(servicePaths)],
     },
 
     fields: [

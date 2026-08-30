@@ -19,19 +19,39 @@ the repo, and migrations do not run themselves. See `docs/deployment.md`.
 
 ## Current scope
 
-Delivered so far: **home page + top navigation structure**. Everything else is scaffolded
-but not yet routed.
+**Complete and live at totalcharmdent.ge.** Every route below is built, routed and
+CMS-backed; the admin panel is Georgian throughout and the clinic edits its own content.
 
-| Section | Component | Source of content |
-| --- | --- | --- |
-| Hero (framed video) | `components/home/Hero.tsx` | new copy, brand line from the existing site |
-| Clinic / mission / vision / stats | `components/home/Clinic.tsx` | existing "ტოტალ შარმ დენტი" page |
-| Services (5 directions) | `components/home/Services.tsx` | category copy from the client; service names from the existing "სტომატოლოგია" page |
-| Atmosphere band | `components/home/Atmosphere.tsx` | placeholder photo |
-| Chief doctor | `components/home/LeadDoctor.tsx` | existing site |
-| Team (4) | `components/home/Team.tsx` | existing site |
-| Technology teaser + care | `components/home/Technology.tsx` | device list from `lib/equipment.ts` |
-| Contact + booking | `components/home/Contact.tsx` | existing contact page |
+| Route (× 3 locales) | Content source |
+| --- | --- |
+| `/` | home — hero, clinic, services, lead doctor, team, technology, FAQ, booking |
+| `/about` | `doctors` — full profiles with education, experience, training, languages |
+| `/services` + `/services/[category]` | `services` — 16 entries across 5 categories |
+| `/technology` | `equipment` — devices by group, with manufacturer links |
+| `/news` + `/news/[slug]` | `posts` — drafts/publish, per-post SEO |
+| `/contact` | `clinic-info` globals + map |
+| `/[slug]` | `landing-pages` — campaign pages, created from the panel |
+
+Admin: 11 collections + 4 globals = 15 screens, grouped as
+ყოველდღიური / საიტის შიგთავსი / მარკეტინგი / პარამეტრები. All labels live in
+`src/admin/labels.ts`.
+
+> **Editing `src/admin/labels.ts` changes what the manual documents.** The Georgian user
+> manual (`docs/admin-manual-ka.md`) names every screen and field exactly as that file
+> spells them. Rename a label there and the manual's chapter for that screen needs the same
+> edit — otherwise staff read one name and see another.
+
+## Documentation
+
+| File | For |
+| --- | --- |
+| `docs/admin-manual-ka.md` | clinic staff — 15 chapters + 3 appendices, in Georgian |
+| `docs/Total-Charm-Dent-sakhelmdzghvanelo.pdf` | the same manual, printable (43 pp) |
+| `docs/TCD-swrafi-barati.pdf` | one-page quick card for the front desk |
+| `docs/TCD-ra-ashenda.pdf` | handover sheet — what was built, for the client |
+| `docs/deployment.md` | deploying; the build needs a reachable database |
+| `docs/cms-migration.md` | which content lives in which collection |
+| `docs/campaign-landing-pages.md` | the landing-page editing model |
 
 ## Internationalisation
 

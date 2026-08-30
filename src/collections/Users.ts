@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 
 import { groups, users as t } from "@/admin/labels";
 import { isAdmin } from "../access/roles";
+import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
 /**
  * Admin accounts.
@@ -123,6 +124,12 @@ export const Users: CollectionConfig = {
                 }
             },
         ],
+
+        /* Account changes are the ones an audit trail exists for. The password
+           itself never reaches the entry — `logger.ts` strips any field whose
+           name looks like a credential, before the diff is even built. */
+        afterChange: [auditCollection()],
+        afterDelete: [auditCollectionDelete()],
     },
 
     fields: [

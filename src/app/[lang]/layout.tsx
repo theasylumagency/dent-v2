@@ -7,7 +7,7 @@ import { htmlLang, isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
 import { getAnalyticsConfig } from "@/lib/analytics/settings";
-import { site } from "@/lib/site";
+import { agency, site } from "@/lib/site";
 
 /* Font preloads stay disabled deliberately. On the Georgian default locale,
    they previously competed with the actual visual LCP for the highest
@@ -52,6 +52,16 @@ export const viewport: Viewport = {
 /** Shared by the normal website and campaign route trees. */
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
+  /* Attribution that survives a content edit. `authors` renders as
+     `<meta name="author">` plus `<link rel="author">`; `creator` as
+     `<meta name="creator">`. Both are inherited by every page under this
+     layout, campaign routes included, and neither is reachable from the
+     admin — unlike the visible footer credit, which is a string in a
+     dictionary. `publisher` is the clinic: it built none of this, but it
+     is the one publishing it. */
+  authors: [{ name: agency.legalName, url: agency.url }],
+  creator: agency.legalName,
+  publisher: site.name,
   icons: {
     icon: [
       { url: "/brand/icon.svg", type: "image/svg+xml" },

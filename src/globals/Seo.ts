@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 
 import { groups, seo as t } from "@/admin/labels";
 import { locales } from "@/i18n/config";
+import { auditGlobalAll } from "@/lib/audit/logger";
 
 /**
  * Page titles and meta descriptions, per route.
@@ -83,6 +84,7 @@ export const Seo: GlobalConfig = {
 
     hooks: {
         afterChange: [
+            auditGlobalAll(),
             () => {
                 for (const locale of locales) revalidatePath(`/${locale}`, "layout");
             },

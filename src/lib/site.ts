@@ -81,6 +81,39 @@ export const site = {
   hours: { opens: "09:00", closes: "21:00" },
 } as const;
 
+/**
+ * The studio that designed and built the site.
+ *
+ * One constant, two consumers: the footer credit line and the `author` /
+ * `creator` metadata in the locale layout. They are kept together because a
+ * credit that links somewhere other than the name it displays is worse than
+ * no credit at all.
+ *
+ * `name` is the short form and the only string that renders on the page —
+ * the footer is not the place for a legal entity. `legalName` goes into the
+ * metadata, where length costs nothing and specificity is the point.
+ *
+ * On `rel`: the footer link carries `nofollow`, which is Google's own
+ * recommendation for site-credit links — "if you have control over the link,
+ * we recommend that you add nofollow to these types of links" (Search
+ * Central SEO office hours, February 2023).
+ *
+ * The credit is sitewide, so a single client is already hundreds of identical
+ * links aimed at one domain; repeated across a portfolio that becomes the
+ * "widely distributed links in the footers or templates of various sites"
+ * pattern the spam policy names by hand. Nothing is given up by complying:
+ * links like this are discounted anyway, and what a credit is actually worth
+ * is the person who clicks it — which `nofollow` does not touch.
+ *
+ * Keep the anchor text as the brand name. A keyword-rich anchor is the part
+ * that genuinely reads as a scheme, not the link itself.
+ */
+export const agency = {
+  name: "The Asylum",
+  legalName: "The Asylum Agency",
+  url: "https://theasylum.agency",
+} as const;
+
 export const media = {
   logo: "/brand/logo.svg",
   /**

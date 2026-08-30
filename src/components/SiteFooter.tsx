@@ -6,7 +6,7 @@ import type { Dictionary } from "@/i18n/dictionaries";
 import { getNavItems, route } from "@/lib/nav";
 import type { ServiceCategory } from "@/lib/services-shared";
 import type { Clinic } from "@/lib/clinic";
-import { media, site } from "@/lib/site";
+import { agency, media, site } from "@/lib/site";
 import { ArrowUpRight, Clock, Mail, Phone, Pin, WhatsApp } from "@/components/ui/icons";
 import BookingTrigger from "@/components/booking/BookingTrigger";
 import { PrivacySettingsButton } from "@/components/analytics/AnalyticsProvider";
@@ -188,10 +188,26 @@ export default function SiteFooter({
             published privacy notice is a requirement under Georgia's
             personal data protection law — this needs a real page before
             launch, not a link to nowhere. */}
-        <div className="flex flex-wrap gap-x-6 gap-y-2">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <PrivacySettingsButton>{dict.footer.privacySettings}</PrivacySettingsButton>
           <span className="cursor-default">{dict.footer.privacy}</span>
           <span className="cursor-default">{dict.footer.terms}</span>
+          {/* The build credit. One step dimmer than the legal links beside it,
+              so it is found by anyone who reads a footer and noticed by nobody
+              who does not — this is a clinic's page, not the studio's.
+              Deliberately absent from `LandingFooter`: campaign pages are paid
+              traffic, and an outbound link there is a leak, not a signature. */}
+          <a
+            href={agency.url}
+            target="_blank"
+            rel="noreferrer nofollow"
+            className="group text-ink-500 transition-colors hover:text-accent-700"
+          >
+            {dict.footer.credit}{" "}
+            <span className="font-medium text-ink-700 transition-colors group-hover:text-accent-700">
+              {agency.name}
+            </span>
+          </a>
         </div>
       </div>
     </footer>

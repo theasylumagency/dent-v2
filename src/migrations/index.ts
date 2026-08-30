@@ -8,6 +8,7 @@ import * as migration_20260820_063311_analytics_consent_audit from './20260820_0
 import * as migration_20260821_064018_campaign_landing_pages from './20260821_064018_campaign_landing_pages';
 import * as migration_20260821_090027_landing_pages_simplified from './20260821_090027_landing_pages_simplified';
 import * as migration_20260827_133147_booking_requests from './20260827_133147_booking_requests';
+import * as migration_20260828_101500_audit_document_label from './20260828_101500_audit_document_label';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20260827_133147_booking_requests.up,
     down: migration_20260827_133147_booking_requests.down,
-    name: '20260827_133147_booking_requests'
+    name: '20260827_133147_booking_requests',
+  },
+  {
+    up: migration_20260828_101500_audit_document_label.up,
+    down: migration_20260828_101500_audit_document_label.down,
+    name: '20260828_101500_audit_document_label'
   },
 ];

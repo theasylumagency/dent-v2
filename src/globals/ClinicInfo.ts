@@ -2,6 +2,7 @@ import type { GlobalConfig } from "payload";
 
 import { clinicInfo as t, groups } from "@/admin/labels";
 import { safeRevalidate } from "@/collections/hooks/revalidate";
+import { auditGlobalAll } from "@/lib/audit/logger";
 
 /**
  * Contact details, editable by the clinic.
@@ -37,6 +38,7 @@ export const ClinicInfo: GlobalConfig = {
 
     hooks: {
         afterChange: [
+            auditGlobalAll(),
             () => {
                 /* Clinic data is rendered by this shared layout and by campaign pages.
                    Route patterns refresh every locale; a CMS save must never rely on a PM2 restart. */

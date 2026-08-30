@@ -763,9 +763,10 @@ export interface AuditLog {
   action: 'create' | 'update' | 'delete';
   targetType: 'collection' | 'global';
   target: string;
+  documentLabel?: string | null;
   documentId?: string | null;
   /**
-   * მხოლოდ შეცვლილი ველები. მგრძნობიარე ველების სახელები ყოველთვის ამოღებულია.
+   * მხოლოდ შეცვლილი ველები — ძველი და ახალი მნიშვნელობით. გრძელი ტექსტი მოკლდება, სტატიის შიგთავსი მხოლოდ აღინიშნება. მგრძნობიარე ველების სახელები ყოველთვის ამოღებულია.
    */
   changes:
     | {
@@ -1248,6 +1249,7 @@ export interface AuditLogsSelect<T extends boolean = true> {
   action?: T;
   targetType?: T;
   target?: T;
+  documentLabel?: T;
   documentId?: T;
   changes?: T;
   updatedAt?: T;

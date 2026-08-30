@@ -3,6 +3,7 @@ import { fileURLToPath } from "url";
 import type { CollectionConfig } from "payload";
 
 import { groups, media as t } from "@/admin/labels";
+import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -64,6 +65,26 @@ export const Media: CollectionConfig = {
                 return { ...data, internalName: filename.replace(/\.[^.]+$/, "") };
             },
         ],
+
+        /* Everything sharp derives from the file itself is excluded: an entry
+           reading "width 1600 → 1600, sizes {…}" says nothing a person wants
+           to know, and on a re-upload it would bury the one line that matters. */
+        afterChange: [
+            auditCollection({
+                ignore: [
+                    "sizes",
+                    "url",
+                    "thumbnailURL",
+                    "width",
+                    "height",
+                    "filesize",
+                    "mimeType",
+                    "focalX",
+                    "focalY",
+                ],
+            }),
+        ],
+        afterDelete: [auditCollectionDelete({ ignore: ["sizes", "url", "thumbnailURL"] })],
     },
 
     upload: {

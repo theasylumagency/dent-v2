@@ -9,6 +9,7 @@ import type {
 import { groups, landingPages as t } from "@/admin/labels";
 import { RESERVED_SLUGS, SLUG_PATTERN, slugify } from "@/lib/campaign-slug";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
+import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
 /**
  * Campaign landing pages.
@@ -224,8 +225,11 @@ export const LandingPages: CollectionConfig = {
   hooks: {
     beforeValidate: [autoSlug],
     beforeChange: [validateArchivedRedirect],
-    afterChange: [afterChangeRevalidate((doc) => [`/${String(doc.slug ?? "")}`])],
-    afterDelete: [afterDeleteRevalidate((doc) => [`/${String(doc.slug ?? "")}`])],
+    afterChange: [auditCollection(), afterChangeRevalidate((doc) => [`/${String(doc.slug ?? "")}`])],
+    afterDelete: [
+      auditCollectionDelete(),
+      afterDeleteRevalidate((doc) => [`/${String(doc.slug ?? "")}`]),
+    ],
   },
 
   fields: [

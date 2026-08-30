@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 import { groups, posts as t } from "@/admin/labels";
 import { autoSlug } from "./hooks/auto-slug";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
+import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
 /** Every route a post appears on. The list page shows all of them. */
 const postPaths = (doc: Record<string, unknown>) => ["/news", `/news/${doc.slug as string}`];
@@ -31,8 +32,8 @@ export const Posts: CollectionConfig = {
 
     hooks: {
         beforeValidate: [autoSlug({ collection: "posts", source: "title" })],
-        afterChange: [afterChangeRevalidate(postPaths)],
-        afterDelete: [afterDeleteRevalidate(postPaths)],
+        afterChange: [auditCollection(), afterChangeRevalidate(postPaths)],
+        afterDelete: [auditCollectionDelete(), afterDeleteRevalidate(postPaths)],
     },
 
     fields: [

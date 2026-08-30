@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 import { equipment as t, groups } from "@/admin/labels";
 import { autoSlug } from "./hooks/auto-slug";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
+import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
 /* The home page names every device, so it flushes with the technology page. */
 const equipmentPaths = ["", "/technology"];
@@ -27,8 +28,8 @@ export const Equipment: CollectionConfig = {
 
     hooks: {
         beforeValidate: [autoSlug({ collection: "equipment", source: "name" })],
-        afterChange: [afterChangeRevalidate(equipmentPaths)],
-        afterDelete: [afterDeleteRevalidate(equipmentPaths)],
+        afterChange: [auditCollection(), afterChangeRevalidate(equipmentPaths)],
+        afterDelete: [auditCollectionDelete(), afterDeleteRevalidate(equipmentPaths)],
     },
 
     fields: [

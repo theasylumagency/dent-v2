@@ -3,6 +3,7 @@ import type { CollectionConfig, Field } from "payload";
 import { doctors as t, groups } from "@/admin/labels";
 import { autoSlug } from "./hooks/auto-slug";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
+import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
 /* Doctors appear on the home page and the about page. */
 const doctorPaths = ["", "/about"];
@@ -70,8 +71,8 @@ export const Doctors: CollectionConfig = {
        never rewritten — it is the anchor `/ka/about#archil-apkhadze`, and a
        link someone shared must keep working after a spelling correction. */
     beforeValidate: [autoSlug({ collection: "doctors", source: "name" })],
-    afterChange: [afterChangeRevalidate(doctorPaths)],
-    afterDelete: [afterDeleteRevalidate(doctorPaths)],
+    afterChange: [auditCollection(), afterChangeRevalidate(doctorPaths)],
+    afterDelete: [auditCollectionDelete(), afterDeleteRevalidate(doctorPaths)],
   },
 
   fields: [
