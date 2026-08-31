@@ -1,7 +1,8 @@
 import type { Field, GlobalConfig } from "payload";
-import { revalidatePath } from "next/cache";
 
 import { groups, seo as t } from "@/admin/labels";
+import { safeRevalidate } from "@/collections/hooks/revalidate";
+import { focusKeyword } from "@/collections/fields/seo";
 import { locales } from "@/i18n/config";
 import { auditGlobalAll } from "@/lib/audit/logger";
 
@@ -58,6 +59,11 @@ const metaFields = (): Field[] => [
             },
         ],
     },
+
+    /* The editorial note, on its own line rather than in the row above:
+       it is not a third column of the same thing. The two fields above are
+       published; this one never leaves the admin. */
+    focusKeyword(),
 ];
 
 /** One route: the named group the database needs, labelled for a human. */
@@ -85,8 +91,16 @@ export const Seo: GlobalConfig = {
     hooks: {
         afterChange: [
             auditGlobalAll(),
+            /* `safeRevalidate`, not `revalidatePath` — as in `ClinicInfo`.
+               `revalidatePath` needs Next's static-generation store, which
+               does not exist when Payload is driven from a CLI script; a
+               bare call threw `Invariant: static generation store missing`
+               and took `npm run seed` down with it the moment the seed
+               touched this global. Outside the server there is also nothing
+               to revalidate, so swallowing is correct rather than merely
+               convenient. */
             () => {
-                for (const locale of locales) revalidatePath(`/${locale}`, "layout");
+                for (const locale of locales) safeRevalidate(`/${locale}`, "layout");
             },
         ],
     },

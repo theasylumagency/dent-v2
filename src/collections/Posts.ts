@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 
 import { groups, posts as t } from "@/admin/labels";
 import { autoSlug } from "./hooks/auto-slug";
+import { seoBlock } from "./fields/seo";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
 import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
@@ -103,31 +104,12 @@ export const Posts: CollectionConfig = {
             localized: true,
             required: true,
         },
-        {
-            type: "collapsible",
-            label: t.seoBlock,
-            admin: {
-                initCollapsed: true,
-                description: t.seoBlockHelp,
-            },
-            fields: [
-                {
-                    name: "metaTitle",
-                    type: "text",
-                    label: t.metaTitle,
-                    localized: true,
-                    maxLength: 65,
-                    admin: { description: t.metaTitleHelp },
-                },
-                {
-                    name: "metaDescription",
-                    type: "textarea",
-                    label: t.metaDescription,
-                    localized: true,
-                    maxLength: 175,
-                    admin: { description: t.metaDescriptionHelp },
-                },
-            ],
-        },
+        /* These two fields existed here for months and nothing read them:
+           `generateMetadata` in `app/[lang]/(site)/news/[slug]/page.tsx`
+           took the title and the excerpt straight from the document. An
+           editor filled the boxes in, published, and the search listing did
+           not change — the exact failure the block below warns about, in
+           the collection that shipped with the warning. Wired up now. */
+        seoBlock(),
     ],
 };

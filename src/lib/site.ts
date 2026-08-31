@@ -35,6 +35,17 @@ export const site = {
   name: "Total Charm Dent",
   url: "https://totalcharmdent.ge",
 
+  /**
+   * The day the site went live, as the sitemap's floor for `<lastmod>`.
+   *
+   * A constant rather than a computed value on purpose: it is the one date
+   * that is honest about a page whose content has never been edited in the
+   * CMS. The alternative — falling back to the current time — is what made
+   * every URL in the sitemap claim to have changed on every crawl. Do not
+   * replace this with `new Date()`; see the note in `app/sitemap.ts`.
+   */
+  launchedAt: "2026-08-14T00:00:00.000Z",
+
   phone: "+995 511 21 16 16",
   phoneAlt: "+995 32 250 16 16",
 

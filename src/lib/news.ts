@@ -1,6 +1,6 @@
 import type { Locale } from "@/i18n/config";
 import { cms, mediaAlt, mediaUrl, toBlocks } from "./cms";
-import { postCategories, type Block, type Post, type PostCategory } from "./news-shared";
+import { postCategories, type Post, type PostCategory } from "./news-shared";
 import { route } from "./routes";
 
 /**
@@ -30,10 +30,13 @@ type PostDoc = {
   slug: string;
   category: PostCategory;
   publishedAt: string;
+  updatedAt?: string;
   cover?: unknown;
   title: string;
   excerpt: string;
   body?: unknown;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
 };
 
 function toPost(doc: PostDoc, lang: Locale, kaTitle: string | undefined): Post {
@@ -48,7 +51,13 @@ function toPost(doc: PostDoc, lang: Locale, kaTitle: string | undefined): Post {
     href: `${route(lang, "news")}/${doc.slug}`,
     title: doc.title,
     excerpt: doc.excerpt,
-    body: toBlocks(doc.body),
+    body: toBlocks(doc.body, lang),
+    metaTitle: doc.metaTitle?.trim() ?? "",
+    metaDescription: doc.metaDescription?.trim() ?? "",
+    /* Falls back to the publication date rather than to "now": a sitemap
+       that reports the current time as the last modification is worse than
+       one that reports a date slightly in the past. */
+    updatedAt: doc.updatedAt ?? doc.publishedAt,
     isFallback: lang !== FALLBACK_LOCALE && kaTitle !== undefined && doc.title === kaTitle,
   };
 }
@@ -96,8 +105,20 @@ export async function getPost(slug: string, lang: Locale): Promise<Post | null> 
   return posts.find((post) => post.slug === slug) ?? null;
 }
 
-/** Drives `generateStaticParams` and the sitemap. */
+/** Drives `generateStaticParams`. */
 export async function getPostSlugs(): Promise<string[]> {
+  return (await getPostIndex()).map((entry) => entry.slug);
+}
+
+/**
+ * Slug plus last-edit date, for the sitemap.
+ *
+ * The slug alone was not enough: with only a list of slugs the sitemap had
+ * nothing to put in `<lastmod>` and used the render time for every URL, so
+ * an article edited six months ago and one edited this morning claimed the
+ * same date — and that date was "now", every crawl.
+ */
+export async function getPostIndex(): Promise<{ slug: string; updatedAt: string }[]> {
   const payload = await cms();
   const result = await payload.find({
     collection: "posts",
@@ -106,7 +127,10 @@ export async function getPostSlugs(): Promise<string[]> {
     limit: 200,
     where: { _status: { equals: "published" } },
   });
-  return result.docs.map((doc) => String(doc.slug));
+  return result.docs.map((doc) => ({
+    slug: String(doc.slug),
+    updatedAt: String(doc.updatedAt ?? doc.publishedAt),
+  }));
 }
 
 /** Only the categories that actually have posts — an empty filter tab is a dead end. */

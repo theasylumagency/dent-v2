@@ -1,10 +1,22 @@
 import { postgresAdapter } from "@payloadcms/db-postgres";
-import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import {
+    BoldFeature,
+    FixedToolbarFeature,
+    HeadingFeature,
+    InlineToolbarFeature,
+    ItalicFeature,
+    lexicalEditor,
+    LinkFeature,
+    OrderedListFeature,
+    ParagraphFeature,
+    UnorderedListFeature,
+} from "@payloadcms/richtext-lexical";
 import path from "path";
 import { buildConfig } from "payload";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
 
+import { keywords as keywordLabels } from "./admin/labels";
 import { payloadKa } from "./admin/payload-ka";
 import { AnalyticsAggregates } from "./collections/AnalyticsAggregates";
 import { AuditLogs } from "./collections/AuditLogs";
@@ -70,11 +82,28 @@ export default buildConfig({
                 Icon: "/components/admin/Icon#Icon",
             },
 
-            /* „სახელმძღვანელო“, under the four groups. The manual itself is
-               `public/manual.html` and opens in its own tab — it carries its
-               own contents and search, so it is a page, not a panel screen.
-               `robots.ts` disallows it and the page sets `noindex`. */
-            afterNavLinks: ["/components/admin/ManualNavLink#ManualNavLink"],
+            /* Two entries under the four groups.
+               „საკვანძო სიტყვები“ is a read-only view over the SEO fields of
+               every page — see `KeywordsView` for why it is a screen of its
+               own rather than a column somewhere.
+               „სახელმძღვანელო“ is `public/manual.html`, opened in its own tab:
+               it carries its own contents and search, so it is a page, not a
+               panel screen. `robots.ts` disallows it and it sets `noindex`. */
+            afterNavLinks: [
+                "/components/admin/KeywordsNavLink#KeywordsNavLink",
+                "/components/admin/ManualNavLink#ManualNavLink",
+            ],
+
+            /* `/admin/keywords`. A custom view, not a collection: it owns no
+               data and writes nothing — every row links back to the document
+               that holds the value. */
+            views: {
+                keywords: {
+                    Component: "/components/admin/KeywordsView#default",
+                    path: "/keywords",
+                    meta: { title: keywordLabels.title },
+                },
+            },
         },
     },
 
@@ -148,7 +177,56 @@ export default buildConfig({
        last two are actually administrator territory. */
     globals: [ClinicInfo, Seo, BookingSettings, AnalyticsSettings],
 
-    editor: lexicalEditor(),
+    /**
+     * The toolbar is trimmed to exactly what `toBlocks` in `lib/cms.ts`
+     * renders — nothing more, nothing less.
+     *
+     * A button that produces nothing on the page is worse than a missing
+     * one: the editor uses it, sees it in the preview, publishes, and the
+     * work is gone with no error anywhere. Payload's default set offers
+     * fourteen block-level features; the converter handled two, so
+     * checklists, quotes, inline images, alignment and horizontal rules
+     * were all silently dropped. Rather than teach the renderer five more
+     * shapes this site's design has no style for, the toolbar now offers
+     * the six things it does render.
+     *
+     * **Headings are H2 and H3 only, and that is deliberate.** Every page
+     * already carries exactly one H1 from its own template — the hero, the
+     * page hero, or the article title. An H1 typed into body text would
+     * give the page a second one, which is precisely the outline damage
+     * that heading control was asked for in order to prevent. H4–H6 are
+     * left out because the design has two subheading sizes; a third would
+     * look identical to the second while claiming a different rank.
+     *
+     * The level chosen here is relative, not final: `components/ui/RichText`
+     * shifts it to sit under whatever heading the surrounding page has
+     * already used, so the same bio is H4/H5 in a team profile and H2/H3 in
+     * an article.
+     *
+     * Adding a feature here means adding a case to `toBlocks`, and a style
+     * to `RichText`. The three move together.
+     */
+    editor: lexicalEditor({
+        features: () => [
+            ParagraphFeature(),
+            HeadingFeature({ enabledHeadingSizes: ["h2", "h3"] }),
+            BoldFeature(),
+            ItalicFeature(),
+            UnorderedListFeature(),
+            OrderedListFeature(),
+            LinkFeature(),
+
+            /* Both toolbars, not just the floating one. Payload ships the
+               inline toolbar alone — it appears only once text is already
+               selected, which is a discoverability problem for anyone who
+               does not already know the feature is there. The client asked
+               to be given heading control that the editor has had all
+               along; a toolbar visible before you select anything is most
+               of what that request was actually about. */
+            FixedToolbarFeature(),
+            InlineToolbarFeature(),
+        ],
+    }),
 
     localization: {
         locales: [

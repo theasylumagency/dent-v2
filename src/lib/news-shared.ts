@@ -19,7 +19,12 @@ import type { Locale } from "@/i18n/config";
 export const postCategories = ["clinic", "guide"] as const;
 export type PostCategory = (typeof postCategories)[number];
 
-export type Block = { type: "h2" | "p"; text: string };
+/* The rich text shape moved to `lib/rich-text.ts` — it is shared with
+   doctors and equipment, which have nothing to do with news, and it grew
+   past a one-line type. Re-exported here so the components that render a
+   post keep importing everything from one place. */
+import type { Block } from "./rich-text";
+export type { Block, Inline } from "./rich-text";
 
 export type Post = {
   slug: string;
@@ -31,6 +36,14 @@ export type Post = {
   title: string;
   excerpt: string;
   body: Block[];
+  /**
+   * The search listing, when the editor wants it to differ from the title
+   * and excerpt above. Empty means "use those", which is usually right.
+   */
+  metaTitle: string;
+  metaDescription: string;
+  /** Last edit, for `<lastmod>` and `dateModified`. ISO 8601. */
+  updatedAt: string;
   /** True when this locale has no translation and Georgian is being shown. */
   isFallback: boolean;
 };

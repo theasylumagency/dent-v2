@@ -136,7 +136,12 @@
   "doctor": {
     "label": "Главный врач",
     "experienceLabel": "лет опыта",
-    "teaserCta": "Подробнее о главном враче"
+    "teaserCta": "Подробнее о главном враче",
+    "backToTeam": "Все врачи",
+    "profileCta": "Полный профиль",
+    "metaTitleSuffix": "— врач Total Charm Dent",
+    "aboutDoctor": "О враче",
+    "bookWith": "Записаться к врачу"
   },
   "team": {
     "label": "Наши специалисты",

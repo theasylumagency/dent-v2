@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test:booking": "tsx --test src/lib/booking/*.test.ts",
     "test:audit": "tsx --test src/lib/audit/*.test.ts",
+    "test:richtext": "tsx --test src/lib/rich-text.test.ts",
     "check:i18n": "node scripts/check-i18n.mjs",
     "payload": "payload",
     "generate:types": "payload generate:types",

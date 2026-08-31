@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { htmlLang, isLocale, locales, type Locale } from "@/i18n/config";
@@ -10,7 +11,9 @@ import { getClinic } from "@/lib/clinic";
 import { getServiceCount } from "@/lib/services";
 import { buildStats } from "@/lib/stats";
 import { media, site } from "@/lib/site";
+import { ArrowUpRight } from "@/components/ui/icons";
 import Reveal from "@/components/ui/Reveal";
+import RichText from "@/components/ui/RichText";
 import PageHero from "@/components/services/PageHero";
 import BookingCta from "@/components/services/BookingCta";
 import DoctorProfile from "@/components/about/DoctorProfile";
@@ -92,6 +95,7 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
     languages: t.languagesLabel,
     pendingLabel: t.pendingLabel,
     pendingText: t.pendingText,
+    profileCta: dict.doctor.profileCta,
   };
 
   const breadcrumbLd = {
@@ -126,10 +130,18 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
       position: index + 1,
       item: {
         "@type": "Person",
+        /* `@id` on the doctor's own page URL, matching the `@id` that page
+           publishes, so a crawler resolves this entry and that page to one
+           entity instead of two people with the same name. An unpublished
+           doctor has no page, so they keep the anchor and no `@id` — an
+           identifier pointing at a URL that 404s is worse than none. */
+        ...(doctor.pageHref ? { "@id": `${site.url}${doctor.pageHref}` } : {}),
         name: doctor.name,
         jobTitle: doctor.role,
         image: doctor.photo ? `${site.url}${doctor.photo}` : undefined,
-        url: `${site.url}/${locale}/about#${doctor.slug}`,
+        url: doctor.pageHref
+          ? `${site.url}${doctor.pageHref}`
+          : `${site.url}/${locale}/about#${doctor.slug}`,
         worksFor: { "@type": "Dentist", "@id": `${site.url}/#clinic`, name: site.name },
         /* An unpublished profile is published as name and job title only.
            Emitting an `alumniOf` we do not have would be an assertion of
@@ -340,12 +352,13 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
                 </p>
               </Reveal>
 
+              {/* Every block used to render as a paragraph here, so a
+                  subheading written into the chief doctor's bio came out as
+                  body text — the one place on the site where the editor's
+                  structure was not merely flattened but discarded. The name
+                  above is the `h2`, so headings start at `h3`. */}
               <Reveal delay={200}>
-                <div className="mt-6 space-y-5 text-base leading-relaxed text-ink-700">
-                  {lead.bio.map((block) => (
-                    <p key={block.text}>{block.text}</p>
-                  ))}
-                </div>
+                <RichText blocks={lead.bio} baseLevel={2} className="mt-6 space-y-5" />
               </Reveal>
 
               <Reveal delay={250}>
@@ -359,6 +372,18 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
                     </li>
                   ))}
                 </ul>
+
+                {lead.pageHref && (
+                  <Link
+                    href={lead.pageHref}
+                    className="group mt-8 inline-flex items-center gap-2.5 text-sm font-medium text-accent-600 transition-colors hover:text-accent-700"
+                  >
+                    {dict.doctor.profileCta}
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-accent-300 bg-ivory-50 transition-all duration-500 group-hover:bg-accent-300 group-hover:text-ink-900">
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </span>
+                  </Link>
+                )}
               </Reveal>
             </div>
           </div>

@@ -1,8 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import type { Doctor } from "@/lib/team";
+import { ArrowUpRight } from "@/components/ui/icons";
 import TrackedView from "@/components/analytics/TrackedView";
 import Reveal from "@/components/ui/Reveal";
+import RichText from "@/components/ui/RichText";
 import Credentials, { LanguageChips } from "./Credentials";
 
 type Labels = {
@@ -13,6 +16,7 @@ type Labels = {
   languages: string;
   pendingLabel: string;
   pendingText: string;
+  profileCta: string;
 };
 
 /**
@@ -72,23 +76,29 @@ export default function DoctorProfile({
                 </p>
               )}
 
-              <div className="mt-5 space-y-4">
-                {profile.bio.map((block) =>
-                  block.type === "h2" ? (
-                    <h4 key={block.text} className="pt-2 font-display text-lg leading-snug">
-                      {block.text}
-                    </h4>
-                  ) : (
-                    <p key={block.text} className="text-base leading-relaxed text-ink-700">
-                      {block.text}
-                    </p>
-                  ),
-                )}
-              </div>
+              {/* The doctor's name above is the `h3`, so a subheading the
+                  editor writes starts at `h4` and cannot outrank it. */}
+              <RichText blocks={profile.bio} baseLevel={3} className="mt-5 space-y-4" />
 
               <div className="mt-8">
                 <Credentials groups={profile} labels={labels} />
               </div>
+
+              {/* The block above is the summary; the page is the same
+                  person with room to breathe — and the URL a search for
+                  their name can actually land on. Only published doctors
+                  have one, which is the same condition as this branch. */}
+              {profile.pageHref && (
+                <Link
+                  href={profile.pageHref}
+                  className="group mt-8 inline-flex items-center gap-2.5 text-sm font-medium text-accent-600 transition-colors hover:text-accent-700"
+                >
+                  {labels.profileCta}
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-accent-300 bg-ivory-50 transition-all duration-500 group-hover:bg-accent-300 group-hover:text-ink-900">
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </span>
+                </Link>
+              )}
             </>
           )}
         </Reveal>

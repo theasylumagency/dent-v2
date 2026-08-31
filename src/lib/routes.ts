@@ -14,6 +14,13 @@ const routeReady = {
      with no reason to trust them. One `about` page carries both, and the
      nav went from five items to four. */
   about: true,
+  /* A doctor's own page, under the about page rather than beside it: the
+     about page *is* the team index — it lists every doctor — so there is no
+     second index to build and the breadcrumb reads as the hierarchy it
+     actually is. The anchors it used to be (`/ka/about#archil-apkhadze`)
+     still exist and still work; the page is what a search for a doctor by
+     name can land on, which an anchor cannot be. */
+  doctor: true,
   services: true,
   serviceCategory: true,
   /* Individual services do not get their own URL. Sixteen thin pages built
@@ -30,6 +37,7 @@ const routeReady = {
 
 const homeAnchor = {
   about: "#about",
+  doctor: "#team",
   services: "#services",
   serviceCategory: "#services",
   serviceDetail: "#services",
@@ -42,6 +50,7 @@ const homeAnchor = {
 
 const realPath = {
   about: "about",
+  doctor: "about",
   services: "services",
   serviceCategory: "services",
   serviceDetail: "services",

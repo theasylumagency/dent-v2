@@ -11,6 +11,7 @@ import { route } from "@/lib/routes";
 import { site } from "@/lib/site";
 import { ArrowUpRight } from "@/components/ui/icons";
 import Reveal from "@/components/ui/Reveal";
+import RichText from "@/components/ui/RichText";
 import Breadcrumbs from "@/components/services/Breadcrumbs";
 import BookingCta from "@/components/services/BookingCta";
 import PostCard from "@/components/news/PostCard";
@@ -29,9 +30,17 @@ export async function generateMetadata({
   const post = await getPost(slug, lang);
   if (!post) return {};
 
+  /* The "Google-ის ჩანაწერი" fields on the document, at last. They were
+     defined in `collections/Posts.ts` and read by nothing — an editor could
+     fill both boxes, publish, and watch the search listing not change.
+     Empty falls back to the title and excerpt, which is the common case and
+     what the field descriptions in the admin promise. */
+  const title = post.metaTitle || post.title;
+  const description = post.metaDescription || post.excerpt;
+
   return {
-    title: post.title,
-    description: post.excerpt,
+    title,
+    description,
     alternates: {
       canonical: `/${lang}/news/${slug}`,
       languages: Object.fromEntries([
@@ -42,8 +51,8 @@ export async function generateMetadata({
     openGraph: {
       type: "article",
       siteName: site.name,
-      title: post.title,
-      description: post.excerpt,
+      title,
+      description,
       locale: htmlLang[lang].replace("-", "_"),
       url: `/${lang}/news/${slug}`,
       publishedTime: post.publishedAt,
@@ -97,7 +106,11 @@ export default async function PostPage({
     headline: post.title,
     description: post.excerpt,
     datePublished: post.publishedAt,
-    dateModified: post.publishedAt,
+    /* The document's own last edit, not the publication date repeated. A
+       `dateModified` that always equals `datePublished` tells a crawler an
+       article has never been touched since it went up, which for a page
+       that gets corrected and extended is simply untrue. */
+    dateModified: post.updatedAt || post.publishedAt,
     inLanguage: htmlLang[post.isFallback ? "ka" : locale],
     image: `${site.url}${post.cover}`,
     url: `${site.url}/${locale}/news/${post.slug}`,
@@ -164,21 +177,23 @@ export default async function PostPage({
             </Reveal>
 
             <div className="mx-auto mt-14 max-w-2xl">
-              {post.body.map((block) =>
-                block.type === "h2" ? (
-                  <Reveal key={block.text}>
-                    <h2 className="mt-12 font-display text-2xl leading-snug first:mt-0 lg:text-3xl">
-                      {block.text}
-                    </h2>
-                  </Reveal>
-                ) : (
-                  <Reveal key={block.text}>
-                    <p className="mt-6 text-base leading-relaxed text-ink-700 first:mt-0 sm:text-lg">
-                      {block.text}
-                    </p>
-                  </Reveal>
-                ),
-              )}
+              {/* Spacing is `space-y` on the container, not `mt-*` on each
+                  block. Each block used to sit alone inside its own
+                  `Reveal` div, so `first:mt-0` matched every one of them
+                  and the margins it was paired with never applied — the
+                  article body rendered with no gaps at all. One `Reveal`
+                  around the whole body also drops one IntersectionObserver
+                  per paragraph on a long article. */}
+              <Reveal>
+                <RichText
+                  blocks={post.body}
+                  /* The post title is the page's h1. */
+                  baseLevel={1}
+                  className="space-y-6"
+                  headingClassName="pt-6 font-display text-2xl leading-snug lg:text-3xl"
+                  paragraphClassName="text-base leading-relaxed text-ink-700 sm:text-lg"
+                />
+              </Reveal>
 
               <Reveal>
                 <Link

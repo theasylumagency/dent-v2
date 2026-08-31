@@ -226,6 +226,10 @@ export interface Post {
    * დაახლოებით 155 სიმბოლომდე.
    */
   metaDescription?: string | null;
+  /**
+   * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+   */
+  focusKeyword?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -427,6 +431,18 @@ export interface Doctor {
         id?: string | null;
       }[]
     | null;
+  /**
+   * დაახლოებით 60 სიმბოლომდე.
+   */
+  metaTitle?: string | null;
+  /**
+   * დაახლოებით 155 სიმბოლომდე.
+   */
+  metaDescription?: string | null;
+  /**
+   * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+   */
+  focusKeyword?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -694,6 +710,10 @@ export interface LandingPage {
      * ცარიელია — გამოიყენება პირველი ეკრანის სურათი.
      */
     socialImage?: (number | null) | Media;
+    /**
+     * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+     */
+    focusKeyword?: string | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -918,6 +938,7 @@ export interface PostsSelect<T extends boolean = true> {
   body?: T;
   metaTitle?: T;
   metaDescription?: T;
+  focusKeyword?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -987,6 +1008,9 @@ export interface DoctorsSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
+  metaTitle?: T;
+  metaDescription?: T;
+  focusKeyword?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1200,6 +1224,7 @@ export interface LandingPagesSelect<T extends boolean = true> {
         metaTitle?: T;
         metaDescription?: T;
         socialImage?: T;
+        focusKeyword?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1362,6 +1387,10 @@ export interface Seo {
      * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
+    /**
+     * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+     */
+    focusKeyword?: string | null;
   };
   about?: {
     /**
@@ -1372,6 +1401,10 @@ export interface Seo {
      * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
+    /**
+     * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+     */
+    focusKeyword?: string | null;
   };
   services?: {
     /**
@@ -1382,6 +1415,10 @@ export interface Seo {
      * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
+    /**
+     * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+     */
+    focusKeyword?: string | null;
   };
   technology?: {
     /**
@@ -1392,6 +1429,10 @@ export interface Seo {
      * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
+    /**
+     * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+     */
+    focusKeyword?: string | null;
   };
   news?: {
     /**
@@ -1402,6 +1443,10 @@ export interface Seo {
      * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
+    /**
+     * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+     */
+    focusKeyword?: string | null;
   };
   contact?: {
     /**
@@ -1412,6 +1457,10 @@ export interface Seo {
      * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
      */
     description?: string | null;
+    /**
+     * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+     */
+    focusKeyword?: string | null;
   };
   categories?: {
     diagnosticsPlanning?: {
@@ -1423,6 +1472,10 @@ export interface Seo {
        * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
        */
       description?: string | null;
+      /**
+       * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+       */
+      focusKeyword?: string | null;
     };
     therapyPrevention?: {
       /**
@@ -1433,6 +1486,10 @@ export interface Seo {
        * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
        */
       description?: string | null;
+      /**
+       * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+       */
+      focusKeyword?: string | null;
     };
     surgeryImplantation?: {
       /**
@@ -1443,6 +1500,10 @@ export interface Seo {
        * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
        */
       description?: string | null;
+      /**
+       * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+       */
+      focusKeyword?: string | null;
     };
     orthodontics?: {
       /**
@@ -1453,6 +1514,10 @@ export interface Seo {
        * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
        */
       description?: string | null;
+      /**
+       * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+       */
+      focusKeyword?: string | null;
     };
     aesthetic?: {
       /**
@@ -1463,6 +1528,10 @@ export interface Seo {
        * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
        */
       description?: string | null;
+      /**
+       * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+       */
+      focusKeyword?: string | null;
     };
   };
   updatedAt?: string | null;
@@ -1536,36 +1605,42 @@ export interface SeoSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        focusKeyword?: T;
       };
   about?:
     | T
     | {
         title?: T;
         description?: T;
+        focusKeyword?: T;
       };
   services?:
     | T
     | {
         title?: T;
         description?: T;
+        focusKeyword?: T;
       };
   technology?:
     | T
     | {
         title?: T;
         description?: T;
+        focusKeyword?: T;
       };
   news?:
     | T
     | {
         title?: T;
         description?: T;
+        focusKeyword?: T;
       };
   contact?:
     | T
     | {
         title?: T;
         description?: T;
+        focusKeyword?: T;
       };
   categories?:
     | T
@@ -1575,30 +1650,35 @@ export interface SeoSelect<T extends boolean = true> {
           | {
               title?: T;
               description?: T;
+              focusKeyword?: T;
             };
         therapyPrevention?:
           | T
           | {
               title?: T;
               description?: T;
+              focusKeyword?: T;
             };
         surgeryImplantation?:
           | T
           | {
               title?: T;
               description?: T;
+              focusKeyword?: T;
             };
         orthodontics?:
           | T
           | {
               title?: T;
               description?: T;
+              focusKeyword?: T;
             };
         aesthetic?:
           | T
           | {
               title?: T;
               description?: T;
+              focusKeyword?: T;
             };
       };
   updatedAt?: T;

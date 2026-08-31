@@ -136,7 +136,12 @@
   "doctor": {
     "label": "მთავარი ექიმი",
     "experienceLabel": "წლიანი გამოცდილება",
-    "teaserCta": "მთავარი ექიმის შესახებ"
+    "teaserCta": "მთავარი ექიმის შესახებ",
+    "backToTeam": "ყველა ექიმი",
+    "profileCta": "სრული პროფილი",
+    "metaTitleSuffix": "— ექიმი Total Charm Dent-ში",
+    "aboutDoctor": "ექიმის შესახებ",
+    "bookWith": "ჩაწერა ამ ექიმთან"
   },
   "team": {
     "label": "ჩვენი სპეციალისტები",

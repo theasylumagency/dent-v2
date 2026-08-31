@@ -2,6 +2,7 @@ import type { CollectionConfig, Field } from "payload";
 
 import { doctors as t, groups } from "@/admin/labels";
 import { autoSlug } from "./hooks/auto-slug";
+import { seoBlock } from "./fields/seo";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
 import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
@@ -185,5 +186,10 @@ export const Doctors: CollectionConfig = {
     credentialBlock("experience", t.experience, t.experienceHelp),
     credentialBlock("training", t.training, t.trainingHelp),
     credentialBlock("languages", t.languages, t.languagesHelp),
+
+    /* A doctor is a page now — `/ka/about/archil-apkhadze` — so meta text
+       on this document has somewhere to go. It did not before, which is why
+       these fields were absent rather than merely unwired. */
+    seoBlock(),
   ],
 };

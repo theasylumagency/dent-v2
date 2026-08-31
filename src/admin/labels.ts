@@ -357,6 +357,63 @@ export const clinicInfo = {
 
 /* ------------------------------------------------------- Google-ის ტექსტები */
 
+/* -------------------------------------------------- საერთო SEO ველები */
+
+/**
+ * The three fields that describe a page in search, wherever that page is
+ * edited — the `seo` global for the fixed routes, and the document itself
+ * for posts, doctors and campaign pages.
+ *
+ * `focusKeyword` is deliberately **not** rendered anywhere. Google stopped
+ * reading `<meta name="keywords">` in 2009 and Bing followed; publishing it
+ * buys nothing and hands a competitor the list of terms you are working on.
+ * What the field is for is the thing Yoast and RankMath actually use it for
+ * — a note to the person writing the copy about which search this page is
+ * meant to win. The help text says so, because a field whose value never
+ * leaves the admin has to explain that itself or it reads as broken.
+ */
+/**
+ * The „საკვანძო სიტყვები“ overview screen — see `components/admin/KeywordsView`.
+ *
+ * The screen exists because the keyword field alone did not answer the
+ * question it was asked for: an editor could write a keyword on every page
+ * and still have no way to see them together.
+ */
+export const keywords = {
+  navLabel: "საკვანძო სიტყვები",
+  title: "საკვანძო სიტყვები",
+  intro:
+    "ყველა გვერდი და მისი საკვანძო სიტყვა, ერთ სიაში. ეს ეკრანი მხოლოდ კითხვისთვისაა — შესაცვლელად დააჭირე გვერდის სახელს და ჩაასწორე იქ, სადაც ტექსტი წერია.",
+  summary: (filled: number, total: number) =>
+    `${total} გვერდიდან ${filled}-ს აქვს საკვანძო სიტყვა ქართულად. ცარიელი უჯრა შეცდომა არ არის — ის იმას ნიშნავს, რომ ამ გვერდზე ჯერ არ გადაწყვეტილა, რომელ ძებნაზე მუშაობს.`,
+
+  groupFixed: "ფიქსირებული გვერდები",
+  groupFixedNote: "მარკეტინგი → Google-ის ტექსტები. თერთმეტივე ერთ ეკრანზეა.",
+  groupPosts: "სიახლეები",
+  groupPostsNote: "მხოლოდ გამოქვეყნებული სტატიები.",
+  groupDoctors: "ექიმები",
+  groupDoctorsNote: "მხოლოდ ისინი, ვისაც „საიტზე გამოჩნდეს“ ჩართული აქვს — დანარჩენს გვერდი არ აქვს.",
+  groupCampaigns: "ლენდინგ გვერდები",
+  groupCampaignsNote: "ყველა კამპანია, სტატუსის მიუხედავად.",
+
+  colPage: "გვერდი",
+  localeLabel: { ka: "ქართული", en: "English", ru: "Русский" },
+
+  empty: "ჯერ არაფერია.",
+  emptyCellHelp: "საკვანძო სიტყვა შევსებული არ არის.",
+  noTitle: "Google-ის სათაური არ არის",
+  noTitleHelp: "ცარიელია — გამოიყენება ჩაშენებული ტექსტი. ხშირად ეს სწორია.",
+
+  footnote:
+    "საკვანძო სიტყვა საიტზე არსად ჩნდება და Google-ს არ ეგზავნება — ის შიდა ჩანაწერია. „Google-ის სათაური არ არის“ ხარვეზი არ არის: ცარიელი ველი ნიშნავს, რომ ჩაშენებული ტექსტი გამოიყენება.",
+} as const;
+
+export const seoShared = {
+  focusKeyword: "საკვანძო სიტყვა",
+  focusKeywordHelp:
+    "რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)",
+} as const;
+
 export const seo = {
   label: "Google-ის ტექსტები",
   description:

@@ -136,7 +136,12 @@
   "doctor": {
     "label": "Chief doctor",
     "experienceLabel": "years of experience",
-    "teaserCta": "More about the chief doctor"
+    "teaserCta": "More about the chief doctor",
+    "backToTeam": "All doctors",
+    "profileCta": "Full profile",
+    "metaTitleSuffix": "— dentist at Total Charm Dent",
+    "aboutDoctor": "About the doctor",
+    "bookWith": "Book with this doctor"
   },
   "team": {
     "label": "Our specialists",

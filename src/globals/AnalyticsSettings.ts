@@ -1,7 +1,7 @@
-import { revalidatePath } from "next/cache";
 import type { GlobalConfig, TextFieldValidation } from "payload";
 
 import { analyticsSettings as t, groups } from "@/admin/labels";
+import { safeRevalidate } from "@/collections/hooks/revalidate";
 import { isAdmin } from "../access/roles";
 import { auditGlobal } from "../lib/audit/logger";
 import { locales } from "../i18n/config";
@@ -47,7 +47,10 @@ export const AnalyticsSettings: GlobalConfig = {
     afterChange: [
       auditGlobal(["ga4MeasurementId", "metaPixelId"]),
       () => {
-        for (const locale of locales) revalidatePath(`/${locale}`, "layout");
+        /* `safeRevalidate`, not `revalidatePath` — same reason as in `Seo`
+           and `ClinicInfo`: a bare call throws outside a Next request, which
+           is exactly where a seed or migration script runs. */
+        for (const locale of locales) safeRevalidate(`/${locale}`, "layout");
       },
     ],
   },

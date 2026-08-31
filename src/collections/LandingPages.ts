@@ -9,6 +9,7 @@ import type {
 import { groups, landingPages as t } from "@/admin/labels";
 import { RESERVED_SLUGS, SLUG_PATTERN, slugify } from "@/lib/campaign-slug";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
+import { focusKeyword } from "./fields/seo";
 import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
 /**
@@ -648,6 +649,7 @@ export const LandingPages: CollectionConfig = {
                   label: "გაზიარების სურათი",
                   admin: { description: "ცარიელია — გამოიყენება პირველი ეკრანის სურათი." },
                 },
+                focusKeyword(),
               ],
             },
           ],

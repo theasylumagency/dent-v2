@@ -115,7 +115,7 @@ async function findDevices(lang: Locale): Promise<Device[]> {
       photoPending: photoOverride ? false : Boolean(doc.photoPending),
       photoFit: photoOverride?.fit ?? "contain",
       summary: doc.summary,
-      body: toBlocks(doc.body),
+      body: toBlocks(doc.body, lang),
       highlights: toStrings(doc.highlights),
       services: relatedServices(doc.services, lang),
     };

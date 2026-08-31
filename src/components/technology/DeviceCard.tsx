@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Device } from "@/lib/equipment";
 import { ArrowUpRight, Sparkle } from "@/components/ui/icons";
 import Reveal from "@/components/ui/Reveal";
+import RichText from "@/components/ui/RichText";
 
 /**
  * One piece of equipment.
@@ -73,19 +74,7 @@ export default function DeviceCard({
           {/* Rich text from the CMS. Headings render as h4, not h3 — the
               device name above is the h3, and an editor adding a subheading
               should not end up outranking it. */}
-          <div className="mt-6 space-y-4">
-            {device.body.map((block) =>
-              block.type === "h2" ? (
-                <h4 key={block.text} className="pt-2 font-display text-lg leading-snug">
-                  {block.text}
-                </h4>
-              ) : (
-                <p key={block.text} className="text-base leading-relaxed text-ink-700">
-                  {block.text}
-                </p>
-              ),
-            )}
-          </div>
+          <RichText blocks={device.body} baseLevel={3} className="mt-6 space-y-4" />
 
           <div className="mt-8 rounded-card border border-accent-200 bg-accent-50 p-6">
             <p className="label-micro">{labels.highlights}</p>
