@@ -140,7 +140,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${site.url}/${locale}${path}`,
       lastModified,
       changeFrequency: "monthly" as const,
-      priority: basePriority * (locale === "ka" ? 1 : 0.8),
+      /**
+       * Rounded, because `0.8 * 0.8` is `0.6400000000000001` in binary
+       * floating point and that is what shipped into the published XML.
+       *
+       * Two decimals rather than one: rounding to one collapses the
+       * section pages (0.64) and the document pages (0.56) onto the same
+       * 0.6, which throws away the only distinction this field carries.
+       */
+      priority: Math.round(basePriority * (locale === "ka" ? 1 : 0.8) * 100) / 100,
       alternates: { languages },
     }));
   };
