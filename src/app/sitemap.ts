@@ -2,9 +2,11 @@ import type { MetadataRoute } from "next";
 
 import { htmlLang, locales } from "@/i18n/config";
 import { cms } from "@/lib/cms";
+import { getCasesUpdatedAt } from "@/lib/cases";
 import { getPostIndex } from "@/lib/news";
 import { getDoctorIndex } from "@/lib/team";
 import { getIndexableLandingPages } from "@/lib/landing-pages";
+import { isRouteReady } from "@/lib/routes";
 import { categoryOrder } from "@/lib/services-shared";
 import { site } from "@/lib/site";
 
@@ -17,8 +19,8 @@ import { site } from "@/lib/site";
  * from, so a new clinical direction cannot land in the navigation and go
  * missing from the sitemap.
  *
- * Keep `paths` in sync with route readiness — flipping a flag in
- * `lib/routes.ts` changes site links but cannot update the sitemap itself.
+ * Paths guarded by `isRouteReady` follow `lib/routes.ts` on their own; any
+ * added as a bare string still has to be kept in sync by hand.
  *
  * This file is a dynamic route: it queries the CMS rather than reading a
  * build-time constant, and `collections/hooks/revalidate.ts` flushes
@@ -86,7 +88,7 @@ function newest(...dates: (Date | null)[]): Date {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   /* Built per request rather than at module load — a new document must
      appear here without a rebuild. */
-  const [posts, doctors, landingPages, services, doctorsAt, equipment, faq, clinic, seo] =
+  const [posts, doctors, landingPages, services, doctorsAt, equipment, faq, cases, clinic, seo] =
     await Promise.all([
       getPostIndex(),
       getDoctorIndex(),
@@ -95,6 +97,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       latestIn("doctors"),
       latestIn("equipment"),
       latestIn("faq"),
+      /* Not `latestIn("cases")`: that would report a date for an unpublished
+         draft, or for a case whose consent box is not ticked — documents this
+         URL does not render. `getCasesUpdatedAt` applies the same two filters
+         the page does. */
+      getCasesUpdatedAt(),
       latestGlobal("clinic-info"),
       latestGlobal("seo"),
     ]);
@@ -109,6 +116,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (path === "/about") return newest(doctorsAt, clinic, seo);
     if (path === "/services") return newest(services, seo);
     if (path.startsWith("/services/")) return newest(services, seo);
+    if (path === "/cases") return newest(cases, seo);
     if (path === "/technology") return newest(equipment, seo);
     if (path === "/news") return newest(newestPost, seo);
     if (path === "/contact") return newest(clinic, seo);
@@ -119,6 +127,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "",
     "/services",
     ...categoryOrder.map((slug) => `/services/${slug}`),
+    /* Route readiness now reaches the sitemap too. The note at the top of
+       this file used to warn that flipping a flag in `lib/routes.ts` could
+       not update this list; that gap is closed for anything added here the
+       same way. */
+    ...(isRouteReady("cases") ? ["/cases"] : []),
     "/technology",
     "/about",
     "/news",

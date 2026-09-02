@@ -8,6 +8,7 @@
     "home": "Home",
     "about": "About us",
     "services": "Services",
+    "cases": "Cases",
     "technology": "Technology",
     "news": "News",
     "contact": "Contact",
@@ -131,6 +132,45 @@
         "metaTitle": "Aesthetic dentistry",
         "metaDescription": "CAD/CAM ceramic veneers, aesthetic restoration and ZOOM 4 teeth whitening at Total Charm Dent, Tbilisi."
       }
+    }
+  },
+  "cases": {
+    "label": "Clinical cases",
+    "title": "Smile stories",
+    "items": [
+      {
+        "before": "Detail",
+        "after": "The whole"
+      },
+      {
+        "before": "Symptom",
+        "after": "Cause"
+      },
+      {
+        "before": "Plan",
+        "after": "Result"
+      },
+      {
+        "before": "Treatment",
+        "after": "A new smile"
+      }
+    ],
+    "closing": "Behind every smile there is a different starting point, a different path and a different result.",
+    "cta": "See the real stories",
+    "note": "Photographs before and after · the stages · the timeline",
+    "page": {
+      "metaTitle": "Clinical cases — before and after photographs",
+      "metaDescription": "Real clinical cases at Total Charm Dent: before and after photographs, treatment stages and timelines. Vake, Tbilisi.",
+      "title": "Smile stories",
+      "lead": "Trust is not built with words — it is built with results. Below are real cases: photographs before and after, with the stages and the timeline for each.",
+      "breadcrumbHome": "Home",
+      "breadcrumbLabel": "Breadcrumb",
+      "consentNote": "Every photograph is published with the patient's written consent. Results are individual and depend on the particular clinical picture.",
+      "beforeLabel": "Before",
+      "afterLabel": "After",
+      "durationLabel": "Duration",
+      "doctorLabel": "Doctor",
+      "empty": "The first cases are being prepared and will appear here shortly. In the meantime you are welcome to book a consultation."
     }
   },
   "doctor": {

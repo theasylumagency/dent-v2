@@ -71,6 +71,7 @@ export interface Config {
     posts: Post;
     services: Service;
     doctors: Doctor;
+    cases: Case;
     equipment: Equipment;
     faq: Faq;
     media: Media;
@@ -89,6 +90,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
+    cases: CasesSelect<false> | CasesSelect<true>;
     equipment: EquipmentSelect<false> | EquipmentSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -443,6 +445,76 @@ export interface Doctor {
    * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
    */
   focusKeyword?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * მკურნალობამდე და მკურნალობის შემდეგ ფოტოები. ყოველი ჩანაწერი გვერდზე ერთ ბლოკად ჩნდება. სანამ „საიტზე ჩანს“ არ მონიშნავ, ჩანაწერს გარეთ ვერავინ ნახავს.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cases".
+ */
+export interface Case {
+  id: number;
+  /**
+   * მონიშნე მხოლოდ მაშინ, თუ პაციენტისგან ფოტოს გამოქვეყნებაზე წერილობითი თანხმობა გაქვს. ეს არის ერთადერთი, რაც საიტზე გამოქვეყნებას აკავებს.
+   */
+  consent?: boolean | null;
+  /**
+   * ჩართვამდე ქვემოთ თანხმობის უჯრა უნდა იყოს მონიშნული — თორემ შენახვა შეცდომას დააბრუნებს.
+   */
+  published?: boolean | null;
+  /**
+   * რაც უფრო მცირე რიცხვია, მით ზემოთ დგას.
+   */
+  order: number;
+  /**
+   * თავისით ივსება სათაურიდან. ესაა ბმულის ბოლო ნაწილი — /ka/cases#მისამართი. ერთხელ შექმნილი ნუ შეიცვლება, თორემ გაზიარებული ბმული გატყდება.
+   */
+  slug: string;
+  /**
+   * მოკლედ, რა გაკეთდა — მაგალითად „ზედა რიგის ესთეტიკური რესტავრაცია“. ეს წარწერა ფოტოების თავზე დგას. პაციენტის სახელი აქ არ იწერება.
+   */
+  title: string;
+  /**
+   * რომელ კლინიკურ მიმართულებას ეკუთვნის. ფოტოების თავზე პატარა წარწერად ჩანს.
+   */
+  direction: 'diagnostics-planning' | 'therapy-prevention' | 'surgery-implantation' | 'orthodontics' | 'aesthetic';
+  beforeImage: number | Media;
+  /**
+   * ორივე ფოტო ერთი კუთხითა და ერთნაირი განათებით უნდა იყოს გადაღებული — გვერდიგვერდ დგება და სხვაობა მაშინვე ჩანს. სხვადასხვა კუთხე შედეგს უფრო ნაკლებ დამაჯერებელს ხდის, ვიდრე რეალურად არის.
+   */
+  afterImage: number | Media;
+  /**
+   * ერთი-ორი წინადადება: რა იყო საწყისი მდგომარეობა და რა შეიცვალა. ეს ტექსტი ფოტოების გვერდით დგას.
+   */
+  summary: string;
+  /**
+   * ისე დაწერე, როგორც პაციენტს ეტყოდი: „4 ვიზიტი“, „3 თვე“. ცარიელი დატოვე და არ გამოჩნდება.
+   */
+  duration?: string | null;
+  /**
+   * ვინ ჩაატარა მკურნალობა. ცარიელი დატოვე და ექიმის სახელი არ გამოჩნდება.
+   */
+  doctor?: (number | null) | Doctor;
+  /**
+   * სურვილისამებრ — მკურნალობის ეტაპები. ცარიელი დატოვე და მხოლოდ მოკლე აღწერა გამოჩნდება.
+   */
+  details?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -837,6 +909,10 @@ export interface PayloadLockedDocument {
         value: number | Doctor;
       } | null)
     | ({
+        relationTo: 'cases';
+        value: number | Case;
+      } | null)
+    | ({
         relationTo: 'equipment';
         value: number | Equipment;
       } | null)
@@ -1011,6 +1087,26 @@ export interface DoctorsSelect<T extends boolean = true> {
   metaTitle?: T;
   metaDescription?: T;
   focusKeyword?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cases_select".
+ */
+export interface CasesSelect<T extends boolean = true> {
+  consent?: T;
+  published?: T;
+  order?: T;
+  slug?: T;
+  title?: T;
+  direction?: T;
+  beforeImage?: T;
+  afterImage?: T;
+  summary?: T;
+  duration?: T;
+  doctor?: T;
+  details?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1420,6 +1516,20 @@ export interface Seo {
      */
     focusKeyword?: string | null;
   };
+  cases?: {
+    /**
+     * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
+     */
+    title?: string | null;
+    /**
+     * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
+     */
+    description?: string | null;
+    /**
+     * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+     */
+    focusKeyword?: string | null;
+  };
   technology?: {
     /**
      * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
@@ -1615,6 +1725,13 @@ export interface SeoSelect<T extends boolean = true> {
         focusKeyword?: T;
       };
   services?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        focusKeyword?: T;
+      };
+  cases?:
     | T
     | {
         title?: T;

@@ -1010,3 +1010,178 @@
     }
   }
 }
+
+/* ====================================================================
+   Clinical cases teaser (home page).
+
+   A before/after door with neither a photograph nor a case in it: four
+   pairs of words, and between each pair a hairline that grows from the
+   first to the second. The second word only lands once the line reaches
+   it, so the motion *is* the transformation rather than an entrance.
+
+   Two rules govern that motion:
+
+   - Everything hidden is scoped to `.js`, exactly as `.reveal` is. The
+     served state must be a plain readable list — a blocked bundle on a
+     medical site cannot leave four empty rows on the page.
+   - Delays are offset from `--reveal-delay`, the stagger `Reveal`
+     already sets on the row, so a row's line never starts drawing
+     before the row itself has faded in.
+
+   The global reduced-motion rule in the `base` layer collapses every
+   duration here to 0.001ms, which lands each row on its end state the
+   moment the observer fires.
+   ==================================================================== */
+@layer components {
+
+  .case-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "index before"
+      "arrow arrow"
+      "after after";
+    align-items: baseline;
+    column-gap: 1.25rem;
+    padding-block: 1.5rem;
+  }
+
+  .case-index {
+    grid-area: index;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--color-ink-500);
+  }
+
+  .case-before {
+    grid-area: before;
+    font-size: 0.9375rem;
+    color: var(--color-ink-600);
+  }
+
+  .case-after {
+    grid-area: after;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.25;
+    color: var(--color-ink-900);
+  }
+
+  /* Noto Serif Georgian carries more ink than Cormorant at the same size,
+     so the negative tracking the Latin display face wants makes the
+     Georgian result word look cramped. */
+  :lang(ka) .case-after {
+    letter-spacing: 0;
+    line-height: 1.38;
+  }
+
+  /* The transformation ------------------------------------------------
+     Vertical on a phone (the row is stacked, so the two words sit above
+     one another) and horizontal from `lg`, where they sit side by side.
+
+     The line gets a whole column of its own rather than a token gap:
+     with the duration column gone there is room for it, and the drawing
+     is the only thing in this section that has to be watched. */
+  .case-arrow {
+    grid-area: arrow;
+    position: relative;
+    display: block;
+    margin-block: 0.875rem;
+  }
+
+  .case-line {
+    display: block;
+    width: 1px;
+    height: 2.25rem;
+    margin-left: 1px;
+    background: linear-gradient(180deg, var(--color-ivory-500), var(--color-accent-400));
+    transform-origin: top center;
+  }
+
+  .case-arrow-dot {
+    position: absolute;
+    left: 0;
+    top: 2.25rem;
+    height: 5px;
+    width: 5px;
+    border-radius: 999px;
+    background: var(--color-accent-400);
+    transform: translate(-1px, -2px);
+  }
+
+  .js .reveal .case-line {
+    transform: scaleY(0);
+    transition: transform 0.9s var(--ease-premium);
+    transition-delay: calc(var(--reveal-delay, 0ms) + 160ms);
+  }
+
+  .js .reveal .case-after {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.55s var(--ease-premium), transform 0.55s var(--ease-premium);
+    transition-delay: calc(var(--reveal-delay, 0ms) + 780ms);
+  }
+
+  .js .reveal .case-arrow-dot {
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-premium);
+    transition-delay: calc(var(--reveal-delay, 0ms) + 900ms);
+  }
+
+  .js .reveal.is-visible .case-line,
+  .js .reveal.is-visible .case-after {
+    transform: none;
+  }
+
+  .js .reveal.is-visible .case-after,
+  .js .reveal.is-visible .case-arrow-dot {
+    opacity: 1;
+  }
+
+  @media (min-width: 1024px) {
+
+    .case-row {
+      grid-template-columns: 3rem minmax(0, 1fr) minmax(6rem, 11rem) minmax(0, 1.1fr);
+      grid-template-areas: "index before arrow after";
+      column-gap: 2.5rem;
+      align-items: center;
+      padding-block: 2.25rem;
+    }
+
+    .case-before {
+      font-size: 1rem;
+    }
+
+    .case-after {
+      font-size: 1.75rem;
+    }
+
+    .case-arrow {
+      margin-block: 0;
+    }
+
+    .case-line {
+      width: 100%;
+      height: 1px;
+      margin-left: 0;
+      background: linear-gradient(90deg, var(--color-ivory-500), var(--color-accent-400));
+      transform-origin: left center;
+    }
+
+    .case-arrow-dot {
+      left: auto;
+      right: 0;
+      top: 50%;
+      transform: translate(2px, -50%);
+    }
+
+    .js .reveal .case-line {
+      transform: scaleX(0);
+    }
+
+    .js .reveal .case-after {
+      transform: translateX(-8px);
+    }
+  }
+}

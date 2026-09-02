@@ -21,6 +21,7 @@ import { payloadKa } from "./admin/payload-ka";
 import { AnalyticsAggregates } from "./collections/AnalyticsAggregates";
 import { AuditLogs } from "./collections/AuditLogs";
 import { BookingRequests } from "./collections/BookingRequests";
+import { Cases } from "./collections/Cases";
 import { Doctors } from "./collections/Doctors";
 import { Equipment } from "./collections/Equipment";
 import { Faq } from "./collections/Faq";
@@ -159,6 +160,9 @@ export default buildConfig({
         Posts,
         Services,
         Doctors,
+        /* After Doctors, which it holds a relationship into — the same
+           reason Services is declared before Equipment. */
+        Cases,
         Equipment,
         Faq,
         Media,

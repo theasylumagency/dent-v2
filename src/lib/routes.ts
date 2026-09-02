@@ -31,6 +31,25 @@ const routeReady = {
      page. */
   serviceDetail: false,
   technology: true,
+  /* The clinical-cases page.
+
+     **This is the launch switch, and it is the only one.** The page, the
+     collection, the home page teaser and the header entry are all built and
+     tested; the clinic has not supplied the cases yet, so nothing about them
+     is shown. Flipping this to `true` restores, in one word:
+
+       - the header nav entry            (`nav.ts` drops unready routes)
+       - the home page teaser section    (`app/[lang]/(site)/page.tsx`)
+       - the `/cases` URL in the sitemap (`app/sitemap.ts`)
+       - and every `route(lang, "cases")` link, which until then resolves
+         to `#cases` rather than to a 404
+
+     The page itself stays reachable at `/ka/cases` while this is `false`, so
+     it can be looked at — it is simply unlinked and, per its own
+     `generateMetadata`, `noindex` until this flips. Commented-out code was
+     the alternative and it is worse: five edits to undo instead of one, and
+     four of them easy to forget. */
+  cases: false,
   news: true,
   contact: true,
 } as const;
@@ -42,6 +61,7 @@ const homeAnchor = {
   serviceCategory: "#services",
   serviceDetail: "#services",
   technology: "#technology",
+  cases: "#cases",
   /* No news section on the home page. If the route were ever switched off
      the anchor would land at the top, which is the least wrong option. */
   news: "",
@@ -55,6 +75,7 @@ const realPath = {
   serviceCategory: "services",
   serviceDetail: "services",
   technology: "technology",
+  cases: "cases",
   news: "news",
   contact: "contact",
 } as const;

@@ -116,6 +116,7 @@ export const Seo: GlobalConfig = {
                         page("home", t.home),
                         page("about", t.about),
                         page("services", t.services),
+                        page("cases", t.cases),
                         page("technology", t.technology),
                         page("news", t.news),
                         page("contact", t.contact),

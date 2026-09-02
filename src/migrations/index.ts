@@ -10,6 +10,7 @@ import * as migration_20260821_090027_landing_pages_simplified from './20260821_
 import * as migration_20260827_133147_booking_requests from './20260827_133147_booking_requests';
 import * as migration_20260828_101500_audit_document_label from './20260828_101500_audit_document_label';
 import * as migration_20260831_131742_seo_focus_keyword_doctor_meta from './20260831_131742_seo_focus_keyword_doctor_meta';
+import * as migration_20260902_125321 from './20260902_125321';
 
 export const migrations = [
   {
@@ -70,6 +71,11 @@ export const migrations = [
   {
     up: migration_20260831_131742_seo_focus_keyword_doctor_meta.up,
     down: migration_20260831_131742_seo_focus_keyword_doctor_meta.down,
-    name: '20260831_131742_seo_focus_keyword_doctor_meta'
+    name: '20260831_131742_seo_focus_keyword_doctor_meta',
+  },
+  {
+    up: migration_20260902_125321.up,
+    down: migration_20260902_125321.down,
+    name: '20260902_125321'
   },
 ];

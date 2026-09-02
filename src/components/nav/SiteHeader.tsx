@@ -340,8 +340,13 @@ export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
           </Link>
 
           {/* Desktop nav */}
+          {/* The one place the `secondary` items are dropped: this row is a
+              single flex line and the Georgian labels already fill it. The
+              drawer below and the footer both render `navItems` whole. */}
           <nav className="hidden items-center gap-1 lg:flex" aria-label={dict.nav.primaryLabel}>
-            {navItems.map((item) => {
+            {navItems
+              .filter((item) => !item.secondary)
+              .map((item) => {
               const isActive = item.key === currentKey;
 
               return item.mega ? (
@@ -387,7 +392,7 @@ export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
                   {item.label}
                 </Link>
               );
-            })}
+              })}
           </nav>
 
           <div className="flex items-center gap-2.5">

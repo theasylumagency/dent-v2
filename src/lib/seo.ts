@@ -20,7 +20,14 @@ import { cms } from "./cms";
  */
 
 /** Keys match the field names in `globals/Seo.ts`. */
-export type SeoRoute = "home" | "about" | "services" | "technology" | "news" | "contact";
+export type SeoRoute =
+  | "home"
+  | "about"
+  | "services"
+  | "cases"
+  | "technology"
+  | "news"
+  | "contact";
 
 /**
  * Category groups are camelCased in the CMS because Payload field names
