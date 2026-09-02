@@ -37,6 +37,16 @@ const nextConfig: NextConfig = {
    */
   compress: false,
 
+  images: {
+    localPatterns: [
+      // Keep ordinary public assets query-free, as in Next's default policy.
+      { pathname: "/**", search: "" },
+      // mediaUrl adds a changing ?v= timestamp. Omitting search permits that
+      // query only for Payload uploads, including their generated sizes.
+      { pathname: "/api/media/file/**" },
+    ],
+  },
+
   experimental: {
     /**
      * Ship the stylesheet as a `<style>` block in the document instead of a
