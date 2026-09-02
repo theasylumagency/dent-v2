@@ -47,6 +47,28 @@ export function safeRevalidate(target: string, type?: "page" | "layout") {
   }
 }
 
+/**
+ * Doctors are also embedded in the shared site's structured data and in
+ * campaign pages. Media can be reused anywhere in either route tree.
+ * Invalidate their route patterns so every locale, nested profile and old
+ * slug is refreshed on its next visit, without querying for references.
+ */
+function revalidatePublicPages() {
+  safeRevalidate("/[lang]/(site)", "layout");
+  safeRevalidate("/[lang]/[slug]", "page");
+  safeRevalidate("/sitemap.xml");
+}
+
+export const afterChangeRevalidatePublicPages: CollectionAfterChangeHook = ({ doc }) => {
+  revalidatePublicPages();
+  return doc;
+};
+
+export const afterDeleteRevalidatePublicPages: CollectionAfterDeleteHook = ({ doc }) => {
+  revalidatePublicPages();
+  return doc;
+};
+
 function revalidateFor(paths: string[] | PathsFor) {
   return (doc: Record<string, unknown>) => {
     const list = typeof paths === "function" ? paths(doc) : paths;

@@ -5,6 +5,7 @@ import { cache } from "react";
 import type { Doctor, LandingPage, Media, Service } from "@/payload-types";
 import type { Locale } from "@/i18n/config";
 import { cms } from "./cms";
+import { mediaUrl } from "./media";
 
 export type LandingMediaAsset = {
   url: string;
@@ -102,7 +103,7 @@ export function landingMediaAsset(
   if (!media) return null;
 
   const size = media.sizes?.[preferred];
-  const url = size?.url || media.url || "";
+  const url = mediaUrl(media, size?.url);
   const width = size?.width || media.width || 0;
   const height = size?.height || media.height || 0;
   if (!url || !width || !height) return null;

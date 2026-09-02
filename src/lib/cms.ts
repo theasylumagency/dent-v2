@@ -7,6 +7,7 @@ import config from "@payload-config";
    that imports `server-only` is what makes it unit-testable. Re-exported
    here so the data modules keep importing it alongside `cms`. */
 export { toBlocks } from "./rich-text";
+export { mediaUrl } from "./media";
 
 /**
  * The Payload client, shared by every data module.
@@ -25,19 +26,6 @@ export function toStrings(rows: unknown): string[] {
   return rows
     .map((row) => (row && typeof row === "object" ? String((row as { text?: unknown }).text ?? "") : ""))
     .filter(Boolean);
-}
-
-/**
- * An upload field is either an id or a populated document, depending on
- * depth. Callers want a URL either way, and a missing image should not throw
- * — the alternative is a page that fails to render because someone deleted a
- * photo in the admin.
- */
-export function mediaUrl(value: unknown): string {
-  if (value && typeof value === "object" && "url" in value) {
-    return String((value as { url?: unknown }).url ?? "");
-  }
-  return "";
 }
 
 export function mediaAlt(value: unknown, fallback = ""): string {
