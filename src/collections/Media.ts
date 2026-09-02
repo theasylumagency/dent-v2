@@ -4,6 +4,7 @@ import type { CollectionConfig } from "payload";
 
 import { groups, media as t } from "@/admin/labels";
 import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
+import { afterChangeRevalidatePublicPages, afterDeleteRevalidatePublicPages } from "./hooks/revalidate";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -83,8 +84,13 @@ export const Media: CollectionConfig = {
                     "focalY",
                 ],
             }),
+            // Editing an upload in a doctor's drawer only saves this record.
+            afterChangeRevalidatePublicPages,
         ],
-        afterDelete: [auditCollectionDelete({ ignore: ["sizes", "url", "thumbnailURL"] })],
+        afterDelete: [
+            auditCollectionDelete({ ignore: ["sizes", "url", "thumbnailURL"] }),
+            afterDeleteRevalidatePublicPages,
+        ],
     },
 
     upload: {
