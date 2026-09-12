@@ -54,7 +54,7 @@ export default function HeroMedia({ dict }: { dict: Dictionary }) {
       const orientation: Orientation = wide.matches ? "wide" : "tall";
       return {
         orientation,
-        src: media.heroVideo[orientation],
+        src: media.heroVideo[orientation][document.createElement("video").canPlayType("video/webm") ? "webm" : "mp4"],
       };
     };
 
