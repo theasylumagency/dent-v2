@@ -46,3 +46,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local questionnaire verification artifacts and private preview invitations
+/tmp/strategy-qa/

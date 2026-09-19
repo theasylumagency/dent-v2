@@ -94,6 +94,11 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [
+      { source: "/strategy/:path*", headers: [
+        { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+        { key: "Referrer-Policy", value: "no-referrer" },
+        { key: "Cache-Control", value: "private, no-store, max-age=0" },
+      ] },
       {
         source: `/:dir(${CACHEABLE_PUBLIC_DIRS})/:path*`,
         headers: [

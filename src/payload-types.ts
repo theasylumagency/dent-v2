@@ -77,6 +77,7 @@ export interface Config {
     media: Media;
     'landing-pages': LandingPage;
     'analytics-aggregates': AnalyticsAggregate;
+    'strategy-responses': StrategyResponse;
     users: User;
     'audit-logs': AuditLog;
     'payload-kv': PayloadKv;
@@ -96,6 +97,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'landing-pages': LandingPagesSelect<false> | LandingPagesSelect<true>;
     'analytics-aggregates': AnalyticsAggregatesSelect<false> | AnalyticsAggregatesSelect<true>;
+    'strategy-responses': StrategyResponsesSelect<false> | StrategyResponsesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -812,6 +814,38 @@ export interface AnalyticsAggregate {
   createdAt: string;
 }
 /**
+ * პასუხები ხელმისაწვდომია მხოლოდ ადმინისტრატორებისთვის. მოწვევის გასაუქმებლად მონიშნეთ წვდომის გაუქმება.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "strategy-responses".
+ */
+export interface StrategyResponse {
+  id: number;
+  title: string;
+  tokenHash: string;
+  formVersion: string;
+  status: 'draft' | 'submitted';
+  revoked?: boolean | null;
+  expiresAt: string;
+  deleteAfter: string;
+  privacyContact: string;
+  answers?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  step: number;
+  revision: number;
+  startedAt?: string | null;
+  completedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * ვის შეუძლია პანელში შესვლა. ადმინისტრატორი ანგარიშებს მართავს; რედაქტორს შიგთავსის შეცვლა და საკუთარი პაროლის შეცვლა შეუძლია — მეტი არაფერი.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1334,6 +1368,27 @@ export interface AnalyticsAggregatesSelect<T extends boolean = true> {
   event?: T;
   route?: T;
   count?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "strategy-responses_select".
+ */
+export interface StrategyResponsesSelect<T extends boolean = true> {
+  title?: T;
+  tokenHash?: T;
+  formVersion?: T;
+  status?: T;
+  revoked?: T;
+  expiresAt?: T;
+  deleteAfter?: T;
+  privacyContact?: T;
+  answers?: T;
+  step?: T;
+  revision?: T;
+  startedAt?: T;
+  completedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

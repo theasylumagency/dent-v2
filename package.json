@@ -20,7 +20,9 @@
     "generate:importmap": "payload generate:importmap",
     "migrate:create": "payload migrate:create",
     "migrate": "payload migrate",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "strategy": "node scripts/strategy.mjs",
+    "test:strategy": "tsx --test src/lib/strategy/*.test.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.86.0",

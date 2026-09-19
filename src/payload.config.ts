@@ -30,6 +30,7 @@ import { Media } from "./collections/Media";
 import { Posts } from "./collections/Posts";
 import { Services } from "./collections/Services";
 import { Users } from "./collections/Users";
+import { StrategyResponses } from "./collections/StrategyResponses";
 import { AnalyticsSettings } from "./globals/AnalyticsSettings";
 import { BookingSettings } from "./globals/BookingSettings";
 import { ClinicInfo } from "./globals/ClinicInfo";
@@ -170,6 +171,7 @@ export default buildConfig({
         /* მარკეტინგი */
         LandingPages,
         AnalyticsAggregates,
+        StrategyResponses,
 
         /* პარამეტრები */
         Users,

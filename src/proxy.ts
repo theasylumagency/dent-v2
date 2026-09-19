@@ -25,6 +25,8 @@ function negotiate(header: string | null): string | null {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (pathname === "/strategy" || pathname.startsWith("/strategy/")) return NextResponse.next();
+
   const hasLocale = locales.some(
     (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
   );
