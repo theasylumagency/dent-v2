@@ -17,3 +17,13 @@ export type MaybeUser = { role?: string | null } | null | undefined;
 export function isAdmin(user: MaybeUser): boolean {
   return user?.role === "admin";
 }
+
+/** A clinic administrator works with patient requests, not site content. */
+export function isClinicAdministrator(user: MaybeUser): boolean {
+  return user?.role === "clinic-admin";
+}
+
+/** The two roles permitted to manage the site's CMS content. */
+export function canManageContent(user: MaybeUser): boolean {
+  return isAdmin(user) || user?.role === "editor";
+}

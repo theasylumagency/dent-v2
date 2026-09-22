@@ -1,3 +1,5 @@
+import { canManageContent, isClinicAdministrator } from "../access/roles";
+
 import type {
   CollectionBeforeChangeHook,
   CollectionBeforeValidateHook,
@@ -203,14 +205,20 @@ export const LandingPages: CollectionConfig = {
   labels: { singular: t.singular, plural: t.plural },
 
   access: {
-    read: ({ req }) => (req.user ? true : { status: { not_equals: "draft" } }),
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    read: ({ req }) =>
+      isClinicAdministrator(req.user)
+        ? false
+        : req.user
+          ? true
+          : { status: { not_equals: "draft" } },
+    create: ({ req }) => canManageContent(req.user),
+    update: ({ req }) => canManageContent(req.user),
+    delete: ({ req }) => canManageContent(req.user),
   },
 
   admin: {
     group: groups.marketing,
+    hidden: ({ user }) => isClinicAdministrator(user as { role?: string | null }),
     useAsTitle: "campaignName",
     defaultColumns: ["campaignName", "slug", "status", "updatedAt"],
     description:

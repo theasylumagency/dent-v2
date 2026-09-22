@@ -3,6 +3,7 @@ import type { AdminViewServerProps } from "payload";
 
 import { locales, type Locale } from "@/i18n/config";
 import { keywords as t, seo as seoLabels } from "@/admin/labels";
+import { isClinicAdministrator } from "@/access/roles";
 
 /**
  * „საკვანძო სიტყვები“ — one screen listing every page's focus keyword.
@@ -67,7 +68,7 @@ export default async function KeywordsView({ initPageResult }: AdminViewServerPr
   /* Payload renders custom views inside the authenticated shell, but this
      component queries the database directly — so it checks for itself
      rather than trusting the wrapper. */
-  if (!user) return null;
+  if (!user || isClinicAdministrator(user)) return null;
 
   /**
    * `locale: "all"`, and that is load-bearing.

@@ -1,5 +1,7 @@
 import type { GlobalConfig } from "payload";
 
+import { canManageContent, isClinicAdministrator } from "../access/roles";
+
 import { clinicInfo as t, groups } from "@/admin/labels";
 import { safeRevalidate } from "@/collections/hooks/revalidate";
 import { auditGlobalAll } from "@/lib/audit/logger";
@@ -28,11 +30,13 @@ export const ClinicInfo: GlobalConfig = {
     label: t.label,
 
     access: {
-        read: () => true,
+        read: ({ req }) => !isClinicAdministrator(req.user),
+        update: ({ req }) => canManageContent(req.user),
     },
 
     admin: {
         group: groups.content,
+        hidden: ({ user }) => isClinicAdministrator(user as { role?: string | null }),
         description: t.description,
     },
 

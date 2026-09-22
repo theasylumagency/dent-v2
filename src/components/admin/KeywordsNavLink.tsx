@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useAuth } from "@payloadcms/ui";
 
 /**
  * „საკვანძო სიტყვები“ — sidebar entry for the overview screen.
@@ -17,6 +20,10 @@ import Link from "next/link";
  * that path, or Payload will not find this file.
  */
 export function KeywordsNavLink() {
+  const { user } = useAuth<{ role?: string }>();
+
+  if (user?.role === "clinic-admin") return null;
+
   return (
     <Link
       href="/admin/keywords"

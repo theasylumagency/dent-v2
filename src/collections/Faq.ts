@@ -1,5 +1,7 @@
 import type { CollectionConfig } from "payload";
 
+import { canManageContent, isClinicAdministrator } from "../access/roles";
+
 import { faq as t, groups } from "@/admin/labels";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
 import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
@@ -13,11 +15,17 @@ export const Faq: CollectionConfig = {
     labels: { singular: t.singular, plural: t.plural },
 
     access: {
-        read: () => true,
+        /* Public site reads remain public; a signed-in clinic administrator is
+           intentionally denied this non-clinical resource. */
+        read: ({ req }) => !isClinicAdministrator(req.user),
+        create: ({ req }) => canManageContent(req.user),
+        update: ({ req }) => canManageContent(req.user),
+        delete: ({ req }) => canManageContent(req.user),
     },
 
     admin: {
         group: groups.content,
+        hidden: ({ user }) => isClinicAdministrator(user as { role?: string | null }),
         useAsTitle: "question",
         defaultColumns: ["question", "order"],
         description: t.description,

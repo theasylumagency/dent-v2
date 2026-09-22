@@ -1,5 +1,7 @@
 import type { CollectionConfig } from "payload";
 
+import { canManageContent, isClinicAdministrator } from "../access/roles";
+
 import { cases as t, groups, services as serviceLabels } from "@/admin/labels";
 import { autoSlug } from "./hooks/auto-slug";
 import { afterChangeRevalidate, afterDeleteRevalidate } from "./hooks/revalidate";
@@ -38,11 +40,17 @@ export const Cases: CollectionConfig = {
   labels: { singular: t.singular, plural: t.plural },
 
   access: {
-    read: () => true,
-  },
+        /* Public site reads remain public; a signed-in clinic administrator is
+           intentionally denied this non-clinical resource. */
+        read: ({ req }) => !isClinicAdministrator(req.user),
+        create: ({ req }) => canManageContent(req.user),
+        update: ({ req }) => canManageContent(req.user),
+        delete: ({ req }) => canManageContent(req.user),
+    },
 
   admin: {
     group: groups.content,
+    hidden: ({ user }) => isClinicAdministrator(user as { role?: string | null }),
     useAsTitle: "title",
     defaultColumns: ["title", "direction", "consent", "published", "order"],
     description: t.description,

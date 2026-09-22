@@ -1,3 +1,7 @@
+"use client";
+
+import { useAuth } from "@payloadcms/ui";
+
 /**
  * „სახელმძღვანელო“ — the last entry in the admin sidebar.
  *
@@ -14,6 +18,10 @@
  * that path, or Payload will not find this file.
  */
 export function ManualNavLink() {
+  const { user } = useAuth<{ role?: string }>();
+
+  if (user?.role === "clinic-admin") return null;
+
   return (
     <a
       href="/manual.html"

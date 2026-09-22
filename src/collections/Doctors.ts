@@ -1,5 +1,7 @@
 import type { CollectionConfig, Field } from "payload";
 
+import { canManageContent, isClinicAdministrator } from "../access/roles";
+
 import { doctors as t, groups } from "@/admin/labels";
 import { autoSlug } from "./hooks/auto-slug";
 import { seoBlock } from "./fields/seo";
@@ -52,11 +54,17 @@ export const Doctors: CollectionConfig = {
   labels: { singular: t.singular, plural: t.plural },
 
   access: {
-    read: () => true,
-  },
+        /* Public site reads remain public; a signed-in clinic administrator is
+           intentionally denied this non-clinical resource. */
+        read: ({ req }) => !isClinicAdministrator(req.user),
+        create: ({ req }) => canManageContent(req.user),
+        update: ({ req }) => canManageContent(req.user),
+        delete: ({ req }) => canManageContent(req.user),
+    },
 
   admin: {
     group: groups.content,
+    hidden: ({ user }) => isClinicAdministrator(user as { role?: string | null }),
     useAsTitle: "name",
     defaultColumns: ["name", "role", "published", "isLead", "order"],
     description: t.description,

@@ -1,5 +1,7 @@
 import type { Field, GlobalConfig } from "payload";
 
+import { canManageContent, isClinicAdministrator } from "../access/roles";
+
 import { groups, seo as t } from "@/admin/labels";
 import { safeRevalidate } from "@/collections/hooks/revalidate";
 import { focusKeyword } from "@/collections/fields/seo";
@@ -80,11 +82,13 @@ export const Seo: GlobalConfig = {
     label: t.label,
 
     access: {
-        read: () => true,
+        read: ({ req }) => !isClinicAdministrator(req.user),
+        update: ({ req }) => canManageContent(req.user),
     },
 
     admin: {
         group: groups.marketing,
+        hidden: ({ user }) => isClinicAdministrator(user as { role?: string | null }),
         description: t.description,
     },
 

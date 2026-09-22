@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
 
 import { groups, users as t } from "@/admin/labels";
-import { isAdmin } from "../access/roles";
+import { isAdmin, isClinicAdministrator } from "../access/roles";
 import { auditCollection, auditCollectionDelete } from "@/lib/audit/logger";
 
 /**
@@ -36,10 +36,14 @@ export const Users: CollectionConfig = {
     auth: true,
 
     access: {
-        /* Colleagues' names and email addresses, visible to anyone already
-           logged in. Restricting this to self would hide the team list for no
-           security gain — the sensitive operations are below. */
-        read: ({ req }) => Boolean(req.user),
+        /* Clinic administrators need no team directory: their work is
+           deliberately limited to booking requests. Everyone else keeps the
+           existing team-list access; the clinic administrator can still read
+           their own account for Payload's account menu. */
+        read: ({ req }) =>
+            isClinicAdministrator(req.user)
+                ? { id: { equals: req.user?.id } }
+                : Boolean(req.user),
 
         /**
          * Admins only — with one escape hatch.
@@ -75,6 +79,7 @@ export const Users: CollectionConfig = {
         useAsTitle: "email",
         defaultColumns: ["name", "email", "role"],
         description: t.description,
+        hidden: ({ user }) => isClinicAdministrator(user as { role?: string | null }),
     },
 
     hooks: {
@@ -163,6 +168,10 @@ export const Users: CollectionConfig = {
                 {
                     label: t.roleEditor,
                     value: "editor",
+                },
+                {
+                    label: t.roleClinicAdministrator,
+                    value: "clinic-admin",
                 },
             ],
         },
