@@ -62,12 +62,16 @@ type EquipmentDoc = {
 /* Real local product photography can replace a seeded CMS placeholder
    without waiting for every deployed database to be reseeded. The TRIOS
    image is a full-frame editorial shot, so it fills the card rather than
-   inheriting the padding used for transparent product cut-outs. */
+   inheriting the padding used for transparent product cut-outs.
+
+   `-clean` is the same render with the manufacturer's printed slogan
+   painted out of the backdrop — a card is not the place for someone
+   else's advertising copy. */
 const localPhotoOverrides: Partial<
   Record<string, { src: string; fit: DevicePhotoFit }>
 > = {
   "trios-3-move": {
-    src: "/images/home/technology/trios-3-move.webp",
+    src: "/images/home/technology/trios-3-move-clean.webp",
     fit: "cover",
   },
 };

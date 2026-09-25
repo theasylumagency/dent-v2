@@ -33,28 +33,6 @@ export const categoryOrder = [
 
 export type CategorySlug = (typeof categoryOrder)[number];
 
-/**
- * One photograph per clinical direction.
- *
- * Keyed by slug and declared here for the same reason `categoryOrder` is:
- * a direction is not complete without a URL, an icon and a picture, and
- * `Record<CategorySlug, string>` makes adding a sixth slug a type error
- * until all three exist. A lookup object in the component would have
- * failed silently with a broken image instead.
- *
- * These are chosen from `public/services`, which holds a shot per
- * *service*; the one picked is the most representative of its group.
- * They are decorative wherever they are used — the direction's title is
- * always adjacent — so call sites pass `alt=""`.
- */
-export const categoryImage: Record<CategorySlug, string> = {
-  "diagnostics-planning": "/services/Diagnostics.webp",
-  "therapy-prevention": "/services/Therapy-in-Adults.webp",
-  "surgery-implantation": "/services/Implantology.webp",
-  orthodontics: "/services/Orthodontics.webp",
-  aesthetic: "/services/Aesthetic-Dentistry.webp",
-};
-
 export function isCategorySlug(value: string): value is CategorySlug {
   return (categoryOrder as readonly string[]).includes(value);
 }

@@ -36,6 +36,24 @@
   --color-brand-700: #124a70;
   --color-brand-600: #1b6493;
 
+  /* ------------------------------------------------------------------
+     Mist — the brand blue at its lightest, as a *surface*. accent-50/100
+     are tints for fills and washes; at section scale they read slightly
+     too saturated next to warm ivory, so these are the same hue pulled a
+     little toward grey. The technology section sits on mist-100 and
+     every ink and brand-navy step keeps its contrast there:
+
+        brand-900 on mist-100   15.3:1
+        ink-700   on mist-100    7.0:1
+        accent-600 on mist-100   4.7:1   (labels only)
+
+     mist-300 is decorative (rails, hairlines) and never carries text.
+     ------------------------------------------------------------------ */
+  --color-mist-50: #f6fafd;
+  --color-mist-100: #ecf5fa;
+  --color-mist-200: #d9eaf4;
+  --color-mist-300: #b9d6e8;
+
   /* Warm ivory surfaces — the page is light, never dark ------------- */
   --color-ivory-50: #fffdfa;
   /* elevated cards */
@@ -343,21 +361,6 @@
       padding-top: max(6rem, 10vh);
       padding-bottom: max(3.5rem, 7vh);
     }
-  }
-
-  /* ------------------------------------------------------------------
-     Scene captions in the technology theatre are anchored to the bottom
-     of a *pinned* viewport, so `.fit-pad` never applies to them. The old
-     `bottom: 7svh` (57px at 820px tall) sat inside the 70px action bar,
-     which cut the last line of every scene description — and 7svh only
-     gets worse as the screen gets shorter, while the bar does not. A
-     fixed clearance is the correct unit here.
-
-     `lg:bottom-auto` (utilities layer) still wins above 1024px, where the
-     caption is vertically centred and the bar does not exist.
-     ------------------------------------------------------------------ */
-  .tech-scene-caption {
-    bottom: calc(var(--action-bar-h) + env(safe-area-inset-bottom) + 1.25rem);
   }
 
   .fit-stack {
@@ -1183,5 +1186,243 @@
     .js .reveal .case-after {
       transform: translateX(-8px);
     }
+  }
+}
+
+/* ====================================================================
+   Services dial (home page).
+
+   The dial has to be the largest circle that fits the space the index
+   leaves it, which is a question about *both* dimensions: on a wide,
+   short laptop window the height runs out first. So the well is a size
+   container and the dial is `min(100cqw, 100cqh)` of it. The dial is
+   itself an inline-size container, so its type is set in `cqw` and
+   scales with the circle rather than with the viewport.
+
+   The icons are drawn on a 24px grid at 1.5px. Scaled up to the size of
+   a node — and further in the centre — that stroke would thicken with
+   them; `non-scaling-stroke` keeps the line as fine as the illustration
+   set the dial is standing in for.
+   ==================================================================== */
+@layer components {
+  .dial-well {
+    container-type: size;
+  }
+
+  .dial {
+    width: min(100cqw, 100cqh);
+    container-type: inline-size;
+  }
+
+  .dial-icon * {
+    stroke-width: 1.15px;
+    vector-effect: non-scaling-stroke;
+  }
+
+  @keyframes dial-drift {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .dial-orbit {
+    animation: dial-drift 120s linear infinite;
+  }
+
+  .dial-panel {
+    opacity: 0;
+    transform: translateY(0.6rem) scale(0.985);
+    transition: opacity 0.35s var(--ease-premium), transform 0.6s var(--ease-premium);
+  }
+
+  .dial-panel[data-active="true"] {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.14s;
+  }
+}
+
+/* ====================================================================
+   Trust band photograph (home page).
+
+   A slow vertical drift tied to the band's own passage through the
+   viewport. Scroll-driven CSS rather than a scroll listener: the browser
+   runs it on the compositor and it needs no JavaScript at all. Where
+   `animation-timeline` is unsupported, or motion is reduced, the picture
+   simply sits still — there is nothing to fall back *to*.
+
+   Scaled 1.12 so the drift never exposes an edge.
+   ==================================================================== */
+@layer components {
+  @keyframes visit-drift {
+    from {
+      transform: translate3d(0, -4.5%, 0) scale(1.12);
+    }
+    to {
+      transform: translate3d(0, 4.5%, 0) scale(1.12);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .visit-photo {
+        animation: visit-drift linear both;
+        animation-timeline: view();
+        animation-range: cover;
+      }
+    }
+  }
+}
+
+/* ====================================================================
+   Technology section (home page) — the precision rail.
+
+   The runway is one screen of pinned stage plus one step-length of
+   scroll per device (four of them — keep `--tech-count` in step with
+   `SCENES` in TechnologyExperience.tsx). A step is shorter on a phone,
+   where a thumb covers the distance more slowly than a wheel.
+
+   The stage clears the collapsed header above and, below lg, the fixed
+   action bar below — the same clearances `.fit-pad` pays, as fixed units,
+   because a pinned viewport never shrinks the bar.
+
+   Every transition here is opacity or transform, with one exception: the
+   active step's copy opens with a `grid-template-rows` transition. That
+   is layout, but it is a paragraph in a list that only exists from lg,
+   four times per pass — not a full-bleed layer on every frame.
+   ==================================================================== */
+@layer components {
+  .tech-surface {
+    background:
+      radial-gradient(60% 45% at 78% 40%, color-mix(in oklab, var(--color-accent-100) 55%, transparent), transparent 70%),
+      linear-gradient(180deg, var(--color-mist-50) 0%, var(--color-mist-100) 28%, var(--color-mist-100) 100%);
+  }
+
+  .tech-runway {
+    --tech-count: 4;
+    --tech-step: 52svh;
+    height: calc(100svh + var(--tech-count) * var(--tech-step));
+  }
+
+  .tech-stage {
+    padding-top: 4.75rem;
+    padding-bottom: calc(var(--action-bar-h) + env(safe-area-inset-bottom) + 1.25rem);
+  }
+
+  @media (min-width: 1024px) {
+    .tech-runway {
+      --tech-step: 60svh;
+    }
+
+    .tech-stage {
+      padding-top: 4rem;
+      padding-bottom: 1.5rem;
+    }
+  }
+
+  /* Desktop list ---------------------------------------------------- */
+  .tech-step {
+    opacity: 0.42;
+    transition: opacity 0.5s var(--ease-premium);
+  }
+
+  .tech-step:hover,
+  .tech-step:focus-within {
+    opacity: 0.75;
+  }
+
+  .tech-step[data-active="true"] {
+    opacity: 1;
+  }
+
+  .tech-step-body {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.6s var(--ease-premium), opacity 0.45s var(--ease-premium);
+  }
+
+  .tech-step[data-active="true"] .tech-step-body {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition-delay: 0s, 0.12s;
+  }
+
+  .tech-node {
+    transition: background-color 0.4s var(--ease-premium), border-color 0.4s var(--ease-premium),
+      box-shadow 0.4s var(--ease-premium);
+  }
+
+  .tech-step[data-active="true"] .tech-node {
+    background: var(--color-accent-500);
+    border-color: var(--color-accent-500);
+    box-shadow: 0 0 0 5px color-mix(in oklab, var(--color-accent-300) 35%, transparent);
+  }
+
+  /* The frame --------------------------------------------------------- */
+  .tech-shot {
+    opacity: 0;
+    transform: scale(1.06);
+    transition: opacity 0.75s var(--ease-premium), transform 1.4s var(--ease-premium);
+  }
+
+  .tech-shot[data-active="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  @keyframes tech-focus {
+    from {
+      opacity: 0;
+      transform: scale(1.045);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .tech-focus {
+    animation: tech-focus 0.8s var(--ease-premium) both;
+  }
+
+  /* One pass of a scan line across the frame whenever the device changes
+     — the only flourish in the section, and it is a transform. */
+  @keyframes tech-scan {
+    from {
+      opacity: 0;
+      transform: translateY(-50%);
+    }
+    20% {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      transform: translateY(50%);
+    }
+  }
+
+  .tech-scan {
+    background: linear-gradient(180deg,
+        transparent 0%,
+        transparent 42%,
+        rgb(185 229 248 / 0.1) 48%,
+        rgb(185 229 248 / 0.55) 50%,
+        rgb(185 229 248 / 0.1) 52%,
+        transparent 58%,
+        transparent 100%);
+    animation: tech-scan 1.5s var(--ease-premium) both;
+  }
+
+  /* Phone caption ----------------------------------------------------- */
+  .tech-caption {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition: opacity 0.4s var(--ease-premium), transform 0.6s var(--ease-premium);
+  }
+
+  .tech-caption[data-active="true"] {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.1s;
   }
 }

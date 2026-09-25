@@ -36,11 +36,12 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       <Hero dict={dict} lang={locale} />
       <Clinic dict={dict} lang={locale} />
       <Services dict={dict} lang={locale} />
-      <Atmosphere dict={dict} />
-      {/* The atmosphere band closes on a claim about trust. This is the
-          door to where that claim is actually evidenced — and a door to an
-          empty room is worse than no door, so it waits on the same launch
-          switch as the page it opens (`routeReady.cases`). */}
+      <Atmosphere dict={dict} lang={locale} />
+      {/* The trust band closes on a claim about trust over the clinic's own
+          front door. This is the door to where that claim is evidenced
+          clinically — and a door to an empty room is worse than no door, so
+          it waits on the same launch switch as the page it opens
+          (`routeReady.cases`). */}
       {isRouteReady("cases") ? <CasesTeaser dict={dict} lang={locale} /> : null}
       <LeadDoctor dict={dict} lang={locale} />
       <Team dict={dict} lang={locale} />

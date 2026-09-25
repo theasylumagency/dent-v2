@@ -1,48 +1,34 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { route } from "@/lib/nav";
 import { getServiceCategories } from "@/lib/services";
-import { categoryImage } from "@/lib/services-shared";
 import { ArrowUpRight } from "@/components/ui/icons";
+import ServiceIcon from "@/components/ui/ServiceIcons";
 import Reveal from "@/components/ui/Reveal";
+import ServicesDial from "./ServicesDial";
 
 /**
  * The five clinical directions, as an index rather than a card grid.
  *
- * The grid this replaces gave every direction an identical box — icon,
- * title, blurb, then a cloud of service pills. Five identical boxes have
- * no hierarchy, so nothing led; and the pills put sixteen secondary links
- * in direct competition with the five primary ones they sat inside. On a
- * phone the whole thing became a very long ragged wall.
+ * One row per direction, numbered, with the title at display size doing the
+ * leading and the services underneath as quiet text. The row is the link.
  *
- * An index fixes both. One row per direction, numbered, with the title at
- * display size doing the leading and the services underneath as quiet
- * text. The row is the link. Hovering or focusing it fades in that
- * direction's photograph from the right, dissolved into the page with a
- * gradient so the type never sits on top of an image.
- *
- * That reveal is CSS only — no scroll listener, no state, no measuring.
- * It costs nothing on a phone (where it is not rendered at all, hover
- * being meaningless there) and the global `prefers-reduced-motion` rule
- * already flattens the transition to nothing for anyone who asks.
+ * From lg the index shares the screen with a dial (`ServicesDial`): pointing
+ * at a row turns it to that direction's node and answers with the one-line
+ * promise the row does not show. It replaced a hover photograph — see the
+ * note in that file for why.
  *
  * Height: exactly one screen from lg, at least one below it
- * (`.h-viewport-lg`). The hero and the about section can hold a hard
- * 100vh on a phone; this one cannot. Five directions named in Georgian
- * wrap to two lines at 375px, and once the head and the padding are paid
- * for there is no fifth of a short screen left to put them in. Forcing
- * it meant deleting the numbers, the service names and the photographs
- * — a worse trade than a section that runs to about 1.2 screens.
- *
- * So below lg the rows take their natural height and the section grows.
- * What mobile gets in exchange for the hover reveal it cannot use is the
- * photograph, as a thumbnail on every row.
+ * (`.h-viewport-lg`). Five directions named in Georgian wrap to two lines at
+ * 375px, and there is no fifth of a short phone screen left to put them in,
+ * so below lg the rows take their natural height and the section grows.
+ * Mobile gets each direction's icon on its row instead of the dial.
  */
 export default async function Services({ dict, lang }: { dict: Dictionary; lang: Locale }) {
   const categories = await getServiceCategories(dict.services.categories, lang);
+  const total = categories.reduce((sum, category) => sum + category.items.length, 0);
 
   return (
     <section
@@ -50,6 +36,7 @@ export default async function Services({ dict, lang }: { dict: Dictionary; lang:
       className="h-viewport-lg relative overflow-hidden border-y border-ivory-400 bg-ivory-200"
     >
       <div className="aura -left-40 top-1/4 h-[30rem] w-[30rem] opacity-30" aria-hidden="true" />
+      <div className="aura -right-32 bottom-0 hidden h-[26rem] w-[26rem] opacity-40 lg:block" aria-hidden="true" />
 
       <div className="shell fit-pad fit-stack relative flex-1">
         {/* Head ------------------------------------------------------ */}
@@ -75,128 +62,79 @@ export default async function Services({ dict, lang }: { dict: Dictionary; lang:
           </Link>
         </Reveal>
 
-        {/* Index ----------------------------------------------------
-            From lg the list and every row are `flex-1`, so the five rows
-            divide the leftover height between them and the section
-            absorbs any window by changing row height rather than
-            overflowing. Below lg none of that applies — see the row. */}
-        <Reveal delay={100} className="flex min-h-0 flex-col lg:flex-1">
-          <ul className="flex min-h-0 flex-col border-t border-ivory-400 lg:flex-1">
-            {categories.map((category, index) => (
-              <li
-                key={category.slug}
-                /* Natural height on a phone, an equal share of the band
-                   from lg. That difference is the whole mobile fix: five
-                   rows forced to a fifth of a short screen each is what
-                   was making the Georgian titles collide. */
-                className="group relative flex min-h-0 items-center border-b border-ivory-400 lg:flex-1"
-              >
-                {/* Photograph, desktop only. Masked rather than dimmed:
-                    a gradient that reaches full page colour on the left
-                    means the title is always on flat ivory, whatever the
-                    picture happens to be doing behind it.
-
-                    `group-focus-within` sits alongside `group-hover` on
-                    this and on the other two affordances below — the row
-                    is reachable by keyboard, and a Tab that lit up
-                    nothing would leave someone stepping through five
-                    rows with no idea which one they were on. */}
-                <div
-                  className="pointer-events-none absolute inset-y-0 right-0 hidden w-[42%] opacity-0 transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-focus-within:opacity-100 group-hover:opacity-100 lg:block"
-                  aria-hidden="true"
+        {/* Index + dial --------------------------------------------- */}
+        <ServicesDial
+          items={categories.map((category) => ({ slug: category.slug, blurb: category.blurb }))}
+          total={total}
+          totalLabel={dict.stats.directions}
+        >
+          {/* From lg the list and every row are `flex-1`, so the rows
+              divide the leftover height between them and the section
+              absorbs any window by changing row height rather than
+              overflowing. Below lg none of that applies. */}
+          <Reveal delay={100} className="flex min-h-0 flex-col lg:flex-1">
+            <ul className="flex min-h-0 flex-col border-t border-ivory-400 lg:flex-1">
+              {categories.map((category, index) => (
+                <li
+                  key={category.slug}
+                  data-dial-index={index}
+                  className="group relative flex min-h-0 items-center border-b border-ivory-400 lg:flex-1"
                 >
-                  <Image
-                    src={categoryImage[category.slug]}
-                    alt=""
-                    fill
-                    sizes="(min-width: 1440px) 600px, 42vw"
-                    className="object-cover"
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        "linear-gradient(to right, var(--color-ivory-200) 0%, color-mix(in oklab, var(--color-ivory-200) 45%, transparent) 55%, transparent 100%)",
-                    }}
-                  />
-                </div>
-
-                <div className="relative flex w-full items-center gap-4 py-3.5 sm:gap-6 lg:gap-10 lg:py-[clamp(0.25rem,1vh,0.75rem)]">
-                  {/* Phones get the photograph as a thumbnail rather than
-                      not at all. The hover reveal below is desktop-only
-                      by necessity — there is no hover on touch — which
-                      left mobile with the one thing this section has
-                      that nothing else on the page does. It also gives
-                      the row a height floor, so the list keeps an even
-                      rhythm even where one title wraps and another
-                      does not. */}
-                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-ivory-300 lg:hidden">
-                    <Image
-                      src={categoryImage[category.slug]}
-                      alt=""
-                      fill
-                      sizes="4rem"
-                      className="object-cover"
-                    />
-                  </div>
-
+                  {/* Wash — a tint that sweeps in from the left under the
+                      row. `scaleX` rather than a width or background
+                      transition, so it never leaves the compositor. */}
                   <span
-                    className="hidden shrink-0 font-display text-[clamp(0.8rem,1.7vh,1rem)] tabular-nums text-accent-500 transition-colors duration-500 group-focus-within:text-accent-700 group-hover:text-accent-700 lg:inline"
+                    className="pointer-events-none absolute inset-0 origin-left scale-x-0 bg-gradient-to-r from-accent-50 via-accent-50/60 to-transparent transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-focus-within:scale-x-100 group-hover:scale-x-100"
                     aria-hidden="true"
-                  >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+                  />
 
-                  {/* Capped at half the row from lg. The photograph
-                      occupies the right 42%, and although its mask is
-                      opaque ivory at that edge, letting the service
-                      names run under it would put small grey text over
-                      a photograph at exactly the width where the mask
-                      starts giving way. */}
-                  <div className="min-w-0 flex-1 lg:max-w-[50%]">
-                    {/* Fixed size on mobile, viewport-relative from lg.
-                        Below lg the section is free to grow, so tying
-                        the title to `vh` there bought nothing and meant
-                        a taller phone got bigger type for no reason. */}
-                    <h3 className="font-display text-xl leading-tight lg:text-[clamp(1.15rem,2.7vh,2.1rem)]">
-                      {/* Stretched link — the whole row is the target.
-                          Nothing else in the row is interactive, so this
-                          needs none of the z-index juggling the card
-                          version required. */}
-                      <Link
-                        href={category.href}
-                        className="transition-colors duration-300 after:absolute after:inset-0 after:content-[''] group-focus-within:text-accent-700 group-hover:text-accent-700"
-                      >
-                        {category.title}
-                      </Link>
-                    </h3>
+                  <div className="relative flex w-full items-center gap-4 py-3.5 sm:gap-6 lg:gap-8 lg:py-[clamp(0.25rem,1vh,0.75rem)] lg:pl-2">
+                    {/* Phones: the direction's icon on the row itself. */}
+                    <span
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-600 ring-1 ring-inset ring-accent-200 lg:hidden"
+                      aria-hidden="true"
+                    >
+                      <ServiceIcon name={category.slug} className="h-6 w-6" />
+                    </span>
 
-                    {/* The services, as text rather than as sixteen
-                        links. They are here to be *read* — they are the
-                        concrete answer to "what do you actually do" that
-                        a generic blurb never gives — and every one of
-                        them is a link on the direction's own page, which
-                        is one click away through the row itself. */}
-                    <p className="index-services mt-1.5 text-xs leading-snug text-ink-600 lg:mt-1 lg:text-[clamp(0.68rem,1.45vh,0.85rem)]">
-                      {category.items.map((item) => item.title).join(" · ")}
-                    </p>
+                    <span
+                      className="hidden shrink-0 font-display text-[clamp(0.8rem,1.7vh,1rem)] tabular-nums text-accent-500 transition-colors duration-500 group-focus-within:text-accent-700 group-hover:text-accent-700 lg:inline"
+                      aria-hidden="true"
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-display text-xl leading-tight lg:text-[clamp(1.15rem,2.6vh,2rem)]">
+                        {/* Stretched link — the whole row is the target. */}
+                        <Link
+                          href={category.href}
+                          className="transition-colors duration-300 after:absolute after:inset-0 after:content-[''] group-focus-within:text-accent-700 group-hover:text-accent-700"
+                        >
+                          {category.title}
+                        </Link>
+                      </h3>
+
+                      {/* The services, as text rather than as sixteen
+                          links — every one of them is a link on the
+                          direction's own page, one click away. */}
+                      <p className="index-services mt-1.5 text-xs leading-snug text-ink-600 lg:mt-1 lg:text-[clamp(0.68rem,1.45vh,0.85rem)]">
+                        {category.items.map((item) => item.title).join(" · ")}
+                      </p>
+                    </div>
+
+                    <span
+                      className="ml-auto hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ivory-500 bg-ivory-50/60 text-accent-600 transition-all duration-500 group-focus-within:border-accent-400 group-focus-within:bg-accent-300 group-focus-within:text-ink-900 group-hover:border-accent-400 group-hover:bg-accent-300 group-hover:text-ink-900 lg:inline-flex lg:h-11 lg:w-11"
+                      aria-hidden="true"
+                    >
+                      <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    </span>
                   </div>
-
-                  <span
-                    /* Desktop only. On touch there is no hover for it to
-                       respond to, and five decorative circles is five
-                       rows' worth of width taken from titles that need
-                       every pixel of it. */
-                    className="ml-auto hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ivory-500 bg-ivory-50/60 text-accent-600 transition-all duration-500 group-focus-within:border-accent-400 group-focus-within:bg-accent-300 group-focus-within:text-ink-900 group-hover:border-accent-400 group-hover:bg-accent-300 group-hover:text-ink-900 lg:inline-flex lg:h-11 lg:w-11"
-                    aria-hidden="true"
-                  >
-                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </ServicesDial>
       </div>
     </section>
   );

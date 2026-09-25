@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useSyncExternalStore } from "react";
+import { useCallback, useRef, useState, useSyncExternalStore, type Ref } from "react";
 import {
   motion,
-  useReducedMotion,
+  useMotionValueEvent,
   useScroll,
   useTransform,
   type MotionValue,
@@ -42,150 +42,106 @@ export type TechnologyExperienceCopy = {
 
 type SceneKey = keyof TechnologyExperienceCopy["scenes"];
 
-/** Homepage-specific editorial assets live here, away from the documentary
- * equipment catalogue. Keep image replacement independent of choreography. */
-const SCENE_ASSETS: Record<
-  SceneKey,
+/**
+ * Homepage-specific editorial assets, kept apart from the documentary
+ * equipment catalogue.
+ *
+ * `model` is the manufacturer's own name and stays Latin in every locale,
+ * for the same reason it does on the technology page: it is the string the
+ * manufacturer, the patient's search and the search index all share.
+ *
+ * TRIOS points at `-clean`: the supplied render had the manufacturer's
+ * advertising lockup ("TRIOS 3 Move+ / Digital precision. Better care.")
+ * printed into the picture, which collided with our own caption whenever
+ * the two were on screen together. The lockup has been painted out of the
+ * background; the device itself is untouched.
+ */
+const SCENES: { key: SceneKey; model: string; src: string; position: string }[] = [
   {
-    number: string;
-    src: string;
-    /** Theatre-only override for `src`, where one exists. */
-    sceneSrc?: string;
-    imageClass: string;
-    staticPosition: string;
-  }
-> = {
-  cbct: {
-    number: "01",
+    key: "cbct",
+    model: "Vatech CBCT",
     src: "/images/home/technology/cbct.webp",
-    imageClass: "object-cover object-[68%_center] lg:object-center",
-    staticPosition: "object-[68%_center]",
+    position: "object-[62%_50%]",
   },
-  trios: {
-    number: "02",
-    src: "/images/home/technology/trios-3-move.webp",
-    /* This scene used to be `mix-blend-mode: luminosity` over the brand-950
-       field. The blend result never varied — the layer carries its own
-       opaque background, so the backdrop is always the same navy — but the
-       browser recomputed it on every scrolled frame and the layer could
-       never be promoted while it did. `-duotone` is that exact composite
-       baked into the file (mean channel error 0.5/255 against a rendered
-       reference), so the same picture now costs nothing to draw.
-
-       The catalogue crop below still points at the unblended original,
-       which is what the reduced-motion layout wants. */
-    sceneSrc: "/images/home/technology/trios-3-move-duotone.webp",
-    imageClass: "object-cover object-center opacity-70",
-    staticPosition: "object-center",
+  {
+    key: "trios",
+    model: "3Shape TRIOS 3 Move+",
+    src: "/images/home/technology/trios-3-move-clean.webp",
+    position: "object-[64%_50%]",
   },
-  airflow: {
-    number: "03",
+  {
+    key: "airflow",
+    model: "EMS AIRFLOW Prophylaxis Master",
     src: "/images/home/technology/airflow.webp",
-    imageClass: "object-cover object-[72%_center] lg:object-center",
-    staticPosition: "object-[72%_center]",
+    position: "object-[52%_62%]",
   },
-  zoom: {
-    number: "04",
+  {
+    key: "zoom",
+    model: "Philips Zoom 4",
     src: "/images/home/technology/zoom-4.webp",
-    imageClass: "object-cover object-[69%_center] lg:object-center",
-    staticPosition: "object-[69%_center]",
+    position: "object-[68%_45%]",
   },
-};
+];
 
-const SCENE_KEYS: SceneKey[] = ["cbct", "trios", "airflow", "zoom"];
+const pad = (value: number) => String(value).padStart(2, "0");
 
-const DESKTOP_QUERY = "(min-width: 1024px)";
+const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
 
 /**
- * Which grade of the choreography to run.
+ * Reduced-motion preference, hydration-safe.
  *
- * Three of the effects here — the animated `clip-path` wipe, `mix-blend-mode`
- * on a full-bleed image, and a large blur that also changes scale — never
- * reach the compositor, so each scrolled frame repaints the entire viewport.
- * Measured on a desktop the TRIOS reveal alone averages ~39ms per frame
- * (p95 127ms); a mid-range handset is several times worse, which is what
- * reads as the section "jamming" under a thumb.
- *
- * So the section ships two grades of the same story: the full theatre from
- * `lg` up, and a transform/opacity-only cut below it. Everything the copy
- * says, and the order it says it in, is identical.
- *
- * Read through `useSyncExternalStore` rather than an effect so the first
- * client render already knows which grade it is — a desktop never commits a
- * mobile frame it would have to replace one tick later.
+ * Motion's `useReducedMotion` reads the media query during the very first
+ * client render, so a visitor who asks for less motion got a different tree
+ * on the client than the server had sent: a hydration failure, a full client
+ * re-render of the section, and `useScroll` complaining about a target that
+ * never hydrated. `useSyncExternalStore` hydrates with the server snapshot
+ * (`false`) and switches to the real value straight after, which is the
+ * supported way to read a browser-only value without a mismatch.
  */
-function useIsDesktop() {
+function usePrefersReducedMotion() {
   return useSyncExternalStore(
     (onChange) => {
-      const query = window.matchMedia(DESKTOP_QUERY);
+      const query = window.matchMedia(REDUCED_QUERY);
       query.addEventListener("change", onChange);
       return () => query.removeEventListener("change", onChange);
     },
-    () => window.matchMedia(DESKTOP_QUERY).matches,
+    () => window.matchMedia(REDUCED_QUERY).matches,
     () => false,
   );
 }
 
 /**
- * `useTransform` against a scroll progress, with both ends of the input range
- * pinned to 0 and 1.
+ * The technology section — a light, stepped "precision rail".
  *
- * Motion hands scroll-linked transforms to the browser as a WAAPI animation
- * on a `ViewTimeline`, and the keyframe offsets come straight from the input
- * range. WAAPI then fills any gap at either end of the timeline with an
- * *implicit* keyframe holding the element's underlying style — so a curve
- * that ends at 0.065 does not hold its last value for the rest of the
- * section. It interpolates from that value back to the element's base style
- * across the remaining 93%, and the title card that had just faded out crept
- * back to full opacity by the end of the scroll. The MotionValue read 0 the
- * whole way; the animation doing the damage was running in the compositor,
- * where JS could not see it.
+ * What it replaces, and why. The previous theatre was 4.5 screens of
+ * near-black on a site whose whole palette is ivory and sky; four
+ * full-bleed renders of near-identical dark rooms cross-faded under one
+ * caption at a time, so long stretches of scrolling changed nothing on
+ * screen, and the TRIOS scene printed the manufacturer's slogan straight
+ * through ours. It also repainted the whole viewport on every scrolled
+ * frame, which is what made it jam under a thumb.
  *
- * Pinning both ends states the entire timeline explicitly, leaving WAAPI
- * nothing to fill in. Every scroll-linked value in this section goes through
- * here — a range that stops short is the bug, not a style choice.
+ * What it is now:
+ *
+ * - **Light.** A pale brand-blue surface (`mist`) with deep brand-navy type.
+ *   The renders keep their dark studio backdrops, but inside a framed
+ *   "viewfinder" — a lit screen on a light page, not a dark page.
+ * - **Stepped, not scrubbed.** Scroll position picks *which* device is
+ *   showing; the change itself is a short timed transition. A scrubbed
+ *   cross-fade parks two half-transparent full-size images on screen for
+ *   as long as the thumb is slow, which is both the ugliest frame and the
+ *   most expensive one. Only the progress rail follows the scroll 1:1.
+ * - **Always legible.** Desktop shows all four steps as a list beside the
+ *   frame, so the reader can see where they are, what is next, and jump
+ *   there. Phones get a counter and a four-part progress bar instead.
+ * - **Compositor-only.** Everything that moves is `opacity` or `transform`.
+ *   React re-renders four times across the whole section — once per step —
+ *   and never per frame.
+ *
+ * The one stepped state lives in `active`, derived from scroll progress in a
+ * motion-value listener. `setActive` with an unchanged value is a no-op, so
+ * the listener costs nothing between step boundaries.
  */
-function useScrollCurve(
-  progress: MotionValue<number>,
-  input: readonly number[],
-  output: readonly number[],
-): MotionValue<number>;
-function useScrollCurve(
-  progress: MotionValue<number>,
-  input: readonly number[],
-  output: readonly string[],
-): MotionValue<string>;
-function useScrollCurve<T extends number | string>(
-  progress: MotionValue<number>,
-  input: readonly number[],
-  output: readonly T[],
-): MotionValue<T> {
-  const inputRange = [...input];
-  const outputRange = [...output];
-
-  if (inputRange[0] > 0) {
-    inputRange.unshift(0);
-    outputRange.unshift(outputRange[0]);
-  }
-  if (inputRange[inputRange.length - 1] < 1) {
-    inputRange.push(1);
-    outputRange.push(outputRange[outputRange.length - 1]);
-  }
-
-  return useTransform(progress, inputRange, outputRange) as MotionValue<T>;
-}
-
-function useSceneMotion(
-  progress: MotionValue<number>,
-  range: [number, number, number, number],
-  scaleRange: [number, number, number, number] = [1.04, 1, 1, 1],
-) {
-  return {
-    opacity: useScrollCurve(progress, range, [0, 1, 1, 0]),
-    scale: useScrollCurve(progress, range, scaleRange),
-  };
-}
-
 export default function TechnologyExperience({
   copy,
   technologyHref,
@@ -193,273 +149,250 @@ export default function TechnologyExperience({
   copy: TechnologyExperienceCopy;
   technologyHref: string;
 }) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
-  const isDesktop = useIsDesktop();
+  const runwayRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = usePrefersReducedMotion();
+  const [active, setActive] = useState(0);
+  const count = SCENES.length;
+
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: runwayRef,
     offset: ["start start", "end end"],
   });
-  /* `scrollYProgress` is pinned at 0 for the whole time the section climbs
-     into view — a full viewport height of scrolling — so progress 0 is not
-     the start of the section, it is everything up to and including the
-     moment the panel stops. Whatever is on screen at progress 0 is what the
-     section looks like the entire way in.
 
-     Hence: the title card is already at full opacity, and so is scene one.
-     The panel arrives named and already showing a picture, and the card is
-     gone shortly after the panel settles rather than holding a third of the
-     way into the pinned timeline. */
-  const introOpacity = useScrollCurve(scrollYProgress, [0, 0.035, 0.065], [1, 1, 0]);
-  const introY = useScrollCurve(scrollYProgress, [0, 0.035, 0.065], [0, 0, -18]);
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    setActive(Math.min(count - 1, Math.max(0, Math.floor(value * count))));
+  });
 
-  const cbctOpacity = useScrollCurve(scrollYProgress, [0.49, 0.51], [1, 0]);
-  /* The one bit of motion in the opening beat: a slow settle that runs while
-     the title card clears, so the pinned stretch is not dead before the
-     first caption arrives. */
-  const cbctScale = useScrollCurve(scrollYProgress, [0, 0.12], [1.03, 1]);
-  const cbctCopyOpacity = useScrollCurve(scrollYProgress, [0.055, 0.1, 0.27, 0.32], [0, 1, 1, 0]);
-  const cbctCopyY = useScrollCurve(scrollYProgress, [0.055, 0.1, 0.27, 0.32], [16, 0, 0, -12]);
-
-  const triosClipPath = useScrollCurve(
-    scrollYProgress,
-    [0.3, 0.48],
-    ["circle(7% at 72% 46%)", "circle(150% at 72% 46%)"],
+  /* Jump to the middle of a step's stretch of the runway, so the step lands
+     settled rather than on its boundary. */
+  const goTo = useCallback(
+    (index: number) => {
+      const runway = runwayRef.current;
+      if (!runway) return;
+      const top = runway.getBoundingClientRect().top + window.scrollY;
+      const span = runway.offsetHeight - window.innerHeight;
+      window.scrollTo({ top: top + (span * (index + 0.5)) / count });
+    },
+    [count],
   );
-  const triosLayerOpacity = useScrollCurve(scrollYProgress, [0.295, 0.3, 0.64, 0.68], [0, 1, 1, 0]);
-  const triosScale = useScrollCurve(scrollYProgress, [0.3, 0.48, 0.65], [1.025, 1, 1.01]);
-  /* Mobile stand-in for the circular wipe: opacity, which the compositor
-     can carry on its own. It settles at 0.40 rather than tracking the
-     circle all the way to 0.48 — while both layers are part-transparent
-     the browser has two full-bleed images to draw instead of one, so the
-     shorter the overlap the better, and the copy still lands at 0.45 over
-     a picture that has already come to rest. */
-  const triosMobileOpacity = useScrollCurve(
-    scrollYProgress,
-    [0.3, 0.4, 0.64, 0.68],
-    [0, 1, 1, 0],
-  );
-  const triosCopyOpacity = useScrollCurve(scrollYProgress, [0.45, 0.49, 0.61, 0.66], [0, 1, 1, 0]);
-  const triosCopyY = useScrollCurve(scrollYProgress, [0.45, 0.49, 0.61, 0.66], [14, 0, 0, -10]);
-
-  const airflowMotion = useSceneMotion(
-    scrollYProgress,
-    [0.62, 0.67, 0.77, 0.81],
-    [1.12, 1.03, 1.02, 1.02],
-  );
-  const airflowCopyOpacity = useScrollCurve(scrollYProgress, [0.65, 0.69, 0.75, 0.79], [0, 1, 1, 0]);
-  const airflowCopyY = useScrollCurve(scrollYProgress, [0.65, 0.69, 0.75, 0.79], [14, 0, 0, -10]);
-
-  const zoomMotion = useSceneMotion(scrollYProgress, [0.75, 0.8, 0.91, 0.95], [1.055, 1, 1, 1]);
-  const zoomCopyOpacity = useScrollCurve(scrollYProgress, [0.78, 0.82, 0.88, 0.92], [0, 1, 1, 0]);
-  const zoomCopyY = useScrollCurve(scrollYProgress, [0.78, 0.82, 0.88, 0.92], [14, 0, 0, -10]);
-  const zoomGlowOpacity = useScrollCurve(scrollYProgress, [0.78, 0.86, 0.92], [0.08, 0.72, 0.18]);
-  const zoomGlowScale = useScrollCurve(scrollYProgress, [0.78, 0.88], [0.78, 1.08]);
-
-  const finaleOpacity = useScrollCurve(scrollYProgress, [0.9, 0.94, 1], [0, 1, 1]);
-  const finaleY = useScrollCurve(scrollYProgress, [0.9, 0.94], [18, 0]);
 
   if (reduceMotion) {
-    return <StaticExperience copy={copy} technologyHref={technologyHref} />;
+    /* The static layout takes the runway ref too, so `useScroll` always has
+       a mounted target to measure — it just has nothing to drive. */
+    return <StaticTechnology ref={runwayRef} copy={copy} technologyHref={technologyHref} />;
   }
+
+  const current = SCENES[active];
+  const currentCopy = copy.scenes[current.key];
 
   return (
     <section
-      ref={sectionRef}
       id="technology"
-      aria-labelledby="technology-experience-title"
-      className="on-dark relative isolate h-[260svh] bg-brand-950 lg:h-[450svh]"
+      aria-labelledby="technology-title"
+      className="tech-surface relative isolate overflow-x-clip border-y border-mist-200"
     >
-      <div className="sticky top-0 h-svh overflow-hidden bg-brand-950">
-        <div
-          className="absolute inset-0 bg-[radial-gradient(75%_80%_at_76%_42%,rgba(18,74,112,0.34),transparent_66%),linear-gradient(135deg,#04121d_0%,#071c2c_54%,#04121d_100%)]"
-          aria-hidden="true"
-        />
-        <BrandGeometry />
+      <BrandRings />
 
-        <motion.div
-          className="absolute inset-0 z-10"
-          style={{ opacity: cbctOpacity, scale: cbctScale }}
-        >
-          <SceneImage scene="cbct" alt={copy.scenes.cbct.alt} />
-        </motion.div>
+      <TechnologyHead copy={copy} />
 
-        <motion.div
-          className="absolute inset-0 z-20 bg-brand-950"
-          style={{
-            clipPath: isDesktop ? triosClipPath : "none",
-            opacity: isDesktop ? triosLayerOpacity : triosMobileOpacity,
-            scale: triosScale,
-          }}
-        >
-          <SceneImage scene="trios" alt={copy.scenes.trios.alt} />
-        </motion.div>
+      {/* The runway: one screen of stage plus one step-length of scroll per
+          device. `--tech-step` is set per breakpoint in globals.css. */}
+      <div ref={runwayRef} className="tech-runway relative">
+        <div className="tech-stage sticky top-0 flex h-svh flex-col">
+          <div className="shell flex min-h-0 w-full flex-1 flex-col gap-5 lg:grid lg:grid-cols-12 lg:items-center lg:gap-12 xl:gap-16">
+            {/* Phone: counter, label and a four-part progress bar. */}
+            <div className="shrink-0 lg:hidden">
+              <div className="flex items-baseline justify-between gap-4">
+                <p className="label-micro !text-accent-600">
+                  <span className="tabular-nums">
+                    {pad(active + 1)} / {pad(count)}
+                  </span>
+                  <span className="mx-2 text-mist-300">·</span>
+                  {currentCopy.microLabel}
+                </p>
+              </div>
+              <div className="mt-3 grid grid-cols-4 gap-1.5" aria-hidden="true">
+                {SCENES.map((scene, index) => (
+                  <ProgressSegment
+                    key={scene.key}
+                    progress={scrollYProgress}
+                    index={index}
+                    count={count}
+                  />
+                ))}
+              </div>
+            </div>
 
-        <motion.div
-          className="absolute inset-0 z-30"
-          style={{ opacity: airflowMotion.opacity, scale: airflowMotion.scale }}
-        >
-          <SceneImage scene="airflow" alt={copy.scenes.airflow.alt} />
-        </motion.div>
-
-        <motion.div
-          className="absolute inset-0 z-40"
-          style={{ opacity: zoomMotion.opacity, scale: zoomMotion.scale }}
-        >
-          <SceneImage scene="zoom" alt={copy.scenes.zoom.alt} />
-          <motion.div
-            /* Scaling a blurred box re-rasterises the blur every frame, and
-               `mix-blend-screen` stops the layer being promoted at all. On a
-               phone the glow is a fixed-size, unblended halo that only
-               fades; desktop keeps the full treatment. */
-            className="absolute right-[18%] top-[22%] h-64 w-64 rounded-full bg-accent-300/45 blur-2xl lg:right-[22%] lg:top-[27%] lg:h-80 lg:w-80 lg:mix-blend-screen lg:blur-3xl"
-            style={{ opacity: zoomGlowOpacity, scale: isDesktop ? zoomGlowScale : 1 }}
-            aria-hidden="true"
-          />
-        </motion.div>
-
-        <div className="shell absolute inset-x-0 top-[18svh] z-50 lg:top-1/2 lg:-translate-y-1/2">
-          <motion.div
-            className="max-w-[32rem]"
-            style={{ opacity: introOpacity, y: introY }}
-          >
-            <p className="eyebrow">{copy.intro.label}</p>
-            <h2
-              id="technology-experience-title"
-              className="mt-6 max-w-3xl font-display text-[clamp(2.25rem,6vw,5.7rem)] leading-[1.04]"
-            >
-              {copy.intro.headline}
-            </h2>
-            <p className="mt-6 hidden max-w-xl text-base leading-relaxed text-ivory-200/78 lg:block lg:text-lg">
-              {copy.intro.copy}
-            </p>
-            <p className="mt-6 max-w-sm text-base leading-relaxed text-ivory-200/78 lg:hidden">
-              {copy.intro.mobileCopy}
-            </p>
-          </motion.div>
-        </div>
-
-        <SceneCopyPanel
-          asset={SCENE_ASSETS.cbct}
-          copy={copy.scenes.cbct}
-          opacity={cbctCopyOpacity}
-          y={cbctCopyY}
-        />
-        <SceneCopyPanel
-          asset={SCENE_ASSETS.trios}
-          copy={copy.scenes.trios}
-          opacity={triosCopyOpacity}
-          y={triosCopyY}
-        />
-        <SceneCopyPanel
-          asset={SCENE_ASSETS.airflow}
-          copy={copy.scenes.airflow}
-          opacity={airflowCopyOpacity}
-          y={airflowCopyY}
-        />
-        <SceneCopyPanel
-          asset={SCENE_ASSETS.zoom}
-          copy={copy.scenes.zoom}
-          opacity={zoomCopyOpacity}
-          y={zoomCopyY}
-        />
-
-        <motion.div
-          className="absolute inset-0 z-60 flex items-center bg-[radial-gradient(70%_70%_at_50%_45%,rgba(13,53,80,0.58),transparent_72%),#04121d] has-[a:focus-visible]:!opacity-100"
-          style={{ opacity: finaleOpacity, y: finaleY }}
-        >
-          <div className="shell w-full text-center">
-            <h3 className="mx-auto max-w-4xl font-display text-[clamp(2.2rem,5.5vw,5.3rem)] leading-[1.08]">
-              {copy.finale.primary}
-            </h3>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ivory-200/72 lg:text-2xl">
-              {copy.finale.secondary}
-            </p>
-            <Link
-              href={technologyHref}
-              className="group mt-10 inline-flex items-center gap-3 text-sm font-medium text-accent-200 transition-colors hover:text-ivory-50"
-            >
-              {copy.finale.cta}
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/35 transition-colors duration-300 group-hover:border-accent-200 group-hover:bg-accent-300 group-hover:text-ink-900">
-                <ArrowUpRight className="h-3.5 w-3.5" />
+            {/* Desktop: the whole list, with a rail that fills as you go. */}
+            <ol className="relative hidden pl-9 lg:col-span-5 lg:block">
+              <span
+                className="absolute bottom-6 left-[5px] top-6 w-px overflow-hidden bg-mist-300"
+                aria-hidden="true"
+              >
+                <motion.span
+                  className="absolute inset-0 origin-top bg-accent-500"
+                  style={{ scaleY: scrollYProgress }}
+                />
               </span>
-            </Link>
+
+              {SCENES.map((scene, index) => {
+                const sceneCopy = copy.scenes[scene.key];
+                const isActive = index === active;
+
+                return (
+                  <li
+                    key={scene.key}
+                    data-active={isActive}
+                    className="tech-step group relative py-[clamp(0.6rem,1.6vh,1.1rem)]"
+                  >
+                    <span
+                      className="tech-node absolute -left-9 top-[calc(clamp(0.6rem,1.6vh,1.1rem)+0.2rem)] h-[11px] w-[11px] rounded-full border border-mist-300 bg-mist-50"
+                      aria-hidden="true"
+                    />
+                    <p className="label-micro flex items-center gap-3 !text-accent-600">
+                      <span className="tabular-nums">{pad(index + 1)}</span>
+                      <span className="h-px w-6 bg-accent-300" aria-hidden="true" />
+                      {sceneCopy.microLabel}
+                    </p>
+                    <h3 className="mt-2 font-display text-[clamp(1.5rem,2.3vw,2.4rem)] leading-[1.12] text-brand-900">
+                      <button
+                        type="button"
+                        onClick={() => goTo(index)}
+                        aria-current={isActive ? "step" : undefined}
+                        className="text-left transition-colors hover:text-accent-700"
+                      >
+                        {sceneCopy.headline}
+                      </button>
+                    </h3>
+                    <div className="tech-step-body grid">
+                      <div className="overflow-hidden">
+                        <p className="max-w-sm pt-2.5 text-base leading-relaxed text-ink-700">
+                          {sceneCopy.copy}
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+
+            {/* The viewfinder — shared by both layouts. */}
+            <div className="relative min-h-0 flex-1 lg:col-span-7 lg:flex-none">
+              <div
+                key={`focus-${active}`}
+                className="tech-focus pointer-events-none absolute -inset-2 z-10 lg:-inset-3.5"
+                aria-hidden="true"
+              >
+                <span className="absolute left-0 top-0 h-6 w-6 rounded-tl-[0.9rem] border-l-[1.5px] border-t-[1.5px] border-accent-400 lg:h-8 lg:w-8" />
+                <span className="absolute right-0 top-0 h-6 w-6 rounded-tr-[0.9rem] border-r-[1.5px] border-t-[1.5px] border-accent-400 lg:h-8 lg:w-8" />
+                <span className="absolute bottom-0 left-0 h-6 w-6 rounded-bl-[0.9rem] border-b-[1.5px] border-l-[1.5px] border-accent-400 lg:h-8 lg:w-8" />
+                <span className="absolute bottom-0 right-0 h-6 w-6 rounded-br-[0.9rem] border-b-[1.5px] border-r-[1.5px] border-accent-400 lg:h-8 lg:w-8" />
+              </div>
+
+              <div className="relative h-full overflow-hidden rounded-[1.25rem] bg-brand-950 shadow-lift lg:h-[min(70svh,46rem)] lg:rounded-[1.75rem]">
+                {SCENES.map((scene, index) => (
+                  <div
+                    key={scene.key}
+                    data-active={index === active}
+                    className="tech-shot absolute inset-0"
+                  >
+                    <Image
+                      src={scene.src}
+                      alt={copy.scenes[scene.key].alt}
+                      fill
+                      sizes="(min-width: 1024px) 55vw, 92vw"
+                      className={`object-cover ${scene.position}`}
+                    />
+                  </div>
+                ))}
+
+                <div key={`scan-${active}`} className="tech-scan pointer-events-none absolute inset-0" aria-hidden="true" />
+
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-3 sm:p-4 lg:p-6">
+                  <span className="rounded-full bg-white/10 px-3 py-1.5 text-[0.7rem] font-medium tracking-wide text-ivory-50 ring-1 ring-inset ring-white/20 backdrop-blur-md lg:text-xs">
+                    {current.model}
+                  </span>
+                  <span className="hidden font-display text-sm tabular-nums text-ivory-50/70 lg:block">
+                    {pad(active + 1)} / {pad(count)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Phone: the active step's words. All four share one grid
+                cell, so the block is always as tall as the longest and
+                nothing below it moves when the step changes. */}
+            <div className="grid shrink-0 lg:hidden">
+              {SCENES.map((scene, index) => {
+                const sceneCopy = copy.scenes[scene.key];
+                return (
+                  <div
+                    key={scene.key}
+                    data-active={index === active}
+                    className="tech-caption col-start-1 row-start-1"
+                  >
+                    <h3 className="font-display text-[1.75rem] leading-[1.15] text-brand-900">
+                      {sceneCopy.headline}
+                    </h3>
+                    <p className="mt-2 text-[0.95rem] leading-relaxed text-ink-700">{sceneCopy.copy}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
+
+      <TechnologyFinale copy={copy} technologyHref={technologyHref} />
     </section>
   );
 }
 
-function BrandGeometry() {
-  return (
-    <div className="pointer-events-none absolute -right-56 -top-40 z-[1] h-[42rem] w-[42rem] opacity-[0.09] lg:-right-48 lg:-top-72 lg:h-[64rem] lg:w-[64rem]" aria-hidden="true">
-      <div className="absolute inset-[8%] rounded-[46%_54%_48%_52%] border border-accent-300" />
-      <div className="absolute inset-[17%] rotate-12 rounded-[52%_48%_54%_46%] border border-accent-300/70" />
-      <div className="absolute inset-[29%] -rotate-6 rounded-full border border-accent-300/50" />
-    </div>
-  );
-}
-
-function SceneImage({ scene, alt }: { scene: SceneKey; alt: string }) {
-  const asset = SCENE_ASSETS[scene];
-
-  return (
-    <>
-      <div className="absolute inset-x-0 top-0 h-[59svh] lg:inset-0 lg:h-full">
-        <Image
-          src={asset.sceneSrc ?? asset.src}
-          alt={alt}
-          fill
-          sizes="100vw"
-          className={asset.imageClass}
-        />
-      </div>
-      <div
-        className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_32%,rgba(4,18,29,0.3)_49%,#04121d_61%)] lg:bg-[linear-gradient(90deg,rgba(4,18,29,0.98)_0%,rgba(4,18,29,0.72)_34%,rgba(4,18,29,0.08)_62%,rgba(4,18,29,0.15)_100%)]"
-        aria-hidden="true"
-      />
-    </>
-  );
-}
-
-function SceneCopyPanel({
-  asset,
-  copy,
-  opacity,
-  y,
+function ProgressSegment({
+  progress,
+  index,
+  count,
 }: {
-  asset: (typeof SCENE_ASSETS)[SceneKey];
-  copy: SceneCopy;
-  opacity: MotionValue<number>;
-  y: MotionValue<number>;
+  progress: MotionValue<number>;
+  index: number;
+  count: number;
 }) {
+  /* Both ends pinned to 0 and 1. Motion can hand a scroll-linked transform
+     to the browser as a WAAPI animation, and WAAPI fills any stretch of the
+     timeline the keyframes do not cover with the element's *underlying*
+     style — so a segment whose range stopped short of 1 would drain back to
+     empty after its step had passed. */
+  const input = [0, index / count, (index + 1) / count, 1];
+  const fill = useTransform(progress, input, [0, 0, 1, 1]);
+
   return (
-    <div className="tech-scene-caption shell pointer-events-none absolute inset-x-0 z-50 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2">
-      <motion.article className="relative max-w-md" style={{ opacity, y }}>
-        <span
-          className="absolute -top-16 left-0 -z-10 font-display text-[7.5rem] leading-none text-white/[0.055] lg:-top-24 lg:text-[10rem]"
-          aria-hidden="true"
+    <span className="relative h-[3px] overflow-hidden rounded-full bg-mist-300">
+      <motion.span className="absolute inset-0 origin-left rounded-full bg-accent-500" style={{ scaleX: fill }} />
+    </span>
+  );
+}
+
+function TechnologyHead({ copy }: { copy: TechnologyExperienceCopy }) {
+  return (
+    <div className="shell relative grid gap-5 pb-10 pt-20 lg:grid-cols-12 lg:items-end lg:gap-12 lg:pb-6 lg:pt-28">
+      <div className="lg:col-span-7">
+        <p className="eyebrow">{copy.intro.label}</p>
+        <h2
+          id="technology-title"
+          className="mt-5 font-display text-[clamp(2.25rem,4.6vw,4.25rem)] leading-[1.06] text-brand-900"
         >
-          {asset.number}
-        </span>
-        <p className="label-micro flex items-center gap-3">
-          <span className="text-accent-300">{asset.number}</span>
-          <span className="h-px w-8 bg-accent-300/55" aria-hidden="true" />
-          {copy.microLabel}
-        </p>
-        <h3 className="mt-4 font-display text-[clamp(2rem,4vw,4.5rem)] leading-[1.05]">
-          {copy.headline}
-        </h3>
-        <p className="mt-4 max-w-sm text-base leading-relaxed text-ivory-200/78 lg:text-lg">
-          {copy.copy}
-        </p>
-      </motion.article>
+          {copy.intro.headline}
+        </h2>
+      </div>
+      <p className="hidden max-w-md text-lg leading-relaxed text-ink-700 lg:col-span-5 lg:block lg:pb-2">
+        {copy.intro.copy}
+      </p>
+      <p className="max-w-md text-base leading-relaxed text-ink-700 lg:hidden">{copy.intro.mobileCopy}</p>
     </div>
   );
 }
 
-function StaticExperience({
+function TechnologyFinale({
   copy,
   technologyHref,
 }: {
@@ -467,73 +400,94 @@ function StaticExperience({
   technologyHref: string;
 }) {
   return (
+    <div className="shell relative pb-20 pt-10 text-center lg:pb-28 lg:pt-6">
+      <span className="mx-auto block h-12 w-px bg-gradient-to-b from-transparent to-accent-400" aria-hidden="true" />
+      <p className="mx-auto mt-8 max-w-3xl font-display text-[clamp(1.9rem,3.6vw,3.25rem)] leading-[1.12] text-brand-900">
+        {copy.finale.primary}{" "}
+        <span className="text-accent-600">{copy.finale.secondary}</span>
+      </p>
+      <Link
+        href={technologyHref}
+        className="group mt-9 inline-flex items-center gap-3 text-sm font-medium text-accent-600 transition-colors hover:text-accent-700"
+      >
+        {copy.finale.cta}
+        <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-accent-300 bg-ivory-50 transition-all duration-500 group-hover:bg-accent-300 group-hover:text-ink-900">
+          <ArrowUpRight className="h-3.5 w-3.5" />
+        </span>
+      </Link>
+    </div>
+  );
+}
+
+/** The logo's loose rings, drawn large and faint behind the section. */
+function BrandRings() {
+  return (
+    <div
+      className="pointer-events-none absolute -right-64 -top-24 -z-10 h-[40rem] w-[40rem] opacity-60 lg:-right-48 lg:-top-40 lg:h-[60rem] lg:w-[60rem]"
+      aria-hidden="true"
+    >
+      <div className="absolute inset-[8%] rounded-[46%_54%_48%_52%] border border-accent-200" />
+      <div className="absolute inset-[17%] rotate-12 rounded-[52%_48%_54%_46%] border border-accent-200/80" />
+      <div className="absolute inset-[29%] -rotate-6 rounded-full border border-accent-200/60" />
+    </div>
+  );
+}
+
+/**
+ * Reduced motion: the same four devices, laid out as a plain two-by-two
+ * grid on the same light surface. Nothing pins and nothing is tied to the
+ * scroll — every word the animated version says is here, in the same order.
+ */
+function StaticTechnology({
+  ref,
+  copy,
+  technologyHref,
+}: {
+  ref: Ref<HTMLDivElement>;
+  copy: TechnologyExperienceCopy;
+  technologyHref: string;
+}) {
+  return (
     <section
       id="technology"
-      aria-labelledby="technology-static-title"
-      className="on-dark relative overflow-hidden bg-brand-950 py-20 lg:py-28"
+      aria-labelledby="technology-title"
+      className="tech-surface relative isolate overflow-x-clip border-y border-mist-200"
     >
-      <BrandGeometry />
-      <div className="shell relative z-10">
-        <p className="eyebrow">{copy.intro.label}</p>
-        <h2
-          id="technology-static-title"
-          className="mt-6 max-w-4xl font-display text-[clamp(2.4rem,6vw,5.5rem)] leading-[1.05]"
-        >
-          {copy.intro.headline}
-        </h2>
-        <p className="mt-6 max-w-2xl text-base leading-relaxed text-ivory-200/78 lg:text-lg">
-          {copy.intro.copy}
-        </p>
+      <BrandRings />
+      <TechnologyHead copy={copy} />
 
-        <div className="mt-16 space-y-16 lg:mt-24 lg:space-y-24">
-          {SCENE_KEYS.map((key) => {
-            const asset = SCENE_ASSETS[key];
-            const scene = copy.scenes[key];
-
-            return (
-              <article key={key} className="grid items-center gap-7 lg:grid-cols-12 lg:gap-12">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-brand-900 ring-1 ring-inset ring-white/10 lg:col-span-7">
-                  <Image
-                    src={asset.src}
-                    alt={scene.alt}
-                    fill
-                    sizes="(min-width: 1024px) 58vw, 100vw"
-                    className={`object-cover ${asset.staticPosition}`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-950/45 to-transparent" aria-hidden="true" />
-                </div>
-                <div className="lg:col-span-5">
-                  <p className="label-micro flex items-center gap-3">
-                    <span>{asset.number}</span>
-                    <span className="h-px w-8 bg-accent-300/55" aria-hidden="true" />
-                    {scene.microLabel}
-                  </p>
-                  <h3 className="mt-4 font-display text-3xl leading-tight lg:text-5xl">
-                    {scene.headline}
-                  </h3>
-                  <p className="mt-4 text-base leading-relaxed text-ivory-200/78 lg:text-lg">
-                    {scene.copy}
-                  </p>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-
-        <div className="mx-auto mt-20 max-w-4xl border-t border-white/12 pt-16 text-center lg:mt-28 lg:pt-24">
-          <h3 className="font-display text-[clamp(2.25rem,5vw,4.75rem)] leading-[1.08]">
-            {copy.finale.primary}
-          </h3>
-          <p className="mt-5 text-lg text-ivory-200/72 lg:text-2xl">{copy.finale.secondary}</p>
-          <Link
-            href={technologyHref}
-            className="group mt-9 inline-flex items-center gap-3 text-sm font-medium text-accent-200 transition-colors hover:text-ivory-50"
-          >
-            {copy.finale.cta}
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-        </div>
+      <div ref={ref} className="shell relative mt-6 grid gap-10 sm:grid-cols-2 lg:mt-10 lg:gap-12">
+        {SCENES.map((scene, index) => {
+          const sceneCopy = copy.scenes[scene.key];
+          return (
+            <article key={scene.key}>
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] bg-brand-950 shadow-lift">
+                <Image
+                  src={scene.src}
+                  alt={sceneCopy.alt}
+                  fill
+                  sizes="(min-width: 640px) 45vw, 92vw"
+                  className={`object-cover ${scene.position}`}
+                />
+                <span className="absolute bottom-4 left-4 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-ivory-50 ring-1 ring-inset ring-white/20 backdrop-blur-md">
+                  {scene.model}
+                </span>
+              </div>
+              <p className="label-micro mt-6 flex items-center gap-3 !text-accent-600">
+                <span className="tabular-nums">{pad(index + 1)}</span>
+                <span className="h-px w-6 bg-accent-300" aria-hidden="true" />
+                {sceneCopy.microLabel}
+              </p>
+              <h3 className="mt-2 font-display text-3xl leading-tight text-brand-900 lg:text-4xl">
+                {sceneCopy.headline}
+              </h3>
+              <p className="mt-3 max-w-md text-base leading-relaxed text-ink-700">{sceneCopy.copy}</p>
+            </article>
+          );
+        })}
       </div>
+
+      <TechnologyFinale copy={copy} technologyHref={technologyHref} />
     </section>
   );
 }

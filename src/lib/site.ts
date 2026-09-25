@@ -157,6 +157,12 @@ export const media = {
   heroPoster: "/media/hero-poster.webp",
   interior: ["/interior/totcharm_dentinner2.webp", "/interior/totcharm_dentinner1.webp"],
   /**
+   * The street front on Arakishvili Street, wide. The home page's trust band
+   * runs it full-bleed; the contact page keeps its own portrait crop
+   * (`/images/contact/exterior.webp`) for its narrower slot.
+   */
+  exterior: "/images/home/clinic-exterior.webp",
+  /**
    * TODO(client): replace with real photography. These slots are deliberately
    * labelled so it is obvious which shots are still missing.
    *
@@ -164,7 +170,6 @@ export const media = {
    * Google Maps embed only as its location section approaches the viewport.
    */
   placeholder: {
-    atmosphere: "/placeholder/atmosphere-wide.webp",
     reception: "/placeholder/reception.webp",
   },
 } as const;
