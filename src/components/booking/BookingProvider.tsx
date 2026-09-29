@@ -72,7 +72,7 @@ export default function BookingProvider({
         window.location.href,
       );
       trackBookingOpen(nextAnalyticsContext);
-      recordAggregateEvent("booking_open");
+      recordAggregateEvent("booking_open", nextAnalyticsContext.pagePath);
       setIsOpen(true);
     },
     [isOpen],
