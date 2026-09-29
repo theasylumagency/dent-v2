@@ -9,6 +9,7 @@ import { getSeo } from "@/lib/seo";
 import { site } from "@/lib/site";
 import BookingTrigger from "@/components/booking/BookingTrigger";
 import LocationMap from "@/components/contact/LocationMap";
+import TrackedDirectionsLink from "@/components/contact/TrackedDirectionsLink";
 import Breadcrumbs from "@/components/services/Breadcrumbs";
 import { ArrowUpRight, Clock, Mail, Phone, Pin } from "@/components/ui/icons";
 
@@ -149,10 +150,10 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
               <p className="label-micro">{copy.entranceLabel}</p>
               <p className="mt-2 text-sm leading-relaxed text-ink-700">{copy.entranceNote}</p>
               <p className="mt-5 text-sm font-medium text-ink-900">{clinic.address}</p>
-              <a href={clinic.maps} target="_blank" rel="noreferrer" className="group mt-5 inline-flex items-center gap-2 text-sm font-medium text-accent-700 transition-colors hover:text-accent-600">
+              <TrackedDirectionsLink href={clinic.maps} target="_blank" rel="noreferrer" className="group mt-5 inline-flex items-center gap-2 text-sm font-medium text-accent-700 transition-colors hover:text-accent-600">
                 {copy.mapsCta}
                 <ArrowUpRight className="h-3.5 w-3.5" />
-              </a>
+              </TrackedDirectionsLink>
             </div>
           </div>
         </div>
