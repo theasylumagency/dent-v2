@@ -38,7 +38,11 @@ function initializeGA4(): void {
   if (!id || !consentGranted || configuredGaId === id) return;
 
   window.dataLayer = window.dataLayer ?? [];
-  window.gtag = window.gtag ?? ((...args: unknown[]) => window.dataLayer?.push(args));
+  window.gtag =
+    window.gtag ??
+    function gtag(..._args: unknown[]) {
+      window.dataLayer?.push(arguments);
+    };
   window.gtag("js", new Date());
   window.gtag("consent", "update", { analytics_storage: "granted" });
   (window as unknown as Record<string, unknown>)[`ga-disable-${id}`] = false;
