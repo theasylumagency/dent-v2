@@ -4,7 +4,7 @@ import type { AggregateEvent } from "@/lib/analytics/types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const EVENTS = new Set<AggregateEvent>(["page_view", "booking_open"]);
+const EVENTS = new Set<AggregateEvent>(["page_view", "booking_open", "booking_complete"]);
 
 function normalizeRoute(value: unknown): string | null {
   if (typeof value !== "string") return "";
@@ -35,7 +35,7 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   try {
-    await incrementAggregate(body.event as AggregateEvent, body.event === "page_view" ? route : "");
+    await incrementAggregate(body.event as AggregateEvent, route);
   } catch (error) {
     console.error("[analytics] aggregate increment failed", error);
     return Response.json({ error: "write_failed" }, { status: 503 });
