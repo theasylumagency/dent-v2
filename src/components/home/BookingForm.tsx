@@ -3,7 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 
 import type { BookingCopy, BookingOption } from "@/components/booking/types";
-import { trackBookingComplete, type LandingAnalyticsContext } from "@/lib/analytics";
+import {
+  trackBookingComplete,
+  trackBookingStart,
+  type BookingAnalyticsContext,
+  type LandingAnalyticsContext,
+} from "@/lib/analytics";
 
 type Status = "idle" | "sending" | "sent" | "error";
 type FieldErrors = Partial<Record<"name" | "phone" | "email", string>>;
@@ -16,6 +21,7 @@ export default function BookingForm({
   fields,
   defaultService,
   landingContext,
+  analyticsContext,
 }: {
   copy: BookingCopy;
   options: BookingOption[];
@@ -29,15 +35,35 @@ export default function BookingForm({
   };
   defaultService?: string;
   landingContext?: LandingAnalyticsContext;
+  analyticsContext?: BookingAnalyticsContext;
 }) {
   const t = copy.form;
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<FieldErrors>({});
   const statusRef = useRef<HTMLDivElement>(null);
+  const startedRef = useRef(false);
 
   useEffect(() => {
     if (status === "sent" || status === "error") statusRef.current?.focus();
   }, [status]);
+
+  function formAnalyticsContext(): BookingAnalyticsContext {
+    if (analyticsContext) return analyticsContext;
+    return {
+      pagePath: window.location.pathname,
+      triggerLocation: landingContext ? "landing_form" : "inline_form",
+    };
+  }
+
+  function markStarted() {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    try {
+      trackBookingStart(formAnalyticsContext());
+    } catch {
+      // Analytics must never interfere with the booking form.
+    }
+  }
 
   function validate(data: FormData): FieldErrors {
     const next: FieldErrors = {};
@@ -54,6 +80,7 @@ export default function BookingForm({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    markStarted();
     const form = event.currentTarget;
     const data = new FormData(form);
     const found = validate(data);
@@ -104,7 +131,7 @@ export default function BookingForm({
     setStatus("sent");
 
     try {
-      trackBookingComplete(landingContext);
+      trackBookingComplete(landingContext, formAnalyticsContext());
     } catch {
       // Analytics is non-critical once the booking has been accepted.
     }
@@ -138,7 +165,12 @@ export default function BookingForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="booking-form">
+    <form
+      onSubmit={handleSubmit}
+      onChangeCapture={() => markStarted()}
+      noValidate
+      className="booking-form"
+    >
       <div>
         <label htmlFor={fieldId("name")} className="label-micro mb-2">
           {t.name} <span aria-hidden="true">*</span>
