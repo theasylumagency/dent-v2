@@ -1,4 +1,4 @@
-import type { GlobalConfig, TextFieldValidation } from "payload";
+import type { FieldHook, GlobalConfig, TextFieldValidation } from "payload";
 
 import { analyticsSettings as t, groups } from "@/admin/labels";
 import { safeRevalidate } from "@/collections/hooks/revalidate";
@@ -12,9 +12,10 @@ const optionalPattern = (pattern: RegExp, message: string): TextFieldValidation 
     return !normalized || pattern.test(normalized) || message;
   };
 
-const trimUpper = (value: unknown) =>
+const trimUpper: FieldHook = ({ value }) =>
   typeof value === "string" ? value.trim().toUpperCase() : value;
-const trim = (value: unknown) => (typeof value === "string" ? value.trim() : value);
+const trim: FieldHook = ({ value }) =>
+  typeof value === "string" ? value.trim() : value;
 
 export const AnalyticsSettings: GlobalConfig = {
   slug: "analytics-settings",
