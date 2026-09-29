@@ -17,8 +17,8 @@ export default function TrackedView({ type, viewKey }: { type: "doctor" | "servi
       ([entry]) => {
         if (!entry?.isIntersecting || seen.has(viewKey)) return;
         seen.add(viewKey);
-        if (type === "doctor") trackDoctorView();
-        else trackServiceView();
+        if (type === "doctor") trackDoctorView(viewKey);
+        else trackServiceView(viewKey);
         observer.disconnect();
       },
       { threshold: 0.2 },
