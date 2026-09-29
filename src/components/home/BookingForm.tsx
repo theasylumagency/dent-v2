@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import type { BookingCopy, BookingOption } from "@/components/booking/types";
 import {
+  recordAggregateEvent,
   trackBookingComplete,
   trackBookingStart,
   type BookingAnalyticsContext,
@@ -129,6 +130,7 @@ export default function BookingForm({
     form.reset();
     setErrors({});
     setStatus("sent");
+    recordAggregateEvent("booking_complete", window.location.pathname);
 
     try {
       trackBookingComplete(landingContext, formAnalyticsContext());
