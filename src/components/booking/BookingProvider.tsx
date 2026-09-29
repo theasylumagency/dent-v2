@@ -12,7 +12,11 @@ import {
 
 import BookingDrawer from "./BookingDrawer";
 import type { BookingCopy, BookingOption } from "./types";
-import { recordAggregateEvent, trackBookingOpen } from "@/lib/analytics";
+import {
+  recordAggregateEvent,
+  trackBookingOpen,
+  type BookingAnalyticsContext,
+} from "@/lib/analytics";
 
 type BookingContextValue = {
   isOpen: boolean;
@@ -22,6 +26,16 @@ type BookingContextValue = {
 
 const BookingContext = createContext<BookingContextValue | null>(null);
 const HISTORY_KEY = "__totalCharmBookingDrawer";
+
+function inferTriggerLocation(trigger?: HTMLElement | null): string {
+  const explicit = trigger?.dataset.analyticsLocation?.trim();
+  if (explicit) return explicit;
+  if (trigger?.closest("header")) return "header";
+  if (trigger?.closest("aside")) return "sidebar";
+  if (trigger?.closest("nav")) return "navigation";
+  if (trigger?.closest("footer")) return "footer";
+  return "page";
+}
 
 export function useBooking() {
   const context = useContext(BookingContext);
@@ -39,6 +53,7 @@ export default function BookingProvider({
   options: BookingOption[];
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [analyticsContext, setAnalyticsContext] = useState<BookingAnalyticsContext>();
   const triggerRef = useRef<HTMLElement | null>(null);
   const wasOpenRef = useRef(false);
 
@@ -46,12 +61,17 @@ export default function BookingProvider({
     (trigger?: HTMLElement | null) => {
       if (isOpen) return;
       triggerRef.current = trigger ?? (document.activeElement as HTMLElement | null);
+      const nextAnalyticsContext: BookingAnalyticsContext = {
+        pagePath: window.location.pathname,
+        triggerLocation: inferTriggerLocation(triggerRef.current),
+      };
+      setAnalyticsContext(nextAnalyticsContext);
       window.history.pushState(
         { ...window.history.state, [HISTORY_KEY]: true },
         "",
         window.location.href,
       );
-      trackBookingOpen();
+      trackBookingOpen(nextAnalyticsContext);
       recordAggregateEvent("booking_open");
       setIsOpen(true);
     },
@@ -81,7 +101,13 @@ export default function BookingProvider({
   return (
     <BookingContext.Provider value={{ isOpen, openBooking, closeBooking }}>
       {children}
-      <BookingDrawer isOpen={isOpen} copy={copy} options={options} onClose={closeBooking} />
+      <BookingDrawer
+        isOpen={isOpen}
+        copy={copy}
+        options={options}
+        analyticsContext={analyticsContext}
+        onClose={closeBooking}
+      />
     </BookingContext.Provider>
   );
 }
