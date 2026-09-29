@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 
 import { Close } from "@/components/ui/icons";
 import BookingForm from "@/components/home/BookingForm";
+import type { BookingAnalyticsContext } from "@/lib/analytics";
 import type { BookingCopy, BookingOption } from "./types";
 
 const FOCUSABLE =
@@ -13,11 +14,13 @@ export default function BookingDrawer({
   isOpen,
   copy,
   options,
+  analyticsContext,
   onClose,
 }: {
   isOpen: boolean;
   copy: BookingCopy;
   options: BookingOption[];
+  analyticsContext?: BookingAnalyticsContext;
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLElement>(null);
@@ -111,7 +114,12 @@ export default function BookingDrawer({
         </div>
 
         <div className="booking-drawer-body no-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-6 sm:px-8 sm:py-8">
-          <BookingForm copy={copy} options={options} onClose={onClose} />
+          <BookingForm
+            copy={copy}
+            options={options}
+            analyticsContext={analyticsContext}
+            onClose={onClose}
+          />
         </div>
       </aside>
     </div>
