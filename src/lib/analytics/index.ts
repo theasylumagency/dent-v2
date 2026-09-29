@@ -9,9 +9,32 @@ export function trackPageView(pathname: string): void {
   sendMetaEvent("PageView");
 }
 
-export function trackBookingOpen(): void {
-  sendGA4Event("booking_form_open");
-  sendMetaCustomEvent("BookingOpen");
+export type BookingAnalyticsContext = {
+  pagePath: string;
+  triggerLocation: string;
+};
+
+function bookingParameters(context?: BookingAnalyticsContext): Record<string, string> {
+  const pagePath =
+    context?.pagePath || (typeof window !== "undefined" ? window.location.pathname : "");
+  const triggerLocation = context?.triggerLocation || "form";
+
+  return {
+    ...(pagePath ? { page_path: pagePath } : {}),
+    trigger_location: triggerLocation,
+  };
+}
+
+export function trackBookingOpen(context?: BookingAnalyticsContext): void {
+  const parameters = bookingParameters(context);
+  sendGA4Event("booking_form_open", parameters);
+  sendMetaCustomEvent("BookingOpen", parameters);
+}
+
+export function trackBookingStart(context?: BookingAnalyticsContext): void {
+  const parameters = bookingParameters(context);
+  sendGA4Event("booking_form_start", parameters);
+  sendMetaCustomEvent("BookingStart", parameters);
 }
 
 export type LandingAnalyticsContext = {
@@ -19,16 +42,23 @@ export type LandingAnalyticsContext = {
   campaignName?: string;
 };
 
-function landingParameters(context?: LandingAnalyticsContext): Record<string, string> | undefined {
-  if (!context) return undefined;
+function landingParameters(context?: LandingAnalyticsContext): Record<string, string> {
+  if (!context) return {};
   return {
     landing_slug: context.landingSlug,
     ...(context.campaignName ? { campaign_name: context.campaignName } : {}),
   };
 }
 
-export function trackBookingComplete(context?: LandingAnalyticsContext): void {
-  const parameters = landingParameters(context);
+export function trackBookingComplete(
+  context?: LandingAnalyticsContext,
+  bookingContext?: BookingAnalyticsContext,
+): void {
+  const parameters = {
+    ...landingParameters(context),
+    ...bookingParameters(bookingContext),
+    lead_source: context ? "campaign_landing" : "booking_form",
+  };
   sendGA4Event("generate_lead", parameters);
   sendMetaEvent("Lead", parameters);
 }
@@ -54,14 +84,39 @@ export function trackEmailClick(): void {
   sendMetaEvent("Contact");
 }
 
-export function trackServiceView(): void {
-  sendGA4Event("service_view");
-  sendMetaEvent("ViewContent");
+export function trackDirectionsClick(): void {
+  sendGA4Event("directions_click");
+  sendMetaEvent("Contact");
 }
 
-export function trackDoctorView(): void {
-  sendGA4Event("doctor_view");
-  sendMetaEvent("ViewContent");
+function inferredContentKey(kind: "service" | "doctor"): string | undefined {
+  if (typeof window === "undefined") return undefined;
+  const pattern =
+    kind === "service"
+      ? /^\/(?:ka|en|ru)\/services\/([^/]+)\/?$/
+      : /^\/(?:ka|en|ru)\/about\/([^/]+)\/?$/;
+  return window.location.pathname.match(pattern)?.[1];
+}
+
+function normalizeContentKey(value?: string): string | undefined {
+  const normalized = value?.trim();
+  if (!normalized) return undefined;
+  const pieces = normalized.split(":");
+  return pieces[pieces.length - 1] || undefined;
+}
+
+export function trackServiceView(contentKey?: string): void {
+  const key = normalizeContentKey(contentKey) ?? inferredContentKey("service");
+  const parameters = key ? { content_key: key } : undefined;
+  sendGA4Event("service_view", parameters);
+  sendMetaEvent("ViewContent", parameters);
+}
+
+export function trackDoctorView(contentKey?: string): void {
+  const key = normalizeContentKey(contentKey) ?? inferredContentKey("doctor");
+  const parameters = key ? { content_key: key } : undefined;
+  sendGA4Event("doctor_view", parameters);
+  sendMetaEvent("ViewContent", parameters);
 }
 
 /** Fire-and-forget, first-party aggregate increment. It carries only the
