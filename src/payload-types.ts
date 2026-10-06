@@ -309,7 +309,13 @@ export interface Service {
    * ხატულა სწორედ ამ მისამართით არჩევა — თუ შეცვლი, სერვისი ხატულის გარეშე დარჩება. ცვლილებამდე დამირეკე.
    */
   slug: string;
-  category: 'diagnostics-planning' | 'therapy-prevention' | 'surgery-implantation' | 'orthodontics' | 'aesthetic';
+  category:
+    | 'diagnostics-planning'
+    | 'therapy-prevention'
+    | 'surgery-implantation'
+    | 'prosthetics'
+    | 'orthodontics'
+    | 'aesthetic';
   /**
    * რიგითობა მიმართულების შიგნით. რაც უფრო მცირე რიცხვია, მით ზემოთ.
    */
@@ -481,7 +487,13 @@ export interface Case {
   /**
    * რომელ კლინიკურ მიმართულებას ეკუთვნის. ფოტოების თავზე პატარა წარწერად ჩანს.
    */
-  direction: 'diagnostics-planning' | 'therapy-prevention' | 'surgery-implantation' | 'orthodontics' | 'aesthetic';
+  direction:
+    | 'diagnostics-planning'
+    | 'therapy-prevention'
+    | 'surgery-implantation'
+    | 'prosthetics'
+    | 'orthodontics'
+    | 'aesthetic';
   beforeImage: number | Media;
   /**
    * ორივე ფოტო ერთი კუთხითა და ერთნაირი განათებით უნდა იყოს გადაღებული — გვერდიგვერდ დგება და სხვაობა მაშინვე ჩანს. სხვადასხვა კუთხე შედეგს უფრო ნაკლებ დამაჯერებელს ხდის, ვიდრე რეალურად არის.
@@ -1670,6 +1682,20 @@ export interface Seo {
        */
       focusKeyword?: string | null;
     };
+    prosthetics?: {
+      /**
+       * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
+       */
+      title?: string | null;
+      /**
+       * დაახლოებით 155 სიმბოლო. ეს ის წინადადებაა, რომელიც ბმულის ქვემოთ ჩანს — დაწერე პაციენტისთვის, არა საძიებო სიტყვებისთვის.
+       */
+      description?: string | null;
+      /**
+       * რომელ ძებნაზე მუშაობს ეს გვერდი — მაგ.: „ბრეკეტები თბილისში“. გვერდზე არ ჩნდება და Google-ს არ ეგზავნება: ეს შენი ჩანაწერია, რომ ტექსტის წერისას თვალწინ გქონდეს. (Google მეტა-keywords-ს 2009 წლიდან აღარ კითხულობს — ამიტომ არსად ვწერთ.)
+       */
+      focusKeyword?: string | null;
+    };
     orthodontics?: {
       /**
        * დაახლოებით 60 სიმბოლო — უფრო გრძელს Google ჭრის. დაწერე რა არის ეს გვერდი, არა როგორ ჰქვია კლინიკას: სახელი ავტომატურად ემატება.
@@ -1832,6 +1858,13 @@ export interface SeoSelect<T extends boolean = true> {
               focusKeyword?: T;
             };
         surgeryImplantation?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              focusKeyword?: T;
+            };
+        prosthetics?:
           | T
           | {
               title?: T;

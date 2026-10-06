@@ -13,7 +13,7 @@ import { PrivacySettingsButton } from "@/components/analytics/AnalyticsProvider"
 
 /* `categories` and `clinic` are passed in rather than fetched: the layout
    already queries both for the header, and one round trip is enough. The
-   footer mirrors the home page — five directions, not sixteen links. */
+   footer mirrors the home page — six directions, not twenty-one links. */
 export default function SiteFooter({
   dict,
   lang,

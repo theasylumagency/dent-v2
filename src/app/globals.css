@@ -457,7 +457,10 @@
     overflow: hidden;
   }
 
-  @media (min-width: 1024px) and (max-height: 700px) {
+  /* Six directions share the screen, so a laptop-height window (768px)
+     already gets one line per row; two would press the title against the
+     rule above it. */
+  @media (min-width: 1024px) and (max-height: 800px) {
     .index-services {
       -webkit-line-clamp: 1;
     }

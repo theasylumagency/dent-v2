@@ -461,7 +461,9 @@ export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
             </Link>
           </div>
 
-          <div className="col-span-9 grid grid-cols-5 gap-x-6">
+          {/* Three across, two down: six directions at a ninth of the
+              screen each would wrap every Georgian title to three lines. */}
+          <div className="col-span-9 grid grid-cols-3 gap-x-8 gap-y-7">
             {megaColumns.map((column) => (
               <div key={column.slug}>
                 <Link

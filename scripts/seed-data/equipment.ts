@@ -47,7 +47,7 @@ export const seedEquipment: SeedDevice[] = [
     manufacturerName: "3Shape",
     manufacturerUrl: "https://www.3shape.com/",
     photo: "/equipment/trios-3-move.webp",
-    services: ["digital-modelling", "veneers", "aligners"],
+    services: ["digital-modelling", "veneers", "aligners", "crowns", "bridges", "implant-prosthetics"],
   },
   {
     slug: "ems-airflow-master",

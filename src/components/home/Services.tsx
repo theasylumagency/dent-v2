@@ -10,7 +10,7 @@ import Reveal from "@/components/ui/Reveal";
 import ServicesDial from "./ServicesDial";
 
 /**
- * The five clinical directions, as an index rather than a card grid.
+ * The six clinical directions, as an index rather than a card grid.
  *
  * One row per direction, numbered, with the title at display size doing the
  * leading and the services underneath as quiet text. The row is the link.
@@ -21,8 +21,8 @@ import ServicesDial from "./ServicesDial";
  * note in that file for why.
  *
  * Height: exactly one screen from lg, at least one below it
- * (`.h-viewport-lg`). Five directions named in Georgian wrap to two lines at
- * 375px, and there is no fifth of a short phone screen left to put them in,
+ * (`.h-viewport-lg`). Six directions named in Georgian wrap to two lines at
+ * 375px, and there is no sixth of a short phone screen left to put them in,
  * so below lg the rows take their natural height and the section grows.
  * Mobile gets each direction's icon on its row instead of the dial.
  */

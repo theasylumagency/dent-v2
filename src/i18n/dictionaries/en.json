@@ -17,7 +17,7 @@
     "closeMenu": "Close menu",
     "language": "Language",
     "allServices": "All services",
-    "servicesIntro": "16 disciplines — from diagnostics to digital smile design, all under one roof.",
+    "servicesIntro": "21 services — from diagnostics to crowns and bridges, all under one roof.",
     "skipToContent": "Skip to content",
     "call": "Call",
     "whatsapp": "WhatsApp",
@@ -37,8 +37,8 @@
     "playMotion": "Play video",
     "facts": [
       {
-        "value": "16",
-        "label": "Dental disciplines"
+        "value": "21",
+        "label": "Dental services"
       },
       {
         "value": "3D",
@@ -78,12 +78,12 @@
     "cta": "Details",
     "viewAll": "All services",
     "categoryCta": "Explore this direction",
-    "categoriesNote": "Five directions, 16 services — the full list lives on the services page.",
+    "categoriesNote": "Six directions, 21 services — the full list lives on the services page.",
     "page": {
       "metaTitle": "Services — the full spectrum of dentistry",
-      "metaDescription": "The 16 dental services of Total Charm Dent across five directions: diagnostics and digital planning, therapy, surgery and implantation, orthodontics and aesthetic dentistry. Vake, Tbilisi.",
+      "metaDescription": "The 21 dental services of Total Charm Dent across six directions: diagnostics and digital planning, therapy, surgery and implantation, prosthodontics, orthodontics and aesthetic dentistry. Vake, Tbilisi.",
       "title": "The full spectrum of dentistry",
-      "lead": "Five clinical directions and 16 services — from diagnostics to aesthetic restoration. Every stage in one clinic, under the care of one team.",
+      "lead": "Six clinical directions and 21 services — from diagnostics to aesthetic restoration. Every stage in one clinic, under the care of one team.",
       "breadcrumbHome": "Home",
       "breadcrumbLabel": "Breadcrumb",
       "directionsLabel": "Clinical directions",
@@ -91,6 +91,8 @@
       "jumpLabel": "Directions",
       "inCategory": "Services in this direction",
       "otherDirections": "Other directions",
+      "seeAlso": "See also",
+      "technologyUsed": "Technology used here",
       "whatsIncluded": "What it covers",
       "ctaTitle": "Not sure where to start?",
       "ctaLead": "Book a first consultation — we examine your mouth, show you the 3D scan and hand you a written treatment plan with stages, timelines and costs.",
@@ -117,6 +119,13 @@
         "lead": "The surgical side covers painless extraction with piezosurgery, removal of wisdom and retained teeth, bone grafting and PRP plasma therapy. For implants we work with surgical guides and with the Straumann, DENTIUM and Bredent SKY systems — from a single tooth to All-on-4 and All-on-6 restorations.",
         "metaTitle": "Surgery and implantation",
         "metaDescription": "Tooth extraction, bone grafting, PRP and dental implants with Straumann, DENTIUM and Bredent SKY systems. All-on-4 and All-on-6 in Tbilisi."
+      },
+      "prosthetics": {
+        "title": "Crowns, bridges and dentures",
+        "blurb": "Restoring the function and natural look of damaged or missing teeth — from a single crown to full rehabilitation.",
+        "lead": "Prosthodontics restores the function, aesthetics and natural look of your teeth. Treatment is planned with intraoral scanning and Digital Smile Design, so the result and every stage are visible before work begins. Every case is planned around your bite, aesthetics and the overall harmony of the face.",
+        "metaTitle": "Crowns, bridges and dentures — prosthodontics",
+        "metaDescription": "Ceramic and zirconia crowns, bridges, implant-supported restorations and removable dentures, digitally planned at Total Charm Dent in Vake, Tbilisi."
       },
       "orthodontics": {
         "title": "Orthodontics",

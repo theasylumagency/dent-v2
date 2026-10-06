@@ -191,6 +191,28 @@ export async function getShowcaseDevices(lang: Locale): Promise<Device[]> {
   return [...picked, ...filler].slice(0, SHOWCASE_COUNT);
 }
 
+/**
+ * The devices used in any of the given services, in catalogue order.
+ *
+ * Read off the equipment's own `services` relationship, so a category page
+ * learns which machines belong to it from the same field the technology
+ * page uses to say what each machine is for — one edit in the admin moves
+ * both.
+ */
+export async function getDevicesForServices(
+  slugs: readonly string[],
+  lang: Locale,
+): Promise<Pick<Device, "slug" | "name">[]> {
+  if (slugs.length === 0) return [];
+
+  const wanted = new Set(slugs);
+  const devices = await findDevices(lang);
+
+  return devices
+    .filter((device) => device.services.some((service) => wanted.has(service.slug)))
+    .map(({ slug, name }) => ({ slug, name }));
+}
+
 export async function getDeviceCount(): Promise<number> {
   const payload = await cms();
   const result = await payload.count({ collection: "equipment" });

@@ -43,7 +43,7 @@ const bracketArch = (
 );
 
 const ICONS = {
-  /* --- five clinical directions ----------------------------------- */
+  /* --- six clinical directions ------------------------------------ */
   "diagnostics-planning": (
     <>
       <path d={TOOTH} />
@@ -66,6 +66,15 @@ const ICONS = {
       <path d="M12 7.6v13.8" />
     </>
   ),
+  /* A crown lifted off the prepared tooth it is made for — the one
+     drawing in the set where the restoration and the tooth are two
+     separate things, which is the whole of what this direction does. */
+  prosthetics: (
+    <>
+      <path d="M6.4 11.2C5.9 10.2 5.6 9.1 5.6 8c0-2.4 1.6-4.2 3.8-4.2 1.1 0 1.7.5 2.6.5s1.5-.5 2.6-.5c2.2 0 3.8 1.8 3.8 4.2 0 1.1-.3 2.2-.8 3.2z" />
+      <path d="M8.6 13.4h6.8l-.7 2.6c-.3 1.2-.5 2.4-.6 3.6-.1 1-.9 1.6-1.6 1.6h-1c-.7 0-1.5-.6-1.6-1.6-.1-1.2-.3-2.4-.6-3.6z" />
+    </>
+  ),
   orthodontics: bracketArch,
   aesthetic: (
     <>
@@ -74,7 +83,7 @@ const ICONS = {
     </>
   ),
 
-  /* --- sixteen services -------------------------------------------- */
+  /* --- services ---------------------------------------------------- */
   diagnostics: (
     <>
       <path d={TOOTH} />
@@ -174,6 +183,52 @@ const ICONS = {
     <>
       <path d="M3.4 5.4h17.2a1.4 1.4 0 0 1 1.4 1.4v9.2a1.4 1.4 0 0 1-1.4 1.4H3.4A1.4 1.4 0 0 1 2 15.9V6.8a1.4 1.4 0 0 1 1.4-1.4z" />
       {inset(0.5, TOOTH)}
+    </>
+  ),
+
+  /* --- prosthetics -------------------------------------------------- */
+  /* The tooth with its crown margin drawn in. */
+  crowns: (
+    <>
+      <path d={TOOTH} />
+      <path d="M5.5 11.4c2.1.9 4.3 1.3 6.5 1.3s4.4-.4 6.5-1.3" />
+    </>
+  ),
+  /* Three units, roots under the two that carry the span. */
+  bridges: (
+    <>
+      <path d="M5 5.5h1.6a2 2 0 0 1 2 2v5H3v-5a2 2 0 0 1 2-2z" />
+      <path d="M11.2 5.5h1.6a2 2 0 0 1 2 2v2.6a2.4 2.4 0 0 1-2.4 2.4h-.8a2.4 2.4 0 0 1-2.4-2.4V7.5a2 2 0 0 1 2-2z" />
+      <path d="M17.4 5.5H19a2 2 0 0 1 2 2v5h-5.6v-5a2 2 0 0 1 2-2z" />
+      <path d="M8.6 9h.6M14.8 9h.6" />
+      <path d="M4.4 12.5l.5 5.6c.1.9 1.7.9 1.8 0l.5-5.6M16.8 12.5l.5 5.6c.1.9 1.7.9 1.8 0l.5-5.6" />
+    </>
+  ),
+  /* The implantation drawing, with a crown where its cap was. */
+  "implant-prosthetics": (
+    <>
+      <path d="M6.8 9c-.7-.9-1.2-2.1-1.2-3.4 0-1.7 1.1-2.9 2.7-2.9 1 0 1.6.4 2.4.4h2.6c.8 0 1.4-.4 2.4-.4 1.6 0 2.7 1.2 2.7 2.9 0 1.3-.5 2.5-1.2 3.4z" />
+      <path d="M10.4 9v1.8h3.2V9" />
+      <path d="M12 10.8v10.4" />
+      <path d="M9.6 12.8h4.8M9.9 15.2h4.2M10.2 17.6h3.6M10.6 19.8h2.8" />
+    </>
+  ),
+  /* An arch seen from below, divided into teeth. */
+  "removable-dentures": (
+    <>
+      <path d="M4 19.5C4 11 7.4 4.5 12 4.5S20 11 20 19.5" />
+      <path d="M8.2 19.5c0-5.8 1.6-9.8 3.8-9.8s3.8 4 3.8 9.8" />
+      <path d="M5.1 12.6l3.6.6M6.9 8.3l2.7 2.4M12 4.5v5.2M17.1 8.3l-2.7 2.4M18.9 12.6l-3.6.6M4.4 16.6h3.9M19.6 16.6h-3.9" />
+    </>
+  ),
+  /* The tooth inside a full turn — the whole mouth, planned as one. */
+  "full-mouth-rehabilitation": (
+    <>
+      <path d="M20.2 9.4A8.6 8.6 0 0 0 4.6 7.4" />
+      <path d="M4.3 4l.3 3.4 3.4-.7" />
+      <path d="M3.8 14.6a8.6 8.6 0 0 0 15.6 2" />
+      <path d="M19.7 20l-.3-3.4-3.4.7" />
+      {inset(0.42, TOOTH)}
     </>
   ),
 } as const;

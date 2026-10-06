@@ -128,7 +128,7 @@ export const Seo: GlobalConfig = {
                 },
                 {
                     label: "მიმართულებები",
-                    description: "სერვისების ხუთი მიმართულების გვერდი.",
+                    description: "სერვისების ექვსი მიმართულების გვერდი.",
                     fields: [
                         {
                             name: "categories",
@@ -138,6 +138,7 @@ export const Seo: GlobalConfig = {
                                 page("diagnosticsPlanning", t.catDiagnostics),
                                 page("therapyPrevention", t.catTherapy),
                                 page("surgeryImplantation", t.catSurgery),
+                                page("prosthetics", t.catProsthetics),
                                 page("orthodontics", t.catOrthodontics),
                                 page("aesthetic", t.catAesthetic),
                             ],

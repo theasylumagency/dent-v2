@@ -12,6 +12,9 @@ import * as migration_20260828_101500_audit_document_label from './20260828_1015
 import * as migration_20260831_131742_seo_focus_keyword_doctor_meta from './20260831_131742_seo_focus_keyword_doctor_meta';
 import * as migration_20260902_125321 from './20260902_125321';
 import * as migration_20260919_085217_strategy_responses from './20260919_085217_strategy_responses';
+import * as migration_20261006_010656_users_clinic_admin_role from './20261006_010656_users_clinic_admin_role';
+import * as migration_20261006_010705_prosthetics_direction from './20261006_010705_prosthetics_direction';
+import * as migration_20261006_010800_prosthetics_services from './20261006_010800_prosthetics_services';
 
 export const migrations = [
   {
@@ -82,6 +85,21 @@ export const migrations = [
   {
     up: migration_20260919_085217_strategy_responses.up,
     down: migration_20260919_085217_strategy_responses.down,
-    name: '20260919_085217_strategy_responses'
+    name: '20260919_085217_strategy_responses',
+  },
+  {
+    up: migration_20261006_010656_users_clinic_admin_role.up,
+    down: migration_20261006_010656_users_clinic_admin_role.down,
+    name: '20261006_010656_users_clinic_admin_role',
+  },
+  {
+    up: migration_20261006_010705_prosthetics_direction.up,
+    down: migration_20261006_010705_prosthetics_direction.down,
+    name: '20261006_010705_prosthetics_direction',
+  },
+  {
+    up: migration_20261006_010800_prosthetics_services.up,
+    down: migration_20261006_010800_prosthetics_services.down,
+    name: '20261006_010800_prosthetics_services'
   },
 ];

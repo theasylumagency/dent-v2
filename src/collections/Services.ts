@@ -77,6 +77,7 @@ export const Services: CollectionConfig = {
                 { label: t.catDiagnostics, value: "diagnostics-planning" },
                 { label: t.catTherapy, value: "therapy-prevention" },
                 { label: t.catSurgery, value: "surgery-implantation" },
+                { label: t.catProsthetics, value: "prosthetics" },
                 { label: t.catOrthodontics, value: "orthodontics" },
                 { label: t.catAesthetic, value: "aesthetic" },
             ],

@@ -16,7 +16,7 @@ export type DialItem = { slug: string; blurb: string };
  *
  * The dial borrows its language from two places the brand already owns:
  * the loose concentric strokes of the logo, and the orbit-and-node drawing
- * style of the service illustrations. Five nodes sit on the ring, one per
+ * style of the service illustrations. One node sits on the ring per
  * direction, each carrying that direction's icon. Pointing at a row turns
  * the dial until its node reaches the index mark at the top, and the centre
  * answers with the direction's one-line promise — the one piece of copy the
@@ -32,8 +32,8 @@ export type DialItem = { slug: string; blurb: string };
  *   the pointer leaves the list. A dial that spins home every time the
  *   mouse drifts toward the "all services" link is noise.
  * - It always takes the short way round. Rotation is accumulated in whole
- *   steps, so going from the fifth node to the first is one step clockwise,
- *   not four the other way.
+ *   steps, so going from the last node to the first is one step clockwise,
+ *   not five the other way.
  * - Everything that moves is a CSS transform on an HTML box — the ring, the
  *   counter-rotation that keeps each icon upright, the idle drift of the
  *   dotted orbit — so all of it runs on the compositor.

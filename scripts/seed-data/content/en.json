@@ -192,6 +192,60 @@
           "Convenient for checking root canal treatment stage by stage",
           "Images are stored and can be compared at later appointments"
         ]
+      },
+      "crowns": {
+        "title": "Ceramic and zirconia crowns",
+        "blurb": "Restoring the shape, strength and function of a damaged tooth.",
+        "lead": "A crown covers the whole tooth and restores its shape, strength and chewing function when the damage is too extensive for a restoration. We make ceramic and zirconia crowns and take the impression with an intraoral scanner instead of traditional impression paste.",
+        "points": [
+          "Digital impression with an intraoral scanner",
+          "The result is planned digitally before any work starts",
+          "A temporary crown while the permanent one is made — you are never left without a tooth",
+          "Ceramic or zirconia, chosen for the clinical situation and the result you want"
+        ]
+      },
+      "bridges": {
+        "title": "Dental bridges",
+        "blurb": "Replacing one or more missing teeth with a fixed bridge.",
+        "lead": "A bridge fills the gap left by one or more missing teeth and is anchored to the neighbouring teeth or to implants. It is a fixed restoration — it does not come out — and it restores both chewing function and the continuity of the smile. The type of bridge and the material are chosen at the planning stage.",
+        "points": [
+          "A fixed restoration — no removable denture",
+          "Supported by neighbouring teeth or by implants",
+          "Digital impression and planning",
+          "Planned around your bite and aesthetics"
+        ]
+      },
+      "implant-prosthetics": {
+        "title": "Implant-supported restorations",
+        "blurb": "A crown, a bridge or a full-arch restoration on implants.",
+        "lead": "An implant replaces the root of a tooth; the prosthetic restoration replaces the tooth itself. On implants we fix a single crown, a bridge or, when all teeth are missing, a full-arch restoration using the All-on-4 and All-on-6 protocols. Implantation and prosthetics are planned by one team, so the shape and position of the restoration are worked out in advance.",
+        "points": [
+          "A single crown, a bridge or a full-arch restoration",
+          "Implantation and prosthetics in one digital plan",
+          "A temporary restoration made from 3D models of the implant and crown while the permanent one is made",
+          "Straumann, DENTIUM and Bredent SKY systems"
+        ]
+      },
+      "removable-dentures": {
+        "title": "Removable dentures",
+        "blurb": "Restoring chewing and the smile with a removable denture.",
+        "lead": "A removable denture restores chewing function and the look of the smile when several or all teeth are missing. It is an alternative to a fixed restoration — the doctor will explain at the planning stage which option suits your case better.",
+        "points": [
+          "Chewing function and the look of the smile restored",
+          "Made individually to the shape of your jaw",
+          "Compared with fixed alternatives at the planning stage"
+        ]
+      },
+      "full-mouth-rehabilitation": {
+        "title": "Full-mouth rehabilitation",
+        "blurb": "Restoring function and aesthetics with one combined plan.",
+        "lead": "When the problem goes beyond a single tooth — several teeth are missing, others are damaged or the bite has changed — we plan the treatment as a whole. The plan is drawn up by the team at a case conference and takes into account function, the bite, aesthetics and the overall harmony of the face. With Digital Smile Design you see the future result before treatment begins.",
+        "points": [
+          "One written plan with stages, timelines and costs",
+          "Digital Smile Design — the result visualised before treatment",
+          "Crowns, bridges, veneers and implant-supported restorations, as the case requires",
+          "Planned around function, the bite, aesthetics and facial harmony"
+        ]
       }
     }
   },

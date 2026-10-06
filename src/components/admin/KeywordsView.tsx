@@ -41,7 +41,7 @@ type Row = {
 
 type Group = { title: string; note: string; rows: Row[] };
 
-/** The eleven fixed routes, in the order the SEO global presents them. */
+/** The fixed routes, in the order the SEO global presents them. */
 const SEO_ROUTES: { field: string; label: string; path: string }[] = [
   { field: "home", label: seoLabels.home, path: "" },
   { field: "about", label: seoLabels.about, path: "/about" },
@@ -55,6 +55,7 @@ const SEO_CATEGORIES: { field: string; label: string; path: string }[] = [
   { field: "diagnosticsPlanning", label: seoLabels.catDiagnostics, path: "/services/diagnostics-planning" },
   { field: "therapyPrevention", label: seoLabels.catTherapy, path: "/services/therapy-prevention" },
   { field: "surgeryImplantation", label: seoLabels.catSurgery, path: "/services/surgery-implantation" },
+  { field: "prosthetics", label: seoLabels.catProsthetics, path: "/services/prosthetics" },
   { field: "orthodontics", label: seoLabels.catOrthodontics, path: "/services/orthodontics" },
   { field: "aesthetic", label: seoLabels.catAesthetic, path: "/services/aesthetic" },
 ];

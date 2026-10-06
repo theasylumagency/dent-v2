@@ -206,6 +206,7 @@ export const services = {
   catDiagnostics: "დიაგნოსტიკა და დაგეგმვა",
   catTherapy: "თერაპია და პროფილაქტიკა",
   catSurgery: "ქირურგია და იმპლანტაცია",
+  catProsthetics: "პროთეზირება",
   catOrthodontics: "ორთოდონტია",
   catAesthetic: "ესთეტიკური სტომატოლოგია",
 } as const;
@@ -438,7 +439,7 @@ export const keywords = {
     `${total} გვერდიდან ${filled}-ს აქვს საკვანძო სიტყვა ქართულად. ცარიელი უჯრა შეცდომა არ არის — ის იმას ნიშნავს, რომ ამ გვერდზე ჯერ არ გადაწყვეტილა, რომელ ძებნაზე მუშაობს.`,
 
   groupFixed: "ფიქსირებული გვერდები",
-  groupFixedNote: "მარკეტინგი → Google-ის ტექსტები. თერთმეტივე ერთ ეკრანზეა.",
+  groupFixedNote: "მარკეტინგი → Google-ის ტექსტები. თორმეტივე ერთ ეკრანზეა.",
   groupPosts: "სიახლეები",
   groupPostsNote: "მხოლოდ გამოქვეყნებული სტატიები.",
   groupDoctors: "ექიმები",
@@ -487,6 +488,7 @@ export const seo = {
   catDiagnostics: "დიაგნოსტიკა და დაგეგმვა",
   catTherapy: "თერაპია და პროფილაქტიკა",
   catSurgery: "ქირურგია და იმპლანტაცია",
+  catProsthetics: "პროთეზირება",
   catOrthodontics: "ორთოდონტია",
   catAesthetic: "ესთეტიკური სტომატოლოგია",
 } as const;

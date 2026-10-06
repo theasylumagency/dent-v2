@@ -15,7 +15,7 @@ import { isRouteReady, route } from "./routes";
  */
 
 /**
- * The five clinical directions.
+ * The six clinical directions.
  *
  * Declared in code rather than in the CMS on purpose. They are the site's
  * information architecture — each has a URL, an icon and a page layout — so
@@ -27,11 +27,29 @@ export const categoryOrder = [
   "diagnostics-planning",
   "therapy-prevention",
   "surgery-implantation",
+  "prosthetics",
   "orthodontics",
   "aesthetic",
 ] as const;
 
 export type CategorySlug = (typeof categoryOrder)[number];
+
+/**
+ * Services from other directions that a reader of this one should be shown.
+ *
+ * A service lives in exactly one direction — its anchor is on one page — but
+ * some of them are as much a part of another direction's work. Veneers are
+ * a prosthodontist's restoration and an aesthetic choice; digital smile
+ * design is planning, and it is also how a crown or a full rehabilitation
+ * is agreed before anything is cut. Rather than file them twice, the
+ * direction that borrows them names them here and its page links across.
+ *
+ * Slugs, not copy: titles come from the CMS, and a slug an editor has since
+ * removed is skipped rather than rendered as a dead link.
+ */
+export const relatedServices: Partial<Record<CategorySlug, readonly string[]>> = {
+  prosthetics: ["veneers", "digital-modelling", "implantation"],
+};
 
 export function isCategorySlug(value: string): value is CategorySlug {
   return (categoryOrder as readonly string[]).includes(value);

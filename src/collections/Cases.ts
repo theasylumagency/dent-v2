@@ -142,6 +142,7 @@ export const Cases: CollectionConfig = {
         { label: serviceLabels.catDiagnostics, value: "diagnostics-planning" },
         { label: serviceLabels.catTherapy, value: "therapy-prevention" },
         { label: serviceLabels.catSurgery, value: "surgery-implantation" },
+        { label: serviceLabels.catProsthetics, value: "prosthetics" },
         { label: serviceLabels.catOrthodontics, value: "orthodontics" },
         { label: serviceLabels.catAesthetic, value: "aesthetic" },
       ],

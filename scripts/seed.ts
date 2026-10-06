@@ -541,6 +541,7 @@ async function main() {
           diagnosticsPlanning: metaOf(d, "diagnostics-planning"),
           therapyPrevention: metaOf(d, "therapy-prevention"),
           surgeryImplantation: metaOf(d, "surgery-implantation"),
+          prosthetics: metaOf(d, "prosthetics"),
           orthodontics: metaOf(d, "orthodontics"),
           aesthetic: metaOf(d, "aesthetic"),
         },

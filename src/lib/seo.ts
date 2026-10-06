@@ -38,6 +38,7 @@ const categoryField: Record<CategorySlug, string> = {
   "diagnostics-planning": "diagnosticsPlanning",
   "therapy-prevention": "therapyPrevention",
   "surgery-implantation": "surgeryImplantation",
+  prosthetics: "prosthetics",
   orthodontics: "orthodontics",
   aesthetic: "aesthetic",
 };

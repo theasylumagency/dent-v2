@@ -13,6 +13,7 @@ export type SeedService = {
     | "diagnostics-planning"
     | "therapy-prevention"
     | "surgery-implantation"
+    | "prosthetics"
     | "orthodontics"
     | "aesthetic";
 };
@@ -34,4 +35,15 @@ export const seedServices: SeedService[] = [
   { slug: "tomography", category: "diagnostics-planning" },
   { slug: "restoration", category: "aesthetic" },
   { slug: "visiograph", category: "diagnostics-planning" },
+
+  /* Added October 2026 with the prosthetics direction, from the list the
+     clinic's head sent. Appended rather than slotted in, so the order
+     values of the sixteen above stay what they were on every database
+     seeded before. The same five reach an already-live database through
+     `src/migrations/*_prosthetics_services.ts`. */
+  { slug: "crowns", category: "prosthetics" },
+  { slug: "bridges", category: "prosthetics" },
+  { slug: "implant-prosthetics", category: "prosthetics" },
+  { slug: "removable-dentures", category: "prosthetics" },
+  { slug: "full-mouth-rehabilitation", category: "prosthetics" },
 ];

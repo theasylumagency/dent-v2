@@ -5,8 +5,10 @@ import { notFound } from "next/navigation";
 import { htmlLang, isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { route } from "@/lib/nav";
+import { getDevicesForServices } from "@/lib/equipment";
+import { isRouteReady } from "@/lib/routes";
 import { getServiceCategories } from "@/lib/services";
-import { categoryOrder, isCategorySlug } from "@/lib/services-shared";
+import { categoryOrder, isCategorySlug, relatedServices } from "@/lib/services-shared";
 import { getCategorySeo } from "@/lib/seo";
 import { site } from "@/lib/site";
 import { ArrowUpRight, Sparkle } from "@/components/ui/icons";
@@ -70,7 +72,7 @@ export default async function ServiceCategoryPage({
   const dict = await getDictionary(locale);
   const t = dict.services.page;
 
-  /* One query for all five, then split. Fetching the current category and
+  /* One query for all six, then split. Fetching the current category and
      the "other directions" list separately would be two round trips for the
      same rows. */
   const categories = await getServiceCategories(dict.services.categories, locale);
@@ -81,6 +83,23 @@ export default async function ServiceCategoryPage({
 
   const others = categories.filter((entry) => entry.slug !== category);
   const copy = dict.services.categories[category];
+
+  /* Borrowed services, looked up in the list already fetched — see
+     `relatedServices`. A slug with no service behind it drops out. */
+  const allServices = categories.flatMap((entry) => entry.items);
+  const related = (relatedServices[category] ?? [])
+    .map((slug) => allServices.find((service) => service.slug === slug))
+    .filter((service): service is (typeof allServices)[number] => Boolean(service));
+
+  /* The machines used in this direction, linked to their cards. Skipped
+     while the technology page is not live — an anchor on a redirect lands
+     nowhere. */
+  const devices = isRouteReady("technology")
+    ? await getDevicesForServices(
+        current.items.map((service) => service.slug),
+        locale,
+      )
+    : [];
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -245,6 +264,60 @@ export default async function ServiceCategoryPage({
                   </Link>
                 </div>
               </Reveal>
+
+              {(related.length > 0 || devices.length > 0) && (
+                <Reveal delay={60}>
+                  <div className="card mt-5 p-7">
+                    {related.length > 0 && (
+                      <>
+                        <h2 className="label-micro">{t.seeAlso}</h2>
+                        <ul className="mt-5 space-y-1">
+                          {related.map((service) => (
+                            <li key={service.slug}>
+                              <Link
+                                href={service.href}
+                                className="group flex items-start gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-accent-50"
+                              >
+                                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-50 text-accent-700 ring-1 ring-inset ring-accent-200 transition-colors group-hover:bg-accent-100">
+                                  <ServiceIcon name={service.slug} className="h-5 w-5" />
+                                </span>
+                                <span className="text-sm leading-snug text-ink-800 transition-colors group-hover:text-accent-700">
+                                  {service.title}
+                                </span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+
+                    {devices.length > 0 && (
+                      <>
+                        <h2
+                          className={`label-micro ${
+                            related.length > 0 ? "mt-6 border-t border-ivory-400 pt-6" : ""
+                          }`}
+                        >
+                          {t.technologyUsed}
+                        </h2>
+                        <ul className="mt-4 space-y-1">
+                          {devices.map((device) => (
+                            <li key={device.slug}>
+                              <Link
+                                href={`${route(locale, "technology")}#${device.slug}`}
+                                className="group flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm text-ink-800 transition-colors hover:bg-accent-50 hover:text-accent-700"
+                              >
+                                {device.name}
+                                <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-accent-600 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                  </div>
+                </Reveal>
+              )}
 
               <Reveal delay={120}>
                 <div className="mt-5 rounded-card border border-accent-200 bg-accent-50 p-7">
