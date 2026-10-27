@@ -53,6 +53,7 @@ async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
     filename: "fixture.webp", mimeType: "image/webp", createdAt: "2020-01-01", updatedAt: "2020-01-01",
   }];
   const writes: Write[] = [];
+  const logs: string[] = [];
   let nextID = 100;
   const failUploads = new Set<string>();
   function withRowIDs(data: Record<string, unknown>) {
@@ -65,15 +66,18 @@ async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
       doctors: { config: Doctors },
       media: { config: { ...MediaCollection, upload: { staticDir: path.join(rootDir, "media") } } },
     },
-    async find({ collection, where }: {
+    async find({ collection, where, sort, limit = 2 }: {
       collection: string;
-      where: { slug?: { equals: string }; internalName?: { equals: string }; or?: { internalName?: { equals: string }; filename?: { equals: string } }[] };
+      where?: { slug?: { equals: string }; internalName?: { equals: string }; or?: { internalName?: { equals: string }; filename?: { equals: string } }[] };
+      sort?: string;
+      limit?: number;
     }) {
-      const matches = collection === "doctors" ? stored.filter((doc) => doc.slug === where.slug?.equals) :
-        media.filter((doc) => where.or ? where.or.some((clause) =>
+      const matches = collection === "doctors" ? (sort === "-order" ? [...stored].sort((a, b) => b.order - a.order) :
+        stored.filter((doc) => doc.slug === where?.slug?.equals)) :
+        media.filter((doc) => where?.or ? where.or.some((clause) =>
           clause.internalName ? doc.internalName === clause.internalName.equals : doc.filename === clause.filename?.equals,
-        ) : doc.internalName === where.internalName?.equals);
-      return { docs: structuredClone(matches.slice(0, 2)), totalDocs: matches.length };
+        ) : doc.internalName === where?.internalName?.equals);
+      return { docs: structuredClone(matches.slice(0, limit)), totalDocs: matches.length };
     },
     async create(input: Write) {
       assert.equal(input.locale, "ka");
@@ -100,8 +104,8 @@ async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
     },
   } as unknown as Payload;
   const run = (apply: boolean, specs: readonly DoctorSpec[] = doctors) =>
-    runMigration(payload, { apply, rootDir, log() {} }, specs);
-  return { rootDir, stored, media, writes, failUploads, run, payload };
+    runMigration(payload, { apply, rootDir, log(line) { logs.push(line); } }, specs);
+  return { rootDir, stored, media, writes, logs, failUploads, run, payload };
 }
 
 test("dry run plans all eight doctors and cannot call mutation APIs", async (t) => {
@@ -152,6 +156,33 @@ test("apply is idempotent, uses row objects and valid Lexical, and preserves pro
   const second = await f.run(true);
   assert.ok(second.every(({ status }) => status === "UNCHANGED"));
   assert.equal(f.writes.length, count, "repeat runs must not write even timestamps");
+});
+
+test("new orders follow the global maximum, including unpublished doctors, in dry run and apply", async (t) => {
+  const f = await fixture(t);
+  f.stored.push({ ...existingDoctor("outside-this-migration", 3), order: 73, published: false });
+  const expected = [74, 75, 76, 77, 78, 79];
+  await f.run(false);
+  const planned = f.logs.filter((line) => line.startsWith("  order: will set ")).map((line) => Number(line.split(" ").at(-1)));
+  assert.deepEqual(planned, expected);
+  assert.equal(f.writes.length, 0);
+  await f.run(true);
+  const created = f.writes.filter(({ collection, id }) => collection === "doctors" && id === undefined);
+  assert.deepEqual(created.map(({ data }) => data.order), expected);
+  assert.equal(f.stored[0].order, 17);
+  assert.equal(f.stored[1].order, 17);
+  assert.equal(f.stored[2].order, 73);
+  const before = f.writes.length;
+  assert.ok((await f.run(true)).every(({ status }) => status === "UNCHANGED"));
+  assert.equal(f.writes.length, before);
+});
+
+test("an empty doctor collection starts at zero and assigns consecutive orders", async (t) => {
+  const f = await fixture(t);
+  f.stored.splice(0);
+  const result = await f.run(true);
+  assert.equal(result.find(({ slug }) => slug === "nino-osadze")!.status, "SKIPPED");
+  assert.deepEqual(f.stored.map(({ order }) => order), [0, 1, 2, 3, 4, 5, 6]);
 });
 
 test("missing official source skips that doctor and continues with the remaining seven", async (t) => {
@@ -207,6 +238,9 @@ test("an upload failure does not block other doctors and a retry creates no dupl
   assert.ok(retry.slice(1).every(({ status }) => status === "UNCHANGED"));
   assert.equal(f.stored.length, 8);
   assert.equal(f.media.length, 8);
+  const createdOrders = f.stored.filter(({ id }) => id >= 100).map(({ order }) => order).sort((a, b) => a - b);
+  assert.deepEqual(createdOrders, [18, 19, 20, 21, 22, 23]);
+  assert.equal(f.stored.find(({ slug }) => slug === "sofio-kotoreishvili")!.order, 23);
 });
 
 test("media survives a doctor-write failure and is reused on retry", async (t) => {

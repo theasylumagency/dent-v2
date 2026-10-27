@@ -129,6 +129,25 @@ async function findDoctor(payload: Payload, slug: string) {
   return result.docs[0];
 }
 
+async function nextDoctorOrder(payload: Payload, lastPlannedOrder?: number): Promise<number> {
+  // Include every doctor, even unpublished profiles outside this migration.
+  const result = await payload.find({
+    collection: "doctors", sort: "-order", limit: 1, select: { order: true },
+    depth: 0, locale: "ka", fallbackLocale: false, overrideAccess: true,
+  });
+  const currentMax = result.docs[0]?.order;
+  if (result.docs.length && (typeof currentMax !== "number" || !Number.isFinite(currentMax))) {
+    throw new Error("Cannot assign order: the highest existing doctor order is invalid");
+  }
+  const maximum = lastPlannedOrder === undefined ? currentMax :
+    currentMax === undefined ? lastPlannedOrder : Math.max(currentMax, lastPlannedOrder);
+  const next = maximum === undefined ? 0 : maximum + 1;
+  if (!Number.isFinite(next) || (maximum !== undefined && next <= maximum)) {
+    throw new Error("Cannot assign order: the next value is outside the supported numeric range");
+  }
+  return next;
+}
+
 async function findMedia(payload: Payload, internalName: string, filename?: string) {
   const result = await payload.find({
     collection: "media",
@@ -202,12 +221,13 @@ function creationData(spec: DoctorSpec, patch: DoctorPatch, fields: Map<string, 
     throw new MigrationIssue("SKIPPED", "Missing doctor; approved name and role are required for creation");
   }
   const order = fields.get("order");
-  if (order?.type !== "number" || typeof order.defaultValue !== "number") {
-    throw new Error("SCHEMA_MISMATCH: expected a numeric default for order");
+  if (order?.type !== "number" || order.localized) {
+    throw new Error("SCHEMA_MISMATCH: expected a shared numeric order field");
   }
-  const data = { ...patch, slug: spec.slug, name: patch.name, role: patch.role, order: order.defaultValue, published: false };
+  const data = { ...patch, slug: spec.slug, name: patch.name, role: patch.role, published: false };
   for (const [name, field] of fields) {
-    if (name === "photo" || name === "id" || name === "createdAt" || name === "updatedAt") continue;
+    // Photo and order are supplied after the remaining creation fields are validated.
+    if (name === "photo" || name === "order" || name === "id" || name === "createdAt" || name === "updatedAt") continue;
     if ("required" in field && field.required && !(name in data) &&
         !("defaultValue" in field && field.defaultValue !== undefined)) {
       throw new MigrationIssue("SKIPPED", `Missing required creation field: ${name}`);
@@ -254,6 +274,7 @@ export function printSummary(results: Result[], apply: boolean, log: (line: stri
 export async function runMigration(payload: Payload, options: RunOptions, specs: readonly DoctorSpec[] = doctors): Promise<Result[]> {
   const { apply, rootDir = root, log = console.log } = options;
   const results: Result[] = [];
+  let lastPlannedOrder: number | undefined;
   const fields = namedFields(payload.collections.doctors.config.fields);
   for (const spec of specs) {
     log(`\n[${apply ? "APPLY" : "DRY RUN"}] ${spec.slug}`);
@@ -269,6 +290,7 @@ export async function runMigration(payload: Payload, options: RunOptions, specs:
       const content = contentPatch(spec, fields);
       const create = existing ? undefined : creationData(spec, content, fields);
       const photo = await planPhoto(payload, spec, existing, rootDir);
+      const createOrder = create ? await nextDoctorOrder(payload, lastPlannedOrder) : undefined;
       const patch = existing ? changes(existing, content) : content;
       const oldPhoto = typeof existing?.photo === "object" ? existing.photo.id : existing?.photo;
       const replacePhoto = !photo.preserve && (!photo.id || oldPhoto !== photo.id);
@@ -281,6 +303,7 @@ export async function runMigration(payload: Payload, options: RunOptions, specs:
         if (key !== "photo") log(`  ${key}: ${Array.isArray(value) ? `${value.length} rows; ` : ""}will ${existing ? "update" : "set"}`);
       }
       log(existing ? "  all other fields: preserved" : "  doctor: will create; published: false");
+      if (createOrder !== undefined) log(`  order: will set ${createOrder}`);
       let status: Status = existing ?
         (Object.keys(patch).length || replacePhoto || photo.updateAlt ? "UPDATED" : "UNCHANGED") : "CREATED";
       if (apply && status !== "UNCHANGED") {
@@ -306,11 +329,12 @@ export async function runMigration(payload: Payload, options: RunOptions, specs:
           } else {
             await payload.create({
               collection: "doctors", locale: "ka", fallbackLocale: false, overrideAccess: true,
-              data: { ...create!, photo: photoID! },
+              data: { ...create!, order: createOrder!, photo: photoID! },
             });
           }
         }
       }
+      if (status === "CREATED") lastPlannedOrder = createOrder;
       results.push({ slug: spec.slug, status });
       log(`  status: ${status}${apply ? "" : " (planned)"}`);
     } catch (error) {

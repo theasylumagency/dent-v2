@@ -27,8 +27,12 @@ fields are compared and changed; unchanged records receive no writes. Payload
 array row IDs and additional Lexical metadata do not trigger needless rewrites.
 Publication, lead status, ordering, experience years, other fields, and EN/RU text
 are preserved for existing doctors. **Photos are shared across locales**, so new
-photo relationships are visible in all languages. New profiles are unpublished,
-with the schema's default ordering. Missing Osadze is skipped because her CV may
+photo relationships are visible in all languages. New profiles are unpublished.
+Their order starts at the maximum across all existing doctors plus one,
+including unpublished profiles outside this migration. Further new profiles
+receive consecutive values in manifest order. An empty collection starts at zero.
+Dry run prints these proposed values without writing; retries preserve existing
+orders and append any still-missing profiles. Missing Osadze is skipped because her CV may
 not supply the required name and role.
 
 The approved copy is in `doctors-2026-10.json`. The user authorized shortening two
@@ -76,7 +80,7 @@ After applying, review new profiles in Payload before publishing. This CLI has
 no running Next.js cache context; the existing revalidation hook logs a skip.
 Refresh the running site's cache through the normal publishing/deploy workflow.
 
-Implementation verification on 2026-10-27: typecheck and all 11 migration tests
+Implementation verification on 2026-10-27: typecheck and all 13 migration tests
 passed; lint for the migration directory passed. Full-project lint reports an
 existing `prefer-rest-params` error at `src/lib/analytics/providers.ts:44`, plus
 existing warnings. All seven supplied portraits have readable JPEG metadata.
