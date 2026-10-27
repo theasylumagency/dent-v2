@@ -21,6 +21,7 @@
     "migrate:create": "payload migrate:create",
     "migrate": "payload migrate",
     "seed": "tsx scripts/seed.ts",
+    "data:update-doctors": "tsx scripts/data-migrations/update-doctors-2026-10.ts",
     "strategy": "node scripts/strategy.mjs",
     "test:strategy": "tsx --test src/lib/strategy/*.test.ts"
   },
