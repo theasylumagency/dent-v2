@@ -5,6 +5,7 @@ import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import Hero from "@/components/home/Hero";
 import Clinic from "@/components/home/Clinic";
+import QualityCertification from "@/components/home/QualityCertification";
 import Services from "@/components/home/Services";
 import Atmosphere from "@/components/home/Atmosphere";
 import CasesTeaser from "@/components/home/CasesTeaser";
@@ -35,6 +36,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
     <>
       <Hero dict={dict} lang={locale} />
       <Clinic dict={dict} lang={locale} />
+      <QualityCertification dict={dict} />
       <Services dict={dict} lang={locale} />
       <Atmosphere dict={dict} lang={locale} />
       {/* The trust band closes on a claim about trust over the clinic's own

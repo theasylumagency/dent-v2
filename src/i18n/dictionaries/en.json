@@ -65,6 +65,16 @@
     "imageAlt": "Inside Total Charm Dent in Vake, Tbilisi — the patient lounge",
     "imageAlt2": "Total Charm Dent reception and waiting area"
   },
+  "qualityCertification": {
+    "label": "An international standard of quality",
+    "title": "Quality, with a standard behind it",
+    "lead": "Total Charm Dent’s quality management system is certified to ISO 9001.",
+    "description": "This international standard is built on consistent processes, attention to patient needs and continual service improvement — principles that guide our everyday work.",
+    "principles": ["Patient focus", "Consistent processes", "Continual improvement"],
+    "caption": "Certified quality management system",
+    "cta": "What ISO 9001 means",
+    "externalNote": "Official ISO website, opens in a new tab"
+  },
   "stats": {
     "satisfied": "Satisfied patients",
     "years": "Years on the market",
