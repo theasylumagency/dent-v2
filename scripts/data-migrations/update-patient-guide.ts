@@ -19,25 +19,25 @@ const posts = [
   {
     slug: "cbct-implant-planning",
     source: "why-is-dental-implantation-planned",
-    cover: "equipment/vatech-cbct.webp",
+    cover: "images/home/technology/cbct.webp",
     alt: "კლინიკის კონუსურ-სხივური ტომოგრაფი Vatech",
   },
   {
     slug: "airflow-instead-of-scaling",
     source: "airflow-instead-of-scaling",
-    cover: "equipment/ems-airflow-master.webp",
+    cover: "images/home/technology/airflow.webp",
     alt: "კლინიკის პროფესიული წმენდის მოწყობილობა EMS AIRFLOW",
   },
   {
     slug: "whitening-what-to-expect",
     source: "whitening-what-to-expect",
-    cover: "equipment/philips-zoom-4.webp",
+    cover: "images/home/technology/zoom-4.webp",
     alt: "კლინიკის კბილების გათეთრების მოწყობილობა Philips Zoom",
   },
   {
     slug: "trios-scanner-arrived",
     source: "trios-scanner-arrived",
-    cover: "equipment/trios-3-move.webp",
+    cover: "images/home/technology/trios-3-move-clean.webp",
     alt: "კლინიკის ინტრაორალური სკანერი 3Shape TRIOS",
   },
 ] as const;
@@ -141,10 +141,11 @@ async function getCover(payload: Payload, filePath: string, alt: string, transla
 async function main() {
   const args = process.argv.slice(2);
   const mode = args[0];
-  if (args.length > 1 || (mode && !["--check-db", "--add-draft", "--update-existing"].includes(mode))) {
-    throw new Error("Usage: npm run data:patient-guide [-- --check-db | --add-draft | --update-existing]");
+  if (args.length > 1 || (mode && !["--check-db", "--add-draft", "--update-existing", "--repair-covers"].includes(mode))) {
+    throw new Error("Usage: npm run data:patient-guide [-- --check-db | --add-draft | --update-existing | --repair-covers]");
   }
-  const selected = mode === "--add-draft" ? posts.slice(0, 1) : mode === "--update-existing" ? posts.slice(1) : posts;
+  const updatingPublished = mode === "--update-existing" || mode === "--repair-covers";
+  const selected = mode === "--add-draft" ? posts.slice(0, 1) : updatingPublished ? posts.slice(1) : posts;
   const articles = await Promise.all(selected.map(async (post) => {
     const filePath = resolve(root, "public", post.cover);
     await access(filePath);
@@ -192,7 +193,7 @@ async function main() {
       const { docs } = await payload.find({ ...lookup, collection: "posts", draft: true, where });
       if (docs.length > 1) throw new Error(`Duplicate slug: ${article.slug}`);
       const existing = docs[0];
-      if (mode === "--update-existing" && existing?._status !== "published") {
+      if (updatingPublished && existing?._status !== "published") {
         throw new Error(`Expected a published post without a pending draft: ${article.slug}`);
       }
       return { article, existing };
@@ -211,6 +212,16 @@ async function main() {
         continue;
       }
       const cover = await getCover(payload, article.filePath, article.alt, coverAlts[article.slug]);
+      if (mode === "--repair-covers") {
+        if (!existing) throw new Error(`Missing published post: ${article.slug}`);
+        if (existing.cover !== cover) {
+          await payload.update({
+            ...write, collection: "posts", id: existing.id, data: { cover, _status: "published" },
+          });
+        }
+        console.log(`Cover ready: ${article.slug}`);
+        continue;
+      }
       const draft = mode === "--add-draft";
       const req = await createLocalReq({}, payload);
       if (!await initTransaction(req)) throw new Error("A database transaction is required");
@@ -253,7 +264,13 @@ async function main() {
   }
 }
 
-main().catch((error: unknown) => {
-  console.error(error instanceof Error ? error.message : error);
-  process.exitCode = 1;
-});
+main().then(
+  () => {
+    // Payload's PostgreSQL adapter leaves its connection pool open after destroy().
+    process.stdout.write("", () => process.exit(0));
+  },
+  (error: unknown) => {
+    const message = error instanceof Error ? error.message : String(error);
+    process.stderr.write(`${message}\n`, () => process.exit(1));
+  },
+);

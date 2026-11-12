@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 
 import type { Locale } from "@/i18n/config";
 /* From `news-shared`, not `news` — this renders inside a client component,
@@ -49,10 +48,12 @@ export default function PostCard({
           </div>
 
           <h3 className="mt-4 font-display text-xl leading-snug">
-            <Link href={post.href} className="transition-colors hover:text-accent-700">
+            {/* Document navigation starts the article at the top and lets the
+                browser restore the listing position on Back. */}
+            <a href={post.href} className="transition-colors hover:text-accent-700">
               {/* Stretched link — the whole card is the target. */}
               <span className="after:absolute after:inset-0 after:content-['']">{post.title}</span>
-            </Link>
+            </a>
           </h3>
 
           <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-700">{post.excerpt}</p>
