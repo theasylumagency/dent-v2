@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useRef, useState, useSyncExternalStore, type Ref } from "react";
+import { useCallback, useRef, useState, useSyncExternalStore } from "react";
 import {
   motion,
   useMotionValueEvent,
@@ -38,6 +38,11 @@ export type TechnologyExperienceCopy = {
     secondary: string;
     cta: string;
   };
+};
+
+type TechnologyExperienceProps = {
+  copy: TechnologyExperienceCopy;
+  technologyHref: string;
 };
 
 type SceneKey = keyof TechnologyExperienceCopy["scenes"];
@@ -110,6 +115,14 @@ function usePrefersReducedMotion() {
   );
 }
 
+export default function TechnologyExperience(props: TechnologyExperienceProps) {
+  return usePrefersReducedMotion() ? (
+    <StaticTechnology {...props} />
+  ) : (
+    <AnimatedTechnology {...props} />
+  );
+}
+
 /**
  * The technology section — a light, stepped "precision rail".
  *
@@ -142,45 +155,33 @@ function usePrefersReducedMotion() {
  * motion-value listener. `setActive` with an unchanged value is a no-op, so
  * the listener costs nothing between step boundaries.
  */
-export default function TechnologyExperience({
-  copy,
-  technologyHref,
-}: {
-  copy: TechnologyExperienceCopy;
-  technologyHref: string;
-}) {
-  const runwayRef = useRef<HTMLDivElement>(null);
-  const reduceMotion = usePrefersReducedMotion();
+function AnimatedTechnology({ copy, technologyHref }: TechnologyExperienceProps) {
+  const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const count = SCENES.length;
 
   const { scrollYProgress } = useScroll({
-    target: runwayRef,
-    offset: ["start start", "end end"],
+    target: trackRef,
+    // The midpoint keeps Motion from using the native `exit` range, which
+    // starts later for a track taller than the viewport.
+    offset: ["start start", "center start", "end start"],
   });
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     setActive(Math.min(count - 1, Math.max(0, Math.floor(value * count))));
   });
 
-  /* Jump to the middle of a step's stretch of the runway, so the step lands
+  /* Jump to the middle of a step's stretch of the track, so the step lands
      settled rather than on its boundary. */
   const goTo = useCallback(
     (index: number) => {
-      const runway = runwayRef.current;
-      if (!runway) return;
-      const top = runway.getBoundingClientRect().top + window.scrollY;
-      const span = runway.offsetHeight - window.innerHeight;
-      window.scrollTo({ top: top + (span * (index + 0.5)) / count });
+      const track = trackRef.current;
+      if (!track) return;
+      const { top, height } = track.getBoundingClientRect();
+      window.scrollTo({ top: window.scrollY + top + (height * (index + 0.5)) / count });
     },
     [count],
   );
-
-  if (reduceMotion) {
-    /* The static layout takes the runway ref too, so `useScroll` always has
-       a mounted target to measure — it just has nothing to drive. */
-    return <StaticTechnology ref={runwayRef} copy={copy} technologyHref={technologyHref} />;
-  }
 
   const current = SCENES[active];
   const currentCopy = copy.scenes[current.key];
@@ -189,7 +190,7 @@ export default function TechnologyExperience({
     <section
       id="technology"
       aria-labelledby="technology-title"
-      className="tech-surface relative isolate overflow-x-clip border-y border-mist-200"
+      className="tech-surface relative isolate border-y border-mist-200"
     >
       <BrandRings />
 
@@ -197,8 +198,14 @@ export default function TechnologyExperience({
 
       {/* The runway: one screen of stage plus one step-length of scroll per
           device. `--tech-step` is set per breakpoint in globals.css. */}
-      <div ref={runwayRef} className="tech-runway relative">
-        <div className="tech-stage sticky top-0 flex h-svh flex-col">
+      <div className="tech-runway relative">
+        {/* The track spans exactly the distance the stage stays pinned. */}
+        <div
+          ref={trackRef}
+          className="tech-track pointer-events-none absolute inset-x-0 top-0"
+          aria-hidden="true"
+        />
+        <div className="tech-stage sticky top-0 flex flex-col">
           <div className="shell flex min-h-0 w-full flex-1 flex-col gap-5 lg:grid lg:grid-cols-12 lg:items-center lg:gap-12 xl:gap-16">
             {/* Phone: counter, label and a four-part progress bar. */}
             <div className="shrink-0 lg:hidden">
@@ -357,13 +364,7 @@ function ProgressSegment({
   index: number;
   count: number;
 }) {
-  /* Both ends pinned to 0 and 1. Motion can hand a scroll-linked transform
-     to the browser as a WAAPI animation, and WAAPI fills any stretch of the
-     timeline the keyframes do not cover with the element's *underlying*
-     style — so a segment whose range stopped short of 1 would drain back to
-     empty after its step had passed. */
-  const input = [0, index / count, (index + 1) / count, 1];
-  const fill = useTransform(progress, input, [0, 0, 1, 1]);
+  const fill = useTransform(progress, [index / count, (index + 1) / count], [0, 1]);
 
   return (
     <span className="relative h-[3px] overflow-hidden rounded-full bg-mist-300">
@@ -422,13 +423,12 @@ function TechnologyFinale({
 /** The logo's loose rings, drawn large and faint behind the section. */
 function BrandRings() {
   return (
-    <div
-      className="pointer-events-none absolute -right-64 -top-24 -z-10 h-[40rem] w-[40rem] opacity-60 lg:-right-48 lg:-top-40 lg:h-[60rem] lg:w-[60rem]"
-      aria-hidden="true"
-    >
-      <div className="absolute inset-[8%] rounded-[46%_54%_48%_52%] border border-accent-200" />
-      <div className="absolute inset-[17%] rotate-12 rounded-[52%_48%_54%_46%] border border-accent-200/80" />
-      <div className="absolute inset-[29%] -rotate-6 rounded-full border border-accent-200/60" />
+    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
+      <div className="absolute -right-64 -top-24 h-[40rem] w-[40rem] opacity-60 lg:-right-48 lg:-top-40 lg:h-[60rem] lg:w-[60rem]">
+        <div className="absolute inset-[8%] rounded-[46%_54%_48%_52%] border border-accent-200" />
+        <div className="absolute inset-[17%] rotate-12 rounded-[52%_48%_54%_46%] border border-accent-200/80" />
+        <div className="absolute inset-[29%] -rotate-6 rounded-full border border-accent-200/60" />
+      </div>
     </div>
   );
 }
@@ -438,25 +438,17 @@ function BrandRings() {
  * grid on the same light surface. Nothing pins and nothing is tied to the
  * scroll — every word the animated version says is here, in the same order.
  */
-function StaticTechnology({
-  ref,
-  copy,
-  technologyHref,
-}: {
-  ref: Ref<HTMLDivElement>;
-  copy: TechnologyExperienceCopy;
-  technologyHref: string;
-}) {
+function StaticTechnology({ copy, technologyHref }: TechnologyExperienceProps) {
   return (
     <section
       id="technology"
       aria-labelledby="technology-title"
-      className="tech-surface relative isolate overflow-x-clip border-y border-mist-200"
+      className="tech-surface relative isolate border-y border-mist-200"
     >
       <BrandRings />
       <TechnologyHead copy={copy} />
 
-      <div ref={ref} className="shell relative mt-6 grid gap-10 sm:grid-cols-2 lg:mt-10 lg:gap-12">
+      <div className="shell relative mt-6 grid gap-10 sm:grid-cols-2 lg:mt-10 lg:gap-12">
         {SCENES.map((scene, index) => {
           const sceneCopy = copy.scenes[scene.key];
           return (

@@ -323,7 +323,7 @@ export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
               unoptimized
               className={`w-auto transition-[height] duration-500 ${scrolled ? "h-9" : "h-11 lg:h-12"}`}
             />
-            <span className="hidden flex-col leading-none sm:flex">
+            <span className="hidden flex-col leading-none sm:flex lg:max-xl:hidden">
               <span
                 className={`font-display text-lg tracking-[0.02em] transition-colors duration-500 ${
                   overlay ? "text-ivory-50" : "text-ink-900"
@@ -340,10 +340,7 @@ export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
           </Link>
 
           {/* Desktop nav */}
-          {/* The one place the `secondary` items are dropped: this row is a
-              single flex line and the Georgian labels already fill it. The
-              drawer below and the footer both render `navItems` whole. */}
-          <nav className="hidden items-center gap-1 lg:flex" aria-label={dict.nav.primaryLabel}>
+          <nav className="hidden items-center lg:flex xl:gap-1" aria-label={dict.nav.primaryLabel}>
             {navItems
               .filter((item) => !item.secondary)
               .map((item) => {
@@ -358,7 +355,7 @@ export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
                   onClick={() => setMegaOpen((v) => !v)}
                   aria-expanded={megaOpen}
                   aria-controls="mega-menu"
-                  className={`group flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm transition-colors ${
+                  className={`group flex items-center gap-1.5 rounded-full px-2.5 py-2.5 text-sm transition-colors xl:px-4 ${
                     megaOpen || isActive
                       ? overlay
                         ? "bg-white/12 text-ivory-50"
@@ -379,7 +376,7 @@ export default function SiteHeader({ dict, lang, megaColumns, clinic }: Props) {
                   href={item.href}
                   onMouseEnter={scheduleCloseMega}
                   aria-current={isActive ? "true" : undefined}
-                  className={`rounded-full px-4 py-2.5 text-sm transition-colors ${
+                  className={`rounded-full px-2.5 py-2.5 text-sm transition-colors xl:px-4 ${
                     isActive
                       ? overlay
                         ? "bg-white/12 font-medium text-ivory-50"

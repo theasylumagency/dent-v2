@@ -10,6 +10,8 @@ import PageHero from "@/components/services/PageHero";
 import BookingCta from "@/components/services/BookingCta";
 import NewsList from "@/components/news/NewsList";
 
+const legacyTitles = { ka: "სიახლეები და სტატიები", en: "News and articles", ru: "Новости и статьи" };
+
 export async function generateMetadata({
   params,
 }: {
@@ -22,9 +24,11 @@ export async function generateMetadata({
     title: t.metaTitle,
     description: t.metaDescription,
   });
+  // Existing CMS records can still contain the SEO title set by the original seed.
+  const title = meta.title === legacyTitles[lang] ? t.metaTitle : meta.title;
 
   return {
-    title: meta.title,
+    title,
     description: meta.description,
     alternates: {
       canonical: `/${lang}/news`,
@@ -36,7 +40,7 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       siteName: site.name,
-      title: meta.title,
+      title,
       description: meta.description,
       locale: htmlLang[lang].replace("-", "_"),
       url: `/${lang}/news`,
@@ -82,7 +86,6 @@ export default async function NewsPage({ params }: { params: Promise<{ lang: str
   return (
     <>
       <PageHero
-        eyebrow={dict.nav.news}
         title={t.title}
         lead={t.lead}
         crumbLabel={t.breadcrumbLabel}

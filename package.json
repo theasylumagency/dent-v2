@@ -22,6 +22,7 @@
     "migrate": "payload migrate",
     "seed": "tsx scripts/seed.ts",
     "data:update-doctors": "tsx scripts/data-migrations/update-doctors-2026-10.ts",
+    "data:patient-guide": "tsx scripts/data-migrations/update-patient-guide.ts",
     "strategy": "node scripts/strategy.mjs",
     "test:strategy": "tsx --test src/lib/strategy/*.test.ts"
   },

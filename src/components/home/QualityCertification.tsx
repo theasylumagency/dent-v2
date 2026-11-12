@@ -1,8 +1,12 @@
+import Link from "next/link";
+
+import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
+import { route } from "@/lib/routes";
 import { ArrowUpRight } from "@/components/ui/icons";
 import Reveal from "@/components/ui/Reveal";
 
-export default function QualityCertification({ dict }: { dict: Dictionary }) {
+export default function QualityCertification({ dict, lang }: { dict: Dictionary; lang: Locale }) {
   const copy = dict.qualityCertification;
 
   return (
@@ -38,18 +42,15 @@ export default function QualityCertification({ dict }: { dict: Dictionary }) {
             ))}
           </ul>
 
-          <a
-            href="https://www.iso.org/standard/9001"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={route(lang, "certificate")}
             className="group mt-7 inline-flex min-h-11 items-center gap-3 rounded-sm text-sm font-medium text-accent-700 transition-colors hover:text-brand-900"
           >
             {copy.cta}
-            <span className="sr-only"> — {copy.externalNote}</span>
             <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-mist-300 transition-colors group-hover:bg-accent-200">
               <ArrowUpRight className="h-3.5 w-3.5" />
             </span>
-          </a>
+          </Link>
         </Reveal>
 
         <Reveal delay={100} className="w-full max-w-[28rem] justify-self-center lg:order-1 lg:col-span-5">

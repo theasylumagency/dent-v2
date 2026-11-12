@@ -111,13 +111,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   /* `seo` is in every row: the meta title and description are what the
      search result itself says, so editing them changes the page as far as
      a search engine is concerned even when no visible copy moved. */
-  const lastModFor = (path: string): Date => {
+  const lastModFor = (path: string): Date | undefined => {
     if (path === "") return newest(services, doctorsAt, equipment, faq, clinic, seo);
     if (path === "/about") return newest(doctorsAt, clinic, seo);
     if (path === "/services") return newest(services, seo);
     if (path.startsWith("/services/")) return newest(services, seo);
     if (path === "/cases") return newest(cases, seo);
     if (path === "/technology") return newest(equipment, seo);
+    if (path === "/certificate") return undefined;
     if (path === "/news") return newest(newestPost, seo);
     if (path === "/contact") return newest(clinic, seo);
     return newest(seo);
@@ -133,6 +134,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
        same way. */
     ...(isRouteReady("cases") ? ["/cases"] : []),
     "/technology",
+    "/certificate",
     "/about",
     "/news",
     "/contact",
@@ -147,7 +149,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
    * The home page outranks its children, and Georgian outranks the
    * translations — it is the locale the clinic actually serves.
    */
-  const entriesFor = (path: string, lastModified: Date, basePriority: number) => {
+  const entriesFor = (path: string, lastModified: Date | undefined, basePriority: number) => {
     const languages = alternatesFor(path);
     return locales.map((locale) => ({
       url: `${site.url}/${locale}${path}`,

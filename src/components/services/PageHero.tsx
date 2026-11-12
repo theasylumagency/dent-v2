@@ -19,7 +19,7 @@ export default function PageHero({
   crumbLabel,
   aside,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   lead: string;
   crumbs: Crumb[];
@@ -36,8 +36,8 @@ export default function PageHero({
 
         <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end lg:gap-14">
           <Reveal className="lg:col-span-7">
-            <p className="eyebrow">{eyebrow}</p>
-            <h1 className="mt-6 fluid-display font-display">{title}</h1>
+            {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
+            <h1 className={`fluid-display font-display${eyebrow ? " mt-6" : ""}`}>{title}</h1>
           </Reveal>
 
           <Reveal delay={100} className="lg:col-span-5">

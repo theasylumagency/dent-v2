@@ -36,7 +36,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
     <>
       <Hero dict={dict} lang={locale} />
       <Clinic dict={dict} lang={locale} />
-      <QualityCertification dict={dict} />
+      <QualityCertification dict={dict} lang={locale} />
       <Services dict={dict} lang={locale} />
       <Atmosphere dict={dict} lang={locale} />
       {/* The trust band closes on a claim about trust over the clinic's own

@@ -1304,10 +1304,16 @@
   .tech-runway {
     --tech-count: 4;
     --tech-step: 52svh;
-    height: calc(100svh + var(--tech-count) * var(--tech-step));
+    --tech-stage-height: 100svh;
+    height: calc(var(--tech-stage-height) + var(--tech-count) * var(--tech-step));
+  }
+
+  .tech-track {
+    bottom: var(--tech-stage-height);
   }
 
   .tech-stage {
+    height: var(--tech-stage-height);
     padding-top: 4.75rem;
     padding-bottom: calc(var(--action-bar-h) + env(safe-area-inset-bottom) + 1.25rem);
   }

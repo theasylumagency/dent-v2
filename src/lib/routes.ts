@@ -31,6 +31,7 @@ const routeReady = {
      page. */
   serviceDetail: false,
   technology: true,
+  certificate: true,
   /* The clinical-cases page.
 
      **This is the launch switch, and it is the only one.** The page, the
@@ -61,6 +62,7 @@ const homeAnchor = {
   serviceCategory: "#services",
   serviceDetail: "#services",
   technology: "#technology",
+  certificate: "#quality",
   cases: "#cases",
   /* No news section on the home page. If the route were ever switched off
      the anchor would land at the top, which is the least wrong option. */
@@ -75,6 +77,7 @@ const realPath = {
   serviceCategory: "services",
   serviceDetail: "services",
   technology: "technology",
+  certificate: "certificate",
   cases: "cases",
   news: "news",
   contact: "contact",
