@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_Georgian } from "next/font/google";
+import { brandIcons } from "@/lib/site";
 import "../../globals.css";
 import "./strategy.css";
 
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   description: "კლინიკის ციფრული განვითარების სამუშაო კითხვარი.",
   robots: { index: false, follow: false, nocache: true },
   referrer: "no-referrer",
-  icons: { icon: "/brand/icon.svg" },
+  icons: { icon: { url: brandIcons.svg, sizes: "any", type: "image/svg+xml" } },
 };
 // Deliberately outside [lang]: no marketing pixels, consent banner, public
 // navigation, locale redirect, or analytics configuration fetches.

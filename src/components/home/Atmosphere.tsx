@@ -48,7 +48,7 @@ export default async function Atmosphere({ dict, lang }: { dict: Dictionary; lan
             alt={place.exteriorAlt}
             fill
             sizes="100vw"
-            className="visit-photo object-cover object-[56%_58%] lg:object-[50%_62%]"
+            className="visit-photo object-cover object-[56%_58%] lg:object-[50%_48%]"
           />
           {/* A little weight at the foot of the picture, under the card's
               shadow — the street is the busiest part of the frame and the

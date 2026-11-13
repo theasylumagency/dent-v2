@@ -7,7 +7,7 @@ import { htmlLang, isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
 import { getAnalyticsConfig } from "@/lib/analytics/settings";
-import { agency, site } from "@/lib/site";
+import { agency, brandIcons, site } from "@/lib/site";
 
 /* Font preloads stay disabled deliberately. On the Georgian default locale,
    they previously competed with the actual visual LCP for the highest
@@ -63,11 +63,8 @@ export const metadata: Metadata = {
   creator: agency.legalName,
   publisher: site.name,
   icons: {
-    icon: [
-      { url: "/brand/icon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" },
-    ],
-    apple: { url: "/brand/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    icon: { url: brandIcons.svg, sizes: "any", type: "image/svg+xml" },
+    apple: { url: brandIcons.apple, sizes: "180x180", type: "image/png" },
   },
   manifest: "/manifest.webmanifest",
 };

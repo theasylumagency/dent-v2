@@ -125,6 +125,17 @@ export const agency = {
   url: "https://theasylum.agency",
 } as const;
 
+// Public brand assets are cached for 30 days. Bump the version with the artwork.
+const brandIconVersion = "20261113";
+
+export const brandIcons = {
+  svg: `/brand/icon.svg?v=${brandIconVersion}`,
+  apple: `/brand/apple-touch-icon.png?v=${brandIconVersion}`,
+  png192: `/brand/icon-192.png?v=${brandIconVersion}`,
+  png512: `/brand/icon-512.png?v=${brandIconVersion}`,
+  maskable512: `/brand/icon-maskable-512.png?v=${brandIconVersion}`,
+} as const;
+
 export const media = {
   logo: "/brand/logo.svg",
   /**
@@ -161,7 +172,7 @@ export const media = {
    * runs it full-bleed; the contact page keeps its own portrait crop
    * (`/images/contact/exterior.webp`) for its narrower slot.
    */
-  exterior: "/images/home/clinic-exterior.webp",
+  exterior: "/images/home/total-charm-dent-facade.webp",
   /**
    * TODO(client): replace with real photography. These slots are deliberately
    * labelled so it is obvious which shots are still missing.

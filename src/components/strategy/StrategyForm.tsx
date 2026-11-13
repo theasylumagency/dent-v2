@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { brandIcons } from "@/lib/site";
 import { allSections, answerLabel, fieldsFor, FORM_VERSION, isVisible, optionalSections, sections, validateAnswers, type Answers, type Field, type Question, type Section } from "@/lib/strategy/schema";
 import type { Snapshot } from "@/lib/strategy/handler";
 
@@ -190,7 +191,7 @@ export default function StrategyForm() {
   </section>;
 
   return <div className="strategy-shell">
-    <header className="strategy-header"><div className="strategy-brand"><Image src="/brand/icon.svg" width="40" height="40" alt="" /><span>TOTAL CHARM <strong>DENT</strong></span></div><span className="strategy-private"><span aria-hidden="true">◌</span> სამუშაო სივრცე</span></header>
+    <header className="strategy-header"><div className="strategy-brand"><Image src={brandIcons.svg} width="40" height="40" alt="" unoptimized /><span>TOTAL CHARM <strong>DENT</strong></span></div><span className="strategy-private"><span aria-hidden="true">◌</span> სამუშაო სივრცე</span></header>
     <main id="strategy-main" className={"strategy-main" + (step === -1 || phase !== "ready" || completed ? " strategy-main-intro" : "")}>
       {phase === "loading" ? <div className="strategy-state" role="status"><span className="strategy-eyebrow">TOTAL CHARM DENT</span><h1 ref={heading} tabIndex={-1}>ვამზადებთ თქვენს კითხვარს…</h1></div> : null}
       {phase === "locked" || phase === "unavailable" ? <div className="strategy-state">

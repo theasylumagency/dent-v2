@@ -35,6 +35,7 @@ import { AnalyticsSettings } from "./globals/AnalyticsSettings";
 import { BookingSettings } from "./globals/BookingSettings";
 import { ClinicInfo } from "./globals/ClinicInfo";
 import { Seo } from "./globals/Seo";
+import { brandIcons } from "./lib/site";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -66,7 +67,7 @@ export default buildConfig({
            log in to "the site". */
         meta: {
             titleSuffix: " · Total Charm Dent",
-            icons: [{ rel: "icon", type: "image/svg+xml", url: "/brand/icon.svg" }],
+            icons: [{ rel: "icon", type: "image/svg+xml", url: brandIcons.svg }],
         },
 
         /* Paths are resolved against `importMap.baseDir` above, so they
