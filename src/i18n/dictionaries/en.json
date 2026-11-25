@@ -32,7 +32,7 @@
     "ctaPrimary": "Book a visit",
     "ctaSecondary": "Explore services",
     "scroll": "Scroll",
-    "trust": "5 specialists, trained in Europe, working to international protocols",
+    "teamCta": "Meet our dentists",
     "pauseMotion": "Pause video",
     "playMotion": "Play video",
     "facts": [
@@ -98,7 +98,6 @@
   "stats": {
     "satisfied": "Satisfied patients",
     "years": "Years on the market",
-    "specialists": "Specialists in the team",
     "directions": "Dental services"
   },
   "services": {
@@ -224,10 +223,10 @@
   },
   "team": {
     "label": "Our specialists",
-    "title": "Professionals in their field",
-    "lead": "At Total Charm Dental we have gathered the best doctors. Every specialist has completed an internship in European clinics, mastered modern techniques and works to international protocols. Regular training and participation in dental congresses allow them to continuously raise their level of qualification. Paediatric dentistry is handled only by doctors with the relevant specialisation and many years of experience working with children.",
-    "teaserLead": "Five specialists, each with their own discipline — therapy, orthodontics, prosthodontics and surgery.",
-    "teaserCta": "The team and their qualifications"
+    "title": "Our dentists",
+    "lead": "Explore our dentists’ qualifications, clinical experience and areas of practice.",
+    "teaserLead": "Explore each dentist’s areas of practice.",
+    "teaserCta": "View dentist profiles"
   },
   "news": {
     "metaTitle": "Patient Guide",
@@ -265,7 +264,7 @@
     "missionLabel": "What we work towards",
     "missionTitle": "Mission and vision",
     "atmosphereLabel": "The space",
-    "teamTitle": "The doctors",
+    "teamTitle": "Our dentists",
     "focusLabel": "Focus",
     "educationLabel": "Education",
     "experienceLabel": "Experience",

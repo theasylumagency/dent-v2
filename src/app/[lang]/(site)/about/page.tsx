@@ -72,12 +72,9 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
     getServiceCount(),
   ]);
 
-  /* The specialist count is derived from the same two queries that render
-     the profiles below, so the number and the faces can never disagree. */
   const stats = buildStats({
     labels: dict.stats,
     clinic,
-    doctorCount: (lead ? 1 : 0) + profiles.length,
     serviceCount,
   });
 
@@ -241,9 +238,7 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
               </Reveal>
 
               <Reveal delay={180}>
-                {/* The last-child rule catches an odd count: two of the four
-                    figures are optional claims, and an orphan in a 2×2 card
-                    left a visible empty cell. It spans instead. */}
+                {/* An unpaired figure spans the full row. */}
                 <dl className="card mt-12 grid grid-cols-2 divide-x divide-y divide-ivory-300 overflow-hidden [&>*:last-child:nth-child(odd)]:col-span-2">
                   {stats.map((stat) => (
                     <div key={stat.key} className="flex flex-col-reverse px-6 py-7">
@@ -413,8 +408,7 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
         <div className="shell relative">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
             <Reveal className="lg:col-span-5">
-              <p className="eyebrow">{dict.team.label}</p>
-              <h2 className="mt-6 fluid-title font-display">{t.teamTitle}</h2>
+                <h2 className="fluid-title font-display">{t.teamTitle}</h2>
             </Reveal>
 
             <Reveal delay={120} className="lg:col-span-7">

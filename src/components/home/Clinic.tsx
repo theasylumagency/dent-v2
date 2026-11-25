@@ -6,7 +6,6 @@ import type { Dictionary } from "@/i18n/dictionaries";
 import { route } from "@/lib/routes";
 import { media } from "@/lib/site";
 import { getClinic } from "@/lib/clinic";
-import { getDoctors } from "@/lib/team";
 import { getServiceCount } from "@/lib/services";
 import { buildStats } from "@/lib/stats";
 import { ArrowUpRight } from "@/components/ui/icons";
@@ -16,9 +15,7 @@ import Reveal from "@/components/ui/Reveal";
  * Home-page teaser for `/[lang]/about`, one screen tall.
  *
  * The mission and vision paragraphs live on that page rather than being
- * duplicated here. The numbers stayed: four counters are not prose, they
- * cannot compete with themselves in search, and they are the fastest
- * thing on the page to read.
+ * duplicated here.
  *
  * Being `.h-viewport` changes how the section is laid out, not just how
  * tall it is. Three bands stack in a `.fit-stack`:
@@ -40,19 +37,14 @@ import Reveal from "@/components/ui/Reveal";
  * image band and a sliver.
  */
 export default async function Clinic({ dict, lang }: { dict: Dictionary; lang: Locale }) {
-  /* Two of these four are counted from the CMS, so the row cannot fall out
-     of step with the doctors and services it describes. See `lib/stats.ts`
-     for why the other two are allowed to be absent. */
-  const [clinic, doctors, serviceCount] = await Promise.all([
+  const [clinic, serviceCount] = await Promise.all([
     getClinic(lang, dict.contact),
-    getDoctors(lang),
     getServiceCount(),
   ]);
 
   const stats = buildStats({
     labels: dict.stats,
     clinic,
-    doctorCount: doctors.length,
     serviceCount,
   });
 

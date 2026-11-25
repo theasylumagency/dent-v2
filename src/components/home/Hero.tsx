@@ -33,9 +33,7 @@ import HeroMedia from "./HeroMedia";
  * on `-z-10` would have buried that button.
  */
 export default async function Hero({ dict, lang }: { dict: Dictionary; lang: Locale }) {
-  /* Four faces, not all five — the row stays compact and the count lives
-     in the copy. Lead doctor first, so the stack opens on the name the
-     rest of the page builds on. */
+  /* A compact preview of the team, with the lead doctor first. */
   const faces = (await getDoctors(lang)).slice(0, 4);
 
   return (
@@ -146,9 +144,9 @@ export default async function Hero({ dict, lang }: { dict: Dictionary; lang: Loc
                 ))}
               </ul>
 
-              <p className="max-w-xs text-sm leading-relaxed text-ivory-300/85">
-                {dict.hero.trust}
-              </p>
+              <Link href="#team" className="max-w-xs py-2 text-sm leading-relaxed text-ivory-200 underline decoration-white/40 underline-offset-4 hover:decoration-current">
+                {dict.hero.teamCta} <span aria-hidden="true">→</span>
+              </Link>
             </div>
           </div>
         </div>
