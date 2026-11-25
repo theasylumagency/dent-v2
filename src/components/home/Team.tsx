@@ -11,11 +11,6 @@ import Reveal from "@/components/ui/Reveal";
 /**
  * Home-page teaser for the team section of `/[lang]/about`.
  *
- * The long paragraph about European internships and international
- * protocols moved to the about page, where it sits above the credentials
- * that back it up. Here it would be a claim with nothing under it — and
- * the same claim on two URLs.
- *
  * Each card links to that doctor's block rather than to the top of the
  * page, so clicking a face lands on that face.
  */
@@ -27,8 +22,7 @@ export default async function Team({ dict, lang }: { dict: Dictionary; lang: Loc
       <div className="shell">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
           <Reveal className="lg:col-span-5">
-            <p className="eyebrow">{dict.team.label}</p>
-            <h2 className="mt-6 fluid-title font-display">{dict.team.title}</h2>
+            <h2 className="fluid-title font-display">{dict.team.title}</h2>
           </Reveal>
 
           <Reveal delay={120} className="lg:col-span-7">

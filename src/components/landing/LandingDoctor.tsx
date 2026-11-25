@@ -1,10 +1,17 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import type { LandingPage } from "@/payload-types";
+import type { Locale } from "@/i18n/config";
+import { route } from "@/lib/routes";
 import { landingMediaAsset, populatedDoctor } from "@/lib/landing-pages";
 import Reveal from "@/components/ui/Reveal";
 
-export default function LandingDoctor({ campaign }: { campaign: LandingPage }) {
+export default function LandingDoctor({ campaign, lang, profileLabel }: {
+  campaign: LandingPage;
+  lang: Locale;
+  profileLabel: string;
+}) {
   const section = campaign.doctor;
   const doctor = populatedDoctor(section?.practitioner);
   if (!section?.enabled || !doctor) return null;
@@ -46,6 +53,11 @@ export default function LandingDoctor({ campaign }: { campaign: LandingPage }) {
                 </li>
               ))}
             </ul>
+          ) : null}
+          {doctor.published ? (
+            <Link href={route(lang, "doctor", doctor.slug)} className="mt-6 inline-block text-sm font-medium text-accent-700 underline underline-offset-4">
+              {profileLabel}
+            </Link>
           ) : null}
         </Reveal>
       </div>

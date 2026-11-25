@@ -1,4 +1,4 @@
-.strategy-body { margin:0; background:#f8f6f1; color:#203746; font-family:var(--strategy-font),sans-serif; font-size:15px; line-height:1.75; }
+.strategy-body { margin:0; background:#f8f6f1; color:#203746; font-family:"Noto Sans Georgian","Noto Sans Georgian Fallback",sans-serif; font-size:15px; line-height:1.75; }
 .strategy-body *, .strategy-body *::before, .strategy-body *::after { box-sizing:border-box; }
 .strategy-body button, .strategy-body input, .strategy-body textarea { font:inherit; }
 .strategy-body button { cursor:pointer; }

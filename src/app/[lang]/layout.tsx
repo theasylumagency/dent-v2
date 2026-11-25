@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
-import { Cormorant_Garamond, Manrope, Noto_Sans_Georgian, Noto_Serif_Georgian } from "next/font/google";
 
 import "../globals.css";
 import { htmlLang, isLocale, locales, type Locale } from "@/i18n/config";
@@ -8,41 +7,6 @@ import { getDictionary } from "@/i18n/dictionaries";
 import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
 import { getAnalyticsConfig } from "@/lib/analytics/settings";
 import { agency, brandIcons, site } from "@/lib/site";
-
-/* Font preloads stay disabled deliberately. On the Georgian default locale,
-   they previously competed with the actual visual LCP for the highest
-   priority network band. `swap` and metric-adjusted fallbacks keep CLS at 0. */
-const body = Manrope({
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body",
-  display: "swap",
-  preload: false,
-});
-
-const bodyKa = Noto_Sans_Georgian({
-  subsets: ["georgian"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body-ka",
-  display: "swap",
-  preload: false,
-});
-
-const display = Cormorant_Garamond({
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  weight: ["400", "500"],
-  variable: "--font-display-latin",
-  display: "swap",
-  preload: false,
-});
-
-const displayKa = Noto_Serif_Georgian({
-  subsets: ["georgian"],
-  weight: ["400", "500"],
-  variable: "--font-display-ka",
-  display: "swap",
-  preload: false,
-});
 
 export const viewport: Viewport = {
   themeColor: "#fbf7f1",
@@ -89,11 +53,7 @@ export default async function LocaleLayout({
   ]);
 
   return (
-    <html
-      lang={htmlLang[locale]}
-      className={`${body.variable} ${bodyKa.variable} ${display.variable} ${displayKa.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang={htmlLang[locale]} suppressHydrationWarning>
       <body className="min-h-dvh bg-ivory-100 text-ink-700 antialiased">
         <script dangerouslySetInnerHTML={{ __html: `document.documentElement.classList.add("js")` }} />
         <AnalyticsProvider config={analyticsConfig} copy={dict.analyticsConsent}>

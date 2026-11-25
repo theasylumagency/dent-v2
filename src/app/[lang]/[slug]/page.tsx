@@ -169,7 +169,7 @@ export default async function LandingPageRoute({
           defaultService={defaultService}
         />
         <LandingProblemSolution campaign={campaign} />
-        <LandingDoctor campaign={campaign} />
+        <LandingDoctor campaign={campaign} lang={locale} profileLabel={dict.doctor.profileCta} />
         <LandingSteps copy={copy} />
         <LandingTestimonials campaign={campaign} />
         <LandingClinic campaign={campaign} clinic={clinic} />
