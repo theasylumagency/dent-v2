@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./fonts/faces.css";
 
 @theme {
   /* ------------------------------------------------------------------
@@ -105,8 +106,8 @@
   --color-danger-700: #a4271f;
   /* form errors — 6.1:1 on ivory-100 */
 
-  --font-sans: var(--font-body), var(--font-body-ka), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-display-latin), var(--font-display-ka), ui-serif, Georgia, serif;
+  --font-sans: "Manrope", "Noto Sans Georgian", "Manrope Fallback", "Noto Sans Georgian Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", "Noto Serif Georgian", "Cormorant Garamond Fallback", "Noto Serif Georgian Fallback", ui-serif, Georgia, serif;
 
   --radius-card: 0.5rem;
 
